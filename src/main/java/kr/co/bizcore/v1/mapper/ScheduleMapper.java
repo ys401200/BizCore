@@ -61,16 +61,16 @@ public interface ScheduleMapper {
     public int reportOtherInsert(@Param("schedule") Schedule schedule);
 
     @Select("select swc_organiz.org_title, swc_user.userNo, swc_user.userName, swc_user.org_id ,max(swc_sreport.sreportNo) sreportNo, swc_sreport.weekNum from swc_user \r\n" + 
-            "left join swc_sreport on swc_user.userNo = swc_sreport.userNo and swc_sreport.weekNum = yearweek(curdate()) \r\n" + 
+            "left join swc_sreport on swc_user.userNo = swc_sreport.userNo and swc_sreport.weekNum = #{weekNum} \r\n" + 
             "left join swc_organiz on swc_user.org_id = swc_organiz.org_id \r\n" + 
             "where swc_user.compNo = #{compNo} and swc_user.attrib not like 'XXX%' group by swc_user.userNo order by swc_user.userOtp asc")
-    public List<Schedule> getWorkJournalThisUser(@Param("compNo") int compNo);
+    public List<Schedule> getWorkJournalThisUser(@Param("compNo") int compNo, @Param("weekNum") String weekNum);
 
     @Select("select swc_organiz.org_title, swc_user.userNo, swc_user.userName, swc_user.org_id ,max(swc_sreport.sreportNo) sreportNo, swc_sreport.weekNum from swc_user \r\n" + 
-            "left join swc_sreport on swc_user.userNo = swc_sreport.userNo and swc_sreport.weekNum = yearweek(date_add(now(), interval 7 day)) \r\n" + 
+            "left join swc_sreport on swc_user.userNo = swc_sreport.userNo and swc_sreport.weekNum = #{weekNum} \r\n" + 
             "left join swc_organiz on swc_user.org_id = swc_organiz.org_id \r\n" + 
             "where swc_user.compNo = #{compNo} and swc_user.attrib not like 'XXX%' group by swc_user.userNo order by swc_user.userOtp asc")
-    public List<Schedule> getWorkJournalNextUser(@Param("compNo") int compNo);
+    public List<Schedule> getWorkJournalNextUser(@Param("compNo") int compNo, @Param("weekNum") String weekNum);
 
 
 

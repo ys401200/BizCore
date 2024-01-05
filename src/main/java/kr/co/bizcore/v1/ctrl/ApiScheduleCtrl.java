@@ -410,11 +410,12 @@ public class ApiScheduleCtrl extends Ctrl {
             result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
         }else{
             String type = request.getParameter("type");
+            String weekNum = request.getParameter("weekNum");
 
             if(type.equals("this") || type.equals("last")){
-                list = scheduleService.getWorkJournalThisUser(compNo);
+                list = scheduleService.getWorkJournalThisUser(compNo, weekNum);
             }else{
-                list = scheduleService.getWorkJournalNextUser(compNo);
+                list = scheduleService.getWorkJournalNextUser(compNo, weekNum);
             }
 
             if (list != null) {

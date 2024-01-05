@@ -10308,15 +10308,14 @@ class WorkReportSet{
 		CommonDatas.Temps.workReportSet = this;
 		this.getSreportDatas("this");
 		this.getSreportDatas("next");
+		storage.lastWorkReport = [];
+		storage.thisWorkReport = [];
+		storage.nextWorkReport = [];
 	}
 
-	//개인업무일지 들고오는 함수
-	getWorkReportDatas(setType) {
+	//지난주 개인업무일지 들고 오는 함수
+	getLastWorkReportDatas() {
 		return new Promise((resolve, reject) => {
-			if(setType === "last") resolve("last");
-			else if(setType === "this") resolve("this");
-			else resolve("next");
-
 			let setDate;
 			let calDay = 0;
 			let nowDate = new Date();
@@ -10325,14 +10324,65 @@ class WorkReportSet{
 				calDay = 6 - nowDate.getDay();
 			}
 	
-			if(setType === "last"){
-				nowDate.setDate((nowDate.getDate() + calDay) - 7);
-			}else if(setType === "this" || setType === undefined){
-				nowDate.setDate(nowDate.getDate() + calDay);
-			}else{
-				nowDate.setDate((nowDate.getDate() + calDay) + 7);
+			nowDate.setDate((nowDate.getDate() + calDay) - 7);
+			setDate = nowDate.toISOString().substring(0, 10);
+
+			axios({
+				method: "get",
+				url: "/api/schedule/workReport",
+				params: {
+					"setDate": setDate,
+					"userNo": storage.my,
+				},
+			}).then((response) => {
+				if (response.data.result === "ok") {
+					let result;
+					result = cipher.decAes(response.data.data);
+					result = JSON.parse(result);
+					result = this.setWorkLongDate(result);
+					console.log(result);
+					let now = new Date();
+					let lastDate = new Date(new Date().setHours(24, 0, 0, 0));
+					let tempDate = new Date(new Date().setHours(24, 0, 0, 0));
+					lastDate.setDate(now.getDate() - 7);
+					tempDate.setDate(now.getDate() - 7);
+					let day = lastDate.getDay() - 1;
+					let lastMonday = new Date(lastDate.setDate(lastDate.getDate() - day));
+					let tempMonday = new Date(tempDate.setDate(tempDate.getDate() - day));
+					let lastSunday = new Date(lastMonday.setDate(lastMonday.getDate() + 7));
+
+					for(let i = 0; i < result.length; i++){
+						let item = result[i];
+						let dateTime = new Date(item.schedFrom);
+
+						if(tempMonday <= dateTime && lastSunday > dateTime){
+							storage.lastWorkReport.push(item);
+						}else if(lastSunday <= dateTime){
+							storage.thisWorkReport.push(item);
+						}
+					}
+				}
+			}).catch((error) => {
+				msg.set("지난주 개인업무일지 에러입니다.\n" + error);
+				console.log(error);
+			});
+
+			resolve("last");
+		})
+	}
+
+	//이번주 개인업무일지 들고오는 함수
+	getThisWorkReportDatas() {
+		return new Promise((resolve, reject) => {
+			let setDate;
+			let calDay = 0;
+			let nowDate = new Date();
+	
+			if(nowDate.getDay() > 0 && nowDate.getDay() < 7){
+				calDay = 6 - nowDate.getDay();
 			}
 	
+			nowDate.setDate(nowDate.getDate() + calDay);
 			setDate = nowDate.toISOString().substring(0, 10);
 
 			axios({
@@ -10349,22 +10399,204 @@ class WorkReportSet{
 					result = JSON.parse(result);
 					result = this.setWorkLongDate(result);
 	
-					if(setType === "last"){
-						storage.lastWorkReport = result;
-					}else if(setType === "this" || setType === undefined){
-						storage.thisWorkReport = result;
-					}else{
-						storage.nextWorkReport = result;
-					}
+					let now = new Date(new Date().setHours(24, 0, 0, 0));
+					let tempNow = new Date(new Date().setHours(24, 0, 0, 0));
+					let day = now.getDay() - 1;
+					let thisMonday = new Date(now.setDate(now.getDate() - day));
+					let tempMonday = new Date(tempNow.setDate(tempNow.getDate() - day));
+					let thisSunday = new Date(thisMonday.setDate(thisMonday.getDate() + 7));
 
-					this.drawWorkReport(setType);
+					for(let i = 0; i < result.length; i++){
+						let item = result[i];
+						let dateTime = new Date(item.schedFrom);
+						
+						if(tempMonday <= dateTime && thisSunday > dateTime){
+							storage.thisWorkReport.push(item);
+						}else if(tempMonday > dateTime){
+							storage.lastWorkReport.push(item);
+						}else if(thisSunday <= dateTime){
+							storage.nextWorkReport.push(item);
+						}
+					}
 				}
+			}).catch((error) => {
+				msg.set("이번주 개인업무일지 에러입니다.\n" + error);
+				console.log(error);
+			});
+
+			resolve("this");
+		})
+	}
+
+	//다음주 개인업무일지 들고오는 함수
+	getNextWorkReportDatas() {
+		return new Promise((resolve, reject) => {
+			let setDate;
+			let calDay = 0;
+			let nowDate = new Date();
+	
+			if(nowDate.getDay() > 0 && nowDate.getDay() < 7){
+				calDay = 6 - nowDate.getDay();
+			}
+	
+			nowDate.setDate((nowDate.getDate() + calDay) + 7);
+			setDate = nowDate.toISOString().substring(0, 10);
+
+			axios({
+				method: "get",
+				url: "/api/schedule/workReport",
+				params: {
+					"setDate": setDate,
+					"userNo": storage.my,
+				},
+			}).then((response) => {
+				if (response.data.result === "ok") {
+					let result;
+					result = cipher.decAes(response.data.data);
+					result = JSON.parse(result);
+					result = this.setWorkLongDate(result);
+					
+					let now = new Date();
+					let nextDate = new Date(new Date().setHours(24, 0, 0, 0));
+					let tempDate = new Date(new Date().setHours(24, 0, 0, 0));
+					nextDate.setDate(now.getDate() + 7);
+					tempDate.setDate(now.getDate() + 7);
+					let day = nextDate.getDay() - 1;
+					let nextMonday = new Date(nextDate.setDate(nextDate.getDate() - day));
+					let tempMonday = new Date(tempDate.setDate(tempDate.getDate() - day));
+					let nextSunday = new Date(nextMonday.setDate(nextMonday.getDate() + 7));
+
+					for(let i = 0; i < result.length; i++){
+						let item = result[i];
+						let dateTime = new Date(item.schedFrom).getTime();
+
+						if(tempMonday.getTime() <= dateTime && nextSunday.getTime() > dateTime){
+							storage.nextWorkReport.push(item);
+						}else if(tempMonday.getTime() > dateTime){
+							storage.thisWorkReport.push(item);
+						}
+					}
+				}
+
 			}).catch((error) => {
 				msg.set("개인업무일지 에러입니다.\n" + error);
 				console.log(error);
 			});
+
+			resolve("next");
 		})
 	}
+
+	// //개인업무일지 들고오는 함수
+	// getWorkReportDatas(setType) {
+	// 	return new Promise((resolve, reject) => {
+	// 		if(setType === "last") resolve("last");
+	// 		else if(setType === "this") resolve("this");
+	// 		else resolve("next");
+
+	// 		let setDate;
+	// 		let calDay = 0;
+	// 		let nowDate = new Date();
+	
+	// 		if(nowDate.getDay() > 0 && nowDate.getDay() < 7){
+	// 			calDay = 6 - nowDate.getDay();
+	// 		}
+	
+	// 		if(setType === "last"){
+	// 			nowDate.setDate((nowDate.getDate() + calDay) - 7);
+	// 		}else if(setType === "this" || setType === undefined){
+	// 			nowDate.setDate(nowDate.getDate() + calDay);
+	// 		}else{
+	// 			nowDate.setDate((nowDate.getDate() + calDay) + 7);
+	// 		}
+	
+	// 		setDate = nowDate.toISOString().substring(0, 10);
+
+	// 		axios({
+	// 			method: "get",
+	// 			url: "/api/schedule/workReport",
+	// 			params: {
+	// 				"setDate": setDate,
+	// 				"userNo": storage.my,
+	// 			},
+	// 		}).then((response) => {
+	// 			if (response.data.result === "ok") {
+	// 				let result;
+	// 				result = cipher.decAes(response.data.data);
+	// 				result = JSON.parse(result);
+	// 				result = this.setWorkLongDate(result);
+	
+	// 				if(setType === "last"){
+	// 					let now = new Date();
+	// 					let lastDate = new Date(new Date().setHours(24, 0, 0, 0));
+	// 					lastDate.setDate(now.getDate() - 7);
+	// 					let day = lastDate.getDay() - 1;
+	// 					let lastMonday = new Date(lastDate.setDate(lastDate.getDate() - day));
+	// 					let lastSunday = new Date(lastMonday.setDate(lastMonday.getDate() + 7));
+
+	// 					for(let i = 0; i < result.length; i++){
+	// 						let item = result[i];
+	// 						let dateTime = new Date(item.schedFrom).getTime();
+
+	// 						if(lastMonday.getTime() <= dateTime && lastSunday.getTime() > dateTime){
+	// 							storage.lastWorkReport.push(item);
+	// 						}else if(lastSunday.getTime() <= dateTime){
+	// 							storage.thisWorkReport.push(item);
+	// 						}
+	// 					}
+
+	// 					storage.lastWorkReport = storage.lastWorkReport.sort(function(a, b){return new Date(a.schedFrom) - new Date(b.schedFrom);});
+	// 				}else if(setType === "this" || setType === undefined){
+	// 					let now = new Date(new Date().setHours(24, 0, 0, 0));
+	// 					let day = now.getDay() - 1;
+	// 					let thisMonday = new Date(now.setDate(now.getDate() - day));
+	// 					let thisSunday = new Date(thisMonday.setDate(thisMonday.getDate() + 7));
+
+	// 					for(let i = 0; i < result.length; i++){
+	// 						let item = result[i];
+	// 						let dateTime = new Date(item.schedFrom).getTime();
+
+	// 						if(thisMonday.getTime() <= dateTime && thisSunday.getTime() > dateTime){
+	// 							storage.thisWorkReport.push(item);
+	// 						}else if(thisMonday.getTime() > dateTime){
+	// 							storage.lastWorkReport.push(item);
+	// 						}else if(thisSunday.getTime() <= dateTime){
+	// 							storage.nextWorkReport.push(item);
+	// 						}
+
+	// 					}
+
+	// 					storage.thisWorkReport = storage.thisWorkReport.sort(function(a, b){return new Date(a.schedFrom) - new Date(b.schedFrom);});
+	// 				}else{
+	// 					let now = new Date();
+	// 					let nextDate = new Date(new Date().setHours(24, 0, 0, 0));
+	// 					nextDate.setDate(now.getDate() + 7);
+	// 					let day = nextDate.getDay() - 1;
+	// 					let nextMonday = new Date(nextDate.setDate(nextDate.getDate() - day));
+	// 					let nextSunday = new Date(nextMonday.setDate(nextMonday.getDate() + 7));
+
+	// 					for(let i = 0; i < result.length; i++){
+	// 						let item = result[i];
+	// 						let dateTime = new Date(item.schedFrom).getTime();
+
+	// 						if(nextMonday.getTime() <= dateTime && nextSunday.getTime() > dateTime){
+	// 							storage.nextWorkReport.push(item);
+	// 						}else if(nextMonday.getTime() > dateTime){
+	// 							storage.thisWorkReport.push(item);
+	// 						}
+	// 					}
+
+	// 					storage.nextWorkReport = storage.nextWorkReport.sort(function(a, b){return new Date(a.schedFrom) - new Date(b.schedFrom);});
+	// 				}
+
+	// 				this.drawWorkReport(setType);
+	// 			}
+	// 		}).catch((error) => {
+	// 			msg.set("개인업무일지 에러입니다.\n" + error);
+	// 			console.log(error);
+	// 		});
+	// 	})
+	// }
 
 	//주간별 긴 일정 json 포맷 함수
 	setWorkLongDate(datas) {
@@ -10459,95 +10691,98 @@ class WorkReportSet{
 	}
 
 	//개인업무일지 레이아웃 셋팅 함수
-	drawWorkReport(setType){
+	drawWorkReport(){
 		let workReportContent = document.getElementsByClassName("workReportContent")[0];
+		workReportContent.innerHTML = "";
 		let gridHtml;
-		
-		if(setType === "last"){
-			let othersHtml = "<div class=\"othersContents\">";
-			othersHtml += "<div class=\"othersTitle\">추가기재</div>";
 
-			if(storage.thisSreport === undefined){
-				othersHtml += "<div class=\"othersContent\"><textarea id=\"lastOthers\"></textarea></div>";
-				othersHtml += "<div><input type=\"checkbox\" /></div>";
-			}else{
-				othersHtml += "<div class=\"othersContent\"><textarea id=\"lastOthers\">" + storage.thisSreport.prComment + "</textarea></div>";
+		storage.lastWorkReport = storage.lastWorkReport.sort(function(a, b){return new Date(a.schedFrom) - new Date(b.schedFrom);});
+		storage.thisWorkReport = storage.thisWorkReport.sort(function(a, b){return new Date(a.schedFrom) - new Date(b.schedFrom);});
+		storage.nextWorkReport = storage.nextWorkReport.sort(function(a, b){return new Date(a.schedFrom) - new Date(b.schedFrom);});
 
-				if(storage.thisSreport.prCheck > 0){
-					othersHtml += "<div><input type=\"checkbox\" checked/></div>";
-				}else{
-					othersHtml += "<div><input type=\"checkbox\" /></div>";
-				}
-			}
+		let othersHtmlLast = "<div class=\"othersContents\">";
+		othersHtmlLast += "<div class=\"othersTitle\">추가기재</div>";
 
-			othersHtml += "</div>";
-
-			gridHtml = CommonDatas.Temps.workReportSet.setWorkReportGrid(storage.lastWorkReport);
-
-			let lastCreateDiv = document.createElement("div");
-			lastCreateDiv.className = "lastWorkReport";
-			lastCreateDiv.innerHTML = "<span>지난주 업무일지</span>" + gridHtml + othersHtml;
-			workReportContent.append(lastCreateDiv);
-
-			let lastWorkReport = document.getElementsByClassName("lastWorkReport")[0];
-			CommonDatas.Temps.workReportSet.gridRowSort(lastWorkReport);
-		}else if(setType === "this"){
-			let othersHtml = "<div class=\"othersContents\">";
-			othersHtml += "<div class=\"othersTitle\">추가기재</div>";
-
-			if(storage.thisSreport === undefined){
-				othersHtml += "<div class=\"othersContent\"><textarea id=\"thisOthers\"></textarea></div>";
-				othersHtml += "<div><input type=\"checkbox\" /></div>";
-			}else{
-				othersHtml += "<div class=\"othersContent\"><textarea id=\"thisOthers\">" + storage.thisSreport.thComment + "</textarea></div>";
-
-				if(storage.thisSreport.thCheck > 0){
-					othersHtml += "<div><input type=\"checkbox\" checked/></div>";
-				}else{
-					othersHtml += "<div><input type=\"checkbox\" /></div>";
-				}
-			}
-
-			othersHtml += "</div>";
-
-			gridHtml = CommonDatas.Temps.workReportSet.setWorkReportGrid(storage.thisWorkReport);
-
-			let thisCreateDiv = document.createElement("div");
-			thisCreateDiv.className = "thisWorkReport";
-			thisCreateDiv.innerHTML = "<span>이번주 업무일지</span>" + gridHtml + othersHtml;
-			workReportContent.append(thisCreateDiv);
-
-			let thisWorkReport = document.getElementsByClassName("thisWorkReport")[0];
-			CommonDatas.Temps.workReportSet.gridRowSort(thisWorkReport);
+		if(storage.thisSreport === undefined){
+			othersHtmlLast += "<div class=\"othersContent\"><textarea id=\"lastOthers\"></textarea></div>";
+			othersHtmlLast += "<div><input type=\"checkbox\" /></div>";
 		}else{
-			let othersHtml = "<div class=\"othersContents\">";
-			othersHtml += "<div class=\"othersTitle\">추가기재</div>";
+			othersHtmlLast += "<div class=\"othersContent\"><textarea id=\"lastOthers\">" + storage.thisSreport.prComment + "</textarea></div>";
 
-			if(storage.nextSreport === undefined){
-				othersHtml += "<div class=\"othersContent\"><textarea id=\"nextOthers\"></textarea></div>";
-				othersHtml += "<div><input type=\"checkbox\" /></div>";
+			if(storage.thisSreport.prCheck > 0){
+				othersHtmlLast += "<div><input type=\"checkbox\" checked/></div>";
 			}else{
-				othersHtml += "<div class=\"othersContent\"><textarea id=\"nextOthers\">" + storage.nextSreport.thComment + "</textarea></div>";
-
-				if(storage.nextSreport.thCheck > 0){
-					othersHtml += "<div><input type=\"checkbox\" checked/></div>";
-				}else{
-					othersHtml += "<div><input type=\"checkbox\" /></div>";
-				}
+				othersHtmlLast += "<div><input type=\"checkbox\" /></div>";
 			}
-
-			othersHtml += "</div>";
-
-			gridHtml = CommonDatas.Temps.workReportSet.setWorkReportGrid(storage.nextWorkReport);
-
-			let nextCreateDiv = document.createElement("div");
-			nextCreateDiv.className = "nextWorkReport";
-			nextCreateDiv.innerHTML = "<span>다음주 업무일지</span>" + gridHtml + othersHtml;
-			workReportContent.append(nextCreateDiv);
-
-			let nextWorkReport = document.getElementsByClassName("nextWorkReport")[0];
-			CommonDatas.Temps.workReportSet.gridRowSort(nextWorkReport);
 		}
+
+		othersHtmlLast += "</div>";
+
+		gridHtml = CommonDatas.Temps.workReportSet.setWorkReportGrid(storage.lastWorkReport);
+
+		let lastCreateDiv = document.createElement("div");
+		lastCreateDiv.className = "lastWorkReport";
+		lastCreateDiv.innerHTML = "<span>지난주 업무일지</span>" + gridHtml + othersHtmlLast;
+		workReportContent.append(lastCreateDiv);
+
+		let lastWorkReport = document.getElementsByClassName("lastWorkReport")[0];
+		CommonDatas.Temps.workReportSet.gridRowSort(lastWorkReport);
+
+		let othersHtmlThis = "<div class=\"othersContents\">";
+		othersHtmlThis += "<div class=\"othersTitle\">추가기재</div>";
+
+		if(storage.thisSreport === undefined){
+			othersHtmlThis += "<div class=\"othersContent\"><textarea id=\"thisOthers\"></textarea></div>";
+			othersHtmlThis += "<div><input type=\"checkbox\" /></div>";
+		}else{
+			othersHtmlThis += "<div class=\"othersContent\"><textarea id=\"thisOthers\">" + storage.thisSreport.thComment + "</textarea></div>";
+
+			if(storage.thisSreport.thCheck > 0){
+				othersHtmlThis += "<div><input type=\"checkbox\" checked/></div>";
+			}else{
+				othersHtmlThis += "<div><input type=\"checkbox\" /></div>";
+			}
+		}
+
+		othersHtmlThis += "</div>";
+
+		gridHtml = CommonDatas.Temps.workReportSet.setWorkReportGrid(storage.thisWorkReport);
+
+		let thisCreateDiv = document.createElement("div");
+		thisCreateDiv.className = "thisWorkReport";
+		thisCreateDiv.innerHTML = "<span>이번주 업무일지</span>" + gridHtml + othersHtmlThis;
+		workReportContent.append(thisCreateDiv);
+
+		let thisWorkReport = document.getElementsByClassName("thisWorkReport")[0];
+		CommonDatas.Temps.workReportSet.gridRowSort(thisWorkReport);
+
+		let othersHtmlNext = "<div class=\"othersContents\">";
+		othersHtmlNext += "<div class=\"othersTitle\">추가기재</div>";
+
+		if(storage.nextSreport === undefined){
+			othersHtmlNext += "<div class=\"othersContent\"><textarea id=\"nextOthers\"></textarea></div>";
+			othersHtmlNext += "<div><input type=\"checkbox\" /></div>";
+		}else{
+			othersHtmlNext += "<div class=\"othersContent\"><textarea id=\"nextOthers\">" + storage.nextSreport.thComment + "</textarea></div>";
+
+			if(storage.nextSreport.thCheck > 0){
+				othersHtmlNext += "<div><input type=\"checkbox\" checked/></div>";
+			}else{
+				othersHtmlNext += "<div><input type=\"checkbox\" /></div>";
+			}
+		}
+
+		othersHtmlNext += "</div>";
+
+		gridHtml = CommonDatas.Temps.workReportSet.setWorkReportGrid(storage.nextWorkReport);
+
+		let nextCreateDiv = document.createElement("div");
+		nextCreateDiv.className = "nextWorkReport";
+		nextCreateDiv.innerHTML = "<span>다음주 업무일지</span>" + gridHtml + othersHtmlNext;
+		workReportContent.append(nextCreateDiv);
+
+		let nextWorkReport = document.getElementsByClassName("nextWorkReport")[0];
+		CommonDatas.Temps.workReportSet.gridRowSort(nextWorkReport);
 
 		document.getElementsByClassName("crudBtns")[0].children[0].setAttribute("onclick", "let workReport = new WorkReport(); workReport.update(\"this\")");
 		document.getElementsByClassName("crudBtns")[0].children[1].setAttribute("onclick", "let workReport = new WorkReport(); workReport.update(\"next\")");
@@ -10590,13 +10825,12 @@ class WorkReportSet{
 
 	getWeekOfYear(date){
 		let oneJan = new Date(date.getFullYear(), 0, 0);
-		let numberOfDays = Math.floor((date - oneJan) / (24 * 60 * 60 * 1000));
+		let numberOfDays = Math.floor((date - oneJan) / 86400000);
 		return Math.ceil(numberOfDays / 7);
 	};
 
 	setWorkReportGrid(datas){
 		let nowDate = new Date();
-		let nowYear = nowDate.getFullYear();
 		let allHtml = "";
 		let headerHtml = "";
 		let bodyHtml = "";
@@ -10608,6 +10842,7 @@ class WorkReportSet{
 			for(let i = 0; i < datas.length; i++){
 				let item = datas[i];
 				let getDay = new Date(item.schedFrom).getDay();
+				let getYear = new Date(item.schedFrom).getFullYear();
 				let month, type;
 	
 				if(getDay == 0) month = "일";
@@ -10618,7 +10853,7 @@ class WorkReportSet{
 				else if(getDay == 5) month = "금";
 				else if(getDay == 6) month = "토";
 	
-				bodyHtml += "<div class=\"gridWeek\" data-value=\"" + nowYear + CommonDatas.Temps.workReportSet.getWeekOfYear(new Date(item.schedFrom)) + "\" style=\"justify-content: center;\">" + nowYear + CommonDatas.Temps.workReportSet.getWeekOfYear(new Date(item.schedFrom)) + "</div>";
+				bodyHtml += "<div class=\"gridWeek\" data-value=\"" + getYear + CommonDatas.Temps.workReportSet.getWeekOfYear(new Date(item.schedFrom)) + "\" style=\"justify-content: center;\">" + getYear + CommonDatas.Temps.workReportSet.getWeekOfYear(new Date(item.schedFrom)) + "</div>";
 				bodyHtml += "<div class=\"gridMonth\" data-value=\"" + month + "\" style=\"justify-content: center;\">" + month + "</div>";
 	
 				if(item.schedType === 10165){
@@ -10650,6 +10885,27 @@ class WorkReportSet{
 		allHtml = headerHtml + bodyHtml;
 
 		return allHtml;
+	}
+
+	workReportDataSet(){
+		for(let i = 0; i < storage.lastTempWorkReport.length; i++){
+			let item = storage.lastTempWorkReport[i];
+			storage.lastWorkReport.push(item);
+		}
+
+		for(let i = 0; i < storage.thisTempWorkReport.length; i++){
+			let item = storage.thisTempWorkReport[i];
+			storage.thisWorkReport.push(item);
+		}
+
+		for(let i = 0; i < storage.nextTempWorkReport.length; i++){
+			let item = storage.nextTempWorkReport[i];
+			storage.nextWorkReport.push(item);
+		}
+
+		storage.lastWorkReport = storage.lastWorkReport.sort(function(a, b){return new Date(a.schedFrom) - new Date(b.schedFrom);});
+		storage.thisWorkReport = storage.thisWorkReport.sort(function(a, b){return new Date(a.schedFrom) - new Date(b.schedFrom);});
+		storage.nextWorkReport = storage.nextWorkReport.sort(function(a, b){return new Date(a.schedFrom) - new Date(b.schedFrom);});
 	}
 }
 
@@ -10854,15 +11110,27 @@ class WorkReport{
 class WorkJournalSet{
 	constructor(){
 		CommonDatas.Temps.workJournalSet = this;
+		storage.lastWorkJournalDatas = {};
+		storage.thisWorkJournalDatas = {};
+		storage.nextWorkJournalDatas = {};
+		storage.lastTempArray = [];
+		storage.thisTempArray = [];
+		storage.nextTempArray = [];
 	}
 
 	//업무일지검토 유저목록 데이터 불러오는 함수
 	getWorkJournalUsers(type){
+		let workReportSet = new WorkReportSet();
+		let nowDate = new Date();
+		let weekNum = workReportSet.getWeekOfYear(new Date());
+		let setDateWeek = nowDate.getFullYear().toString() + weekNum.toString();
+
 		axios({
 			method: "get",
 			url: "/api/schedule/getWorkJournalUser",
 			params: {
 				"type": type,
+				"weekNum": setDateWeek,
 			},
 		}).then((res) => {
 			if(res.data.result === "ok"){
@@ -10917,6 +11185,8 @@ class WorkJournalSet{
 							let result = cipher.decAes(res.data.data);
 							result = JSON.parse(result);
 							result = workReportSet.setWorkLongDate(result);
+							result = result.sort(function(a, b){return new Date(a.schedFrom) - new Date(b.schedFrom);});
+							console.log(result);
 
 							if(result[0] !== undefined){
 								if(type === "last"){
@@ -10929,6 +11199,205 @@ class WorkJournalSet{
 							}
 						}
 					})
+				}
+			}
+		}, 1000);
+	}
+
+	//지난주 개인업무일지 들고 오는 함수
+	getLastWorkJournalDatas() {
+		let setDate;
+		let calDay = 0;
+		let nowDate = new Date();
+
+		if(nowDate.getDay() > 0 && nowDate.getDay() < 7){
+			calDay = 6 - nowDate.getDay();
+		}
+
+		nowDate.setDate((nowDate.getDate() + calDay) - 7);
+		setDate = nowDate.toISOString().substring(0, 10);
+
+		setTimeout(() => {
+			const workReportSet = new WorkReportSet();
+
+			for(let i = 0; i < storage.workJournalUsers.length; i++){
+				let item = storage.workJournalUsers[i];
+
+				if(item.sreportNo > 0){
+					axios({
+						method: "get",
+						url: "/api/schedule/workReport",
+						params: {
+							"setDate": setDate,
+							"userNo": item.userNo,
+						},
+					}).then((res) => {
+						if(res.data.result === "ok"){
+							let result;
+							result = cipher.decAes(res.data.data);
+							result = JSON.parse(result);
+							result = workReportSet.setWorkLongDate(result);
+							console.log(result);
+
+							let now = new Date();
+							let lastDate = new Date(new Date().setHours(24, 0, 0, 0));
+							let tempDate = new Date(new Date().setHours(24, 0, 0, 0));
+							lastDate.setDate(now.getDate() - 7);
+							tempDate.setDate(now.getDate() - 7);
+							let day = lastDate.getDay() - 1;
+							let lastMonday = new Date(lastDate.setDate(lastDate.getDate() - day));
+							let tempMonday = new Date(tempDate.setDate(tempDate.getDate() - day));
+							let lastSunday = new Date(lastMonday.setDate(lastMonday.getDate() + 7));
+
+							for(let t = 0; t < result.length; t++){
+								let item = result[t];
+								let dateTime = new Date(item.schedFrom);
+
+								if(tempMonday <= dateTime && lastSunday > dateTime){
+									storage.lastTempArray.push(item);
+								}else if(lastSunday <= dateTime){
+									storage.thisTempArray.push(item);
+								}
+							}
+
+							if(result[0] !== undefined){
+								storage.lastWorkJournalDatas[result[0].userNo] = storage.lastTempArray.sort(function(a, b){return new Date(a.schedFrom).getDay() - new Date(b.schedFrom).getDay();});
+								storage.thisWorkJournalDatas[result[0].userNo] = storage.thisTempArray.sort(function(a, b){return new Date(a.schedFrom).getDay() - new Date(b.schedFrom).getDay();});
+							}
+						}
+					});
+				}
+			}
+		}, 1000);
+	}
+
+	//이번주 업무일지검토 들고오는 함수
+	getThisWorkJournalDatas() {
+		let setDate;
+		let calDay = 0;
+		let nowDate = new Date();
+
+		if(nowDate.getDay() > 0 && nowDate.getDay() < 7){
+			calDay = 6 - nowDate.getDay();
+		}
+
+		nowDate.setDate(nowDate.getDate() + calDay);
+		setDate = nowDate.toISOString().substring(0, 10);
+
+		setTimeout(() => {
+			const workReportSet = new WorkReportSet();
+
+			for(let i = 0; i < storage.workJournalUsers.length; i++){
+				let item = storage.workJournalUsers[i];
+
+				if(item.sreportNo > 0){
+					axios({
+						method: "get",
+						url: "/api/schedule/workReport",
+						params: {
+							"setDate": setDate,
+							"userNo": item.userNo,
+						},
+					}).then((res) => {
+						if(res.data.result === "ok"){
+							let result;
+							result = cipher.decAes(res.data.data);
+							result = JSON.parse(result);
+							result = workReportSet.setWorkLongDate(result);
+			
+							let now = new Date(new Date().setHours(24, 0, 0, 0));
+							let tempNow = new Date(new Date().setHours(24, 0, 0, 0));
+							let day = now.getDay() - 1;
+							let thisMonday = new Date(now.setDate(now.getDate() - day));
+							let tempMonday = new Date(tempNow.setDate(tempNow.getDate() - day));
+							let thisSunday = new Date(thisMonday.setDate(thisMonday.getDate() + 7));
+
+							for(let i = 0; i < result.length; i++){
+								let item = result[i];
+								let dateTime = new Date(item.schedFrom);
+								
+								if(tempMonday <= dateTime && thisSunday > dateTime){
+									storage.thisTempArray.push(item);
+								}else if(tempMonday > dateTime){
+									storage.lastTempArray.push(item);
+								}else if(thisSunday <= dateTime){
+									storage.nextTempArray.push(item);
+								}
+							}
+
+							if(result[0] !== undefined){
+								storage.lastWorkJournalDatas[result[0].userNo] = storage.lastTempArray.sort(function(a, b){return new Date(a.schedFrom).getDay() - new Date(b.schedFrom).getDay();});
+								storage.thisWorkJournalDatas[result[0].userNo] = storage.thisTempArray.sort(function(a, b){return new Date(a.schedFrom).getDay() - new Date(b.schedFrom).getDay();});
+								storage.nextWorkJournalDatas[result[0].userNo] = storage.nextTempArray.sort(function(a, b){return new Date(a.schedFrom).getDay() - new Date(b.schedFrom).getDay();});
+							}
+						}
+					});
+				}
+			}
+		}, 1000);
+	}
+
+	//다음주 업무일지검토 들고오는 함수
+	getNextWorkJournalDatas() {
+		let setDate;
+		let calDay = 0;
+		let nowDate = new Date();
+
+		if(nowDate.getDay() > 0 && nowDate.getDay() < 7){
+			calDay = 6 - nowDate.getDay();
+		}
+
+		nowDate.setDate((nowDate.getDate() + calDay) + 7);
+		setDate = nowDate.toISOString().substring(0, 10);
+
+		setTimeout(() => {
+			const workReportSet = new WorkReportSet();
+
+			for(let i = 0; i < storage.workJournalUsers.length; i++){
+				let item = storage.workJournalUsers[i];
+
+				if(item.sreportNo > 0){
+					axios({
+						method: "get",
+						url: "/api/schedule/workReport",
+						params: {
+							"setDate": setDate,
+							"userNo": item.userNo,
+						},
+					}).then((res) => {
+						if(res.data.result === "ok"){
+							let result;
+							result = cipher.decAes(res.data.data);
+							result = JSON.parse(result);
+							result = workReportSet.setWorkLongDate(result);
+			
+							let now = new Date();
+							let nextDate = new Date(new Date().setHours(24, 0, 0, 0));
+							let tempDate = new Date(new Date().setHours(24, 0, 0, 0));
+							nextDate.setDate(now.getDate() + 7);
+							tempDate.setDate(now.getDate() + 7);
+							let day = nextDate.getDay() - 1;
+							let nextMonday = new Date(nextDate.setDate(nextDate.getDate() - day));
+							let tempMonday = new Date(tempDate.setDate(tempDate.getDate() - day));
+							let nextSunday = new Date(nextMonday.setDate(nextMonday.getDate() + 7));
+
+							for(let i = 0; i < result.length; i++){
+								let item = result[i];
+								let dateTime = new Date(item.schedFrom).getTime();
+		
+								if(tempMonday.getTime() <= dateTime && nextSunday.getTime() > dateTime){
+									storage.nextTempArray.push(item);
+								}else if(tempMonday.getTime() > dateTime){
+									storage.thisTempArray.push(item);
+								}
+							}
+
+							if(result[0] !== undefined){
+								storage.thisWorkJournalDatas[result[0].userNo] = storage.thisTempArray.sort(function(a, b){return new Date(a.schedFrom).getDay() - new Date(b.schedFrom).getDay();});
+								storage.nextWorkJournalDatas[result[0].userNo] = storage.nextTempArray.sort(function(a, b){return new Date(a.schedFrom).getDay() - new Date(b.schedFrom).getDay();});
+							}
+						}
+					});
 				}
 			}
 		}, 1000);
@@ -11265,9 +11734,9 @@ class WorkJournalSet{
 
 		if(thisEle === undefined || thisEle.dataset.type === "last" || thisEle.dataset.type === "this"){
 			CommonDatas.Temps.workJournalSet.getWorkJournalUsers("this");
-			CommonDatas.Temps.workJournalSet.getWorkJournalDatas("last");
-			CommonDatas.Temps.workJournalSet.getWorkJournalDatas("this");
-			CommonDatas.Temps.workJournalSet.getWorkJournalDatas("next");
+			CommonDatas.Temps.workJournalSet.getLastWorkJournalDatas();
+			CommonDatas.Temps.workJournalSet.getThisWorkJournalDatas();
+			CommonDatas.Temps.workJournalSet.getNextWorkJournalDatas();
 			
 			setTimeout(() => {
 				CommonDatas.Temps.workJournalSet.drawWorkJournalContent("this");
@@ -11277,9 +11746,9 @@ class WorkJournalSet{
 			journalChangeBtn.innerText = "업무일지(차주)";			
 		}else{
 			CommonDatas.Temps.workJournalSet.getWorkJournalUsers("next");
-			CommonDatas.Temps.workJournalSet.getWorkJournalDatas("last");
-			CommonDatas.Temps.workJournalSet.getWorkJournalDatas("this");
-			CommonDatas.Temps.workJournalSet.getWorkJournalDatas("next");
+			CommonDatas.Temps.workJournalSet.getLastWorkJournalDatas();
+			CommonDatas.Temps.workJournalSet.getThisWorkJournalDatas();
+			CommonDatas.Temps.workJournalSet.getNextWorkJournalDatas();
 			
 			setTimeout(() => {
 				CommonDatas.Temps.workJournalSet.drawWorkJournalContent("next");

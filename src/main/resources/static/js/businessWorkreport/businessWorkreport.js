@@ -7,15 +7,16 @@ async function callerFun(){
 	let workReportSet = new WorkReportSet();
 	
 	setTimeout(() => {
-		workReportSet.getWorkReportDatas("last");
+		workReportSet.getLastWorkReportDatas();
 	}, 500);
 
 	setTimeout(() => {
-		workReportSet.getWorkReportDatas("this");
+		workReportSet.getThisWorkReportDatas();
 	}, 700);
 
 	setTimeout(() => {
-		workReportSet.getWorkReportDatas("next");
+		workReportSet.getNextWorkReportDatas();
+		workReportSet.drawWorkReport();
 		$('.theme-loader').delay(1000).fadeOut("slow");
 	}, 1500);
 }
