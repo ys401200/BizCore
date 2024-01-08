@@ -127,6 +127,15 @@ function init(){
 	window.setTimeout(checkKeepToken,300);
 } // End of init()
 
+document.addEventListener("DOMContentLoaded", () => {
+	let compId = document.getElementById("compId");
+	let userId = document.getElementById("userId");
+	let getCookieCompId = getCookie("compId");
+	let getCookieUserId = getCookie("userId");
+
+	if(getCookieCompId !== "") compId.value = getCookieCompId;
+	if(getCookieUserId !== "") userId.value = getCookieUserId;
+});
 
 // input 엘리먼트의 keyup 이벤트
 function elInputKeyUp(el, event){
@@ -267,10 +276,49 @@ function loginSubmit(){
 				alert("탈퇴된 회원이거나 조회된 아이디/비밀번호가 없습니다.\n다시 입력해주세요.");
 				return false;
 			}else{
+				let loginSave = document.getElementById("loginSave");
+				deleteCookie("compId");
+				deleteCookie("userId");
+				
+				if(loginSave.checked){
+					setCookie("compId", compId.value, 365);
+					setCookie("userId", userId.value, 365);
+				}
+
 				sessionStorage.setItem("getUserNo", res.data);
 				location.href = "";
 			}
 		})
 	}
 
+}
+
+//쿠키 세팅 함수
+function setCookie(cookieName, value, exdays){
+	var exdate = new Date();
+	exdate.setDate(exdate.getDate() + exdays);
+	var cookieValue = escape(value) + ((exdays==null) ? "" : "; expires=" + exdate.toGMTString());
+	document.cookie = cookieName + "=" + cookieValue;
+}
+  
+//쿠키 삭제 함수
+function deleteCookie(cookieName){
+	var expireDate = new Date();
+	expireDate.setDate(expireDate.getDate() - 1);
+	document.cookie = cookieName + "= " + "; expires=" + expireDate.toGMTString();
+}
+  
+//쿠키 가져오는 함수
+function getCookie(cookieName) {
+	cookieName = cookieName + '=';
+	var cookieData = document.cookie;
+	var start = cookieData.indexOf(cookieName);
+	var cookieValue = '';
+	if(start != -1){
+		start += cookieName.length;
+		var end = cookieData.indexOf(';', start);
+		if(end == -1)end = cookieData.length;
+		cookieValue = cookieData.substring(start, end);
+	}
+	return unescape(cookieValue);
 }

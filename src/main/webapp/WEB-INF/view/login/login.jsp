@@ -25,6 +25,8 @@
             <div id="loginSessionDiv">
                 <!-- <img src="/images/login/loginSession.png" id="loginSessionBtn" onclick="loginSessionClick(this)"/>
                 <span id="loginSessionSpan">로그인 상태 유지</span> -->
+                <input type="checkbox" id="loginSave" checked/>
+                <label for="loginSave">아이디 저장</label>
             </div>
             <div id="loginMsg"></div>
             <div id="loginBtns">

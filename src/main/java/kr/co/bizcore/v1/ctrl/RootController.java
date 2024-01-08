@@ -28,7 +28,7 @@ public class RootController extends Ctrl {
     private static final String VIEW_PATH = null;
     private static final String VIEW_ERROR_PATH = "/error/";
 
-	// 로그인 여부에 따 다ㄴ 페이지를 보여줌
+	// 로그인 여부에 따라 다른 페이지를 보여줌
     @RequestMapping("")
     public String root(HttpServletRequest request) {
         HttpSession session = null;
