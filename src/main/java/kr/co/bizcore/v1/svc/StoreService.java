@@ -22,6 +22,10 @@ public class StoreService extends Svc{
         return store;
     }
 
+    public List<Store> getCategoryStoreList(Store store){
+        return storeMapper.getCategoryStoreList(store);
+    }
+    
     public int insertStore(Store store) {
         return storeMapper.storeInsert(store);
     }

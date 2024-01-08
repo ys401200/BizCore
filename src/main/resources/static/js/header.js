@@ -65,9 +65,10 @@ let promiseInit = function init() {
 			// getPersonalize();
 			// noteLiveUpdate();
 			CommonDatas.setTopPathActive();
-			CommonDatas.setSidePathActive();
 			
 			setTimeout(() => {
+				CommonDatas.setSidePanalScript();
+				CommonDatas.setSidePathActive();
 				CommonDatas.pageAuthSet();
 				CommonDatas.sideMenuAuthSet();
 				resolve();

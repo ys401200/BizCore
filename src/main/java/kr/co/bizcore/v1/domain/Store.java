@@ -23,6 +23,7 @@ public class Store extends Domain{
     private String authCode;
     private String options;
     private String secondDetail;
+    private String categories;
     private String storeDate;
     private String releaseDate;
     private String orderDate;

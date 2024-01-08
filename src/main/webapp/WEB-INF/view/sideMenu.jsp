@@ -41,7 +41,7 @@
 			</div>
 			<div class="menuItem" data-key="sales">
 				<a href="/business/sales">
-					<img src="/images/main/icons/mainSchedIcon.png" id="mainSalesIcon" />
+					<img src="/images/main/icons/mainSalesIcon.png" id="mainSalesIcon" />
 					<span>영업활동관리</span>
 				</a>
 			</div>
@@ -77,7 +77,7 @@
 					<a href="/business/cont">계약조회</a>
 				</div>
 			</div>
-			<div class="menuItem" data-key="tech">
+			<!-- <div class="menuItem" data-key="tech">
 				<input type="radio" id="tech" name="sideMenu" onclick="CommonDatas.sideMenuItemClick();">
 				<label for="tech">
 					<img src="/images/main/icons/mainSchedIcon.png" id="mainSchedIcon" />
@@ -92,6 +92,23 @@
 				<div>
 					<a href="/business/store">재고 조회</a>
 				</div>
+			</div> -->
+			<div class="menuItem" data-key="tech">
+				<a href="/business/tech">
+					<img src="/images/main/icons/mainTechIcon.png" id="mainTechIcon" />
+					<span>기술지원관리</span>
+				</a>
+			</div>
+			<div class="menuItem" data-key="store">
+				<input type="radio" id="store" name="sideMenu" onclick="CommonDatas.sideMenuItemClick();">
+				<label for="store">
+					<img src="/images/main/icons/mainStoreIcon.png" id="mainStoreIcon" />
+					<span>재고조회</span>
+					<span>+</span>
+				</label>
+			</div>
+			<div class="panel" data-key="categories">
+				
 			</div>
 			<div class="menuItem">
 				<a href="/business/reference">

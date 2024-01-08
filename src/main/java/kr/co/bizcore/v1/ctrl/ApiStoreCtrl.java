@@ -1,5 +1,8 @@
 package kr.co.bizcore.v1.ctrl;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -32,8 +35,48 @@ public class ApiStoreCtrl extends Ctrl {
     @Autowired
     private StoreService storeService;
 
-    @GetMapping("")
-    public String storeList(HttpServletRequest request) {
+    // @GetMapping("")
+    // public String storeList(HttpServletRequest request) {
+    //     String result = null, data = null, aesKey = null, aesIv = null, userNo = null, compId = null;
+    //     int compNo = 0;
+    //     HttpSession session = null;
+    //     Msg msg = null;
+    //     List<Store> list = null;
+    //     int i = 0;
+        
+    //     session = request.getSession();
+    //     aesKey = (String) session.getAttribute("aesKey");
+    //     aesIv = (String) session.getAttribute("aesIv");
+    //     compNo = (int) session.getAttribute("compNo");
+    //     userNo = (String) session.getAttribute("userNo");
+    //     msg = getMsg((String) session.getAttribute("lang"));
+    //     if (compNo == 0)
+    //     compNo = (int) request.getAttribute("compNo");
+            
+    //     if (compNo == 0) {
+    //         result = "{\"result\":\"failure\",\"msg\":\"" + msg.compNoNotVerified + "\"}";
+    //     }else if(aesKey == null || aesIv == null){
+    //         result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
+    //     }else{
+    //         Store store = new Store();
+    //         store.setCompNo(compNo);
+    //         list = storeService.getStoreList(store);
+            
+    //         if (list != null) {
+    //             data = new Gson().toJson(list).toString();
+    //         } else {
+    //             data = "[]";
+    //         }
+            
+    //         data = storeService.encAes(data, aesKey, aesIv);
+    //         result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}";            
+    //     }
+
+    //     return result;
+    // }
+
+    @GetMapping("/categoryStore/{categories}")
+    public String getCategoryStoreList(HttpServletRequest request, @PathVariable String categories) throws UnsupportedEncodingException {
         String result = null, data = null, aesKey = null, aesIv = null, userNo = null, compId = null;
         int compNo = 0;
         HttpSession session = null;
@@ -57,7 +100,8 @@ public class ApiStoreCtrl extends Ctrl {
         }else{
             Store store = new Store();
             store.setCompNo(compNo);
-            list = storeService.getStoreList(store);
+            store.setCategories(categories);
+            list = storeService.getCategoryStoreList(store);
             
             if (list != null) {
                 data = new Gson().toJson(list).toString();

@@ -14218,7 +14218,8 @@ class StoreSet{
 
 	//재고조회 리스트 저장 함수
 	list() {
-		axios.get("/api/store").then((response) => {
+		let splitStr = location.pathname.split("/");
+		axios.get("/api/store/categoryStore/" + splitStr[3]).then((response) => {
 			if (response.data.result === "ok") {
 				let result;
 				result = cipher.decAes(response.data.data);
@@ -14426,6 +14427,7 @@ class StoreSet{
 	//재고현황 등록 폼
 	storeInsertForm(){
 		let html, dataArray;
+		storage.categoryArr = [];
 	
 		dataArray = [
 			{
@@ -14485,6 +14487,30 @@ class StoreSet{
 				"title": "비고",
 				"elementId": "firstDetail",
 				"col": 4,
+				"disabled": false,
+			},
+			{
+				"title": "카테고리<br />(제품회사명)",
+				"complete": "categories",
+				"keyup": "CommonDatas.addAutoComplete(this);",
+				"onClick": "CommonDatas.addAutoComplete(this);",
+				"disabled": false,
+			},
+			{
+				"title": "카테고리 선택 시<br />자동 입력(*)",
+				"elementId": "categories",
+				"col": 2,
+				"disabled": true,
+			},
+			{
+				"title": "카테고리 삭제<br />선택 시 삭제",
+				"selectValue": [
+					{
+						"key": "",
+						"value": "선택",
+					},
+				],
+				"type": "select",
 				"disabled": false,
 			},
 			{
@@ -14548,10 +14574,11 @@ class StoreSet{
 			"authCode": "",
 			"options": "",
 			"secondDetail": "",
-			"storeDate": "",
-			"releaseDate": "",
-			"orderDate": "",
-			"bklnDate": ""
+			"categories": "",
+			"storeDate": null,
+			"releaseDate": null,
+			"orderDate": null,
+			"bklnDate": null
 		};
 	}
 
@@ -14659,6 +14686,7 @@ class Store{
 			this.authCode = getData.authCode;
 			this.options = getData.options;
 			this.secondDetail = getData.secondDetail;
+			this.categories = getData.categories;
 			this.storeDate = getData.storeDate;
 			this.releaseDate = getData.releaseDate;
 			this.orderDate = getData.orderDate;
@@ -14682,12 +14710,13 @@ class Store{
 			this.authCode = "";
 			this.options = "";
 			this.secondDetail = "";
-			this.storeDate = "";
-			this.releaseDate = "";
-			this.orderDate = "";
-			this.bklnDate = "";
-			this.regDate = "";
-			this.modDate = "";
+			this.categories = "";
+			this.storeDate = null;
+			this.releaseDate = null;
+			this.orderDate = null;
+			this.bklnDate = null;
+			this.regDate = null;
+			this.modDate = null;
 			this.attrib = "";
 		}
 	}
@@ -14695,7 +14724,16 @@ class Store{
 	//재고현황 상세보기
 	detail() {
 		let html = "";
-		let storeDate, releaseDate, orderDate, bklnDate, datas, dataArray, notIdArray;
+		let storeDate, releaseDate, orderDate, bklnDate, datas, dataArray, notIdArray, splitCategories;
+		storage.categoryArr = [];
+
+		if(this.categories !== undefined && this.categories !== null){
+			splitCategories = this.categories.split(",");
+			
+			for(let i = 0; i < splitCategories.length; i++){
+				CommonDatas.makeCategories(splitCategories[i]);
+			}
+		}
 
 		CommonDatas.detailSetFormList(this.getData);
 
@@ -14717,7 +14755,7 @@ class Store{
 		bklnDate = CommonDatas.dateDis(new Date(this.bklnDate).getTime());
 		bklnDate = CommonDatas.dateFnc(bklnDate);
 
-		notIdArray = ["userNo"];
+		notIdArray = ["userNo", "categories"];
 		datas = ["custNo", "contNo", "productNo", "userNo"];
 
 		dataArray = [
@@ -14781,6 +14819,28 @@ class Store{
 				"value": this.firstDetail,
 			},
 			{
+				"title": "카테고리<br />(제품회사명)",
+				"complete": "categories",
+				"keyup": "CommonDatas.addAutoComplete(this);",
+				"onClick": "CommonDatas.addAutoComplete(this);",
+			},
+			{
+				"title": "카테고리 선택 시<br />자동 입력(*)",
+				"elementId": "categories",
+				"col": 2,
+				"value": (CommonDatas.emptyValuesCheck(this.categories)) ? "" : this.categories,
+			},
+			{
+				"title": "카테고리 삭제<br />선택 시 삭제",
+				"selectValue": [
+					{
+						"key": "",
+						"value": "선택",
+					},
+				],
+				"type": "select",
+			},
+			{
 				"title": "재고수량",
 				"elementId": "inventoryQty",
 				"value": this.inventoryQty,
@@ -14838,6 +14898,15 @@ class Store{
 		CommonDatas.detailTrueDatas(datas);
 		CommonDatas.Temps.storeSet.addModalFirstRadio();
 		document.querySelector("[name=\"storeType\"][value=\"" + this.storeType + "\"]").checked = true;
+
+		setTimeout(() => {
+			let categories = document.getElementById("categories");
+			let categorySelect = categories.parentElement.parentElement.nextElementSibling.children[1].children[0];
+
+			if(this.categories !== undefined && this.categories !== null){
+				CommonDatas.makeCategoryOptions(categorySelect, "categories");
+			}
+		}, 300);
 	}
 
 	//재고현황 등록
@@ -19730,6 +19799,28 @@ class Common {
 			}
 		}
 	}
+
+	setSidePanalScript(){
+		let menuItem = document.getElementsByClassName("menuItem");
+		
+		for(let i = 0; i < menuItem.length; i++){
+			let item = menuItem[i];
+			let itemNextDiv = item.nextElementSibling;
+
+			if(itemNextDiv.className === "panel" && itemNextDiv.dataset.key !== undefined){
+				if(itemNextDiv.dataset.key === "categories"){
+					for(let t = 0; t < storage.categories.length; t++){
+						let secondItem = storage.categories[t];
+						let createDiv = document.createElement("div");
+						let html = "<a href=\"/business/store/" + secondItem.custCategoryName + "\">" + secondItem.custCategoryName + "</a>";
+						createDiv.innerHTML = html;
+						itemNextDiv.append(createDiv);
+					}
+				}
+			}
+		}
+	}
+
 	//페이지 로드될 때 top menu active 함수
 	setTopPathActive() {
 		let path = location.pathname.split("/");
@@ -19754,7 +19845,7 @@ class Common {
 	setSidePathActive() {
 		let path = location.pathname.split("/");
 		let menuItem = document.getElementsByClassName("menuItem");
-		let container
+		let container;
 
 		if (path[1] === "" || path[1] === "business") {
 			if (path[3] != "popup") {
@@ -19800,6 +19891,10 @@ class Common {
 								}
 							} else if (path[2] === "workreport") {
 								if (target.getAttribute("href") === "/" + path[1] + "/" + path[2]) {
+									target.classList.add("active");
+								}
+							} else if (path[2] === "store") {
+								if (target.getAttribute("href") === "/" + path[1] + "/" + path[2] + "/" + decodeURI(path[3])) {
 									target.classList.add("active");
 								}
 							} else {
