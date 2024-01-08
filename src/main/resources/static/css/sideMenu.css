@@ -3,6 +3,8 @@
 .sideMenu{
 	height: 100%;
 	font-size: 0.9rem;
+	/* 사이드 메뉴 최소 크기 2024.01.08 이용호  */
+	min-width: 160px;
 }
 
 .sideMenu > .business{
