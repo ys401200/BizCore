@@ -14,17 +14,9 @@
 
 #bodyContents #widgetContainer{
 	display: grid;
-	/* 레이아웃 수정 2024.01.08 이용호 */
-	/* grid-template-columns: repeat(6, 1fr); */
-	grid-template-columns: repeat(7, 1fr);
+	grid-template-columns: repeat(6, 1fr);
 	column-gap:3px;
 	row-gap:3px;
-	min-width: 2100px;
-}
-
-/* 월간 유지보수 실적 차트 css 변경 2024.01.08 이용호 */
-#widgetContainer > #chart_body:nth-child(2) > .chart_container {
-	padding-right: 40px!important;
 }
 
 #widgetContainer > div{
@@ -58,20 +50,12 @@
 } */
 
 #widgetContainer > div:nth-child(2) > div > canvas{
-	/* padding-right: 15px; */
-	width: 100%!important;
-    height: 100%!important;
-    max-height: 493px!important;
+	padding-right: 15px;
 }
 
 .chart_container{
 	padding-left: 10px;
 	padding-right: 10px;
-}
-
-.chart_container > #chart_0 {
-	width: 100%;
-	height: 100%;
 }
 
 .chartInfo{
