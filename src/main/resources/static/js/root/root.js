@@ -698,7 +698,7 @@ function addChart_3(){
 	nowMonth = new Date().getMonth();
 	// nowMonth = 11;
 	
-	let attainPercent = isNaN((storage.contMonthTotal[nowMonth] / storage.goalMonthTotal[nowMonth] * 100).toFixed(2)) ? 0 : (storage.contMonthTotal[nowMonth] / storage.goalMonthTotal[nowMonth] * 100).toFixed(2);
+	let attainPercent = (isNaN((storage.contMonthTotal[nowMonth] / (storage.goalMonthTotal[nowMonth] * 100)).toFixed(2)) || !isFinite((storage.contMonthTotal[nowMonth] / (storage.goalMonthTotal[nowMonth] * 100)))) ? 0 : (storage.contMonthTotal[nowMonth] / (storage.goalMonthTotal[nowMonth] * 100)).toFixed(2);
 	let notAttainPercent = (100 - attainPercent).toFixed(2);
 	notAttainPercent = (notAttainPercent > 100) ? 100 : notAttainPercent;
 
@@ -836,7 +836,7 @@ function addChart_4(){
 	chart_3 = document.getElementById('chart_3').getContext('2d');
 	nowMonth = new Date().getMonth();
 	// nowMonth = 11;
-	let attainPercent = isNaN((storage.contMonthCalTotal[nowMonth] / storage.goalMonthCalTotal[nowMonth] * 100).toFixed(2)) ? 0 : (storage.contMonthCalTotal[nowMonth] / storage.goalMonthCalTotal[nowMonth] * 100).toFixed(2);
+	let attainPercent = (isNaN((storage.contMonthCalTotal[nowMonth] / (storage.goalMonthCalTotal[nowMonth] * 100)).toFixed(2)) || !isFinite((storage.contMonthCalTotal[nowMonth] / (storage.goalMonthCalTotal[nowMonth] * 100)))) ? 0 : (storage.contMonthCalTotal[nowMonth] / (storage.goalMonthCalTotal[nowMonth] * 100)).toFixed(2);
 	let notAttainPercent = (100 - attainPercent).toFixed(2);
 	notAttainPercent = (notAttainPercent > 100) ? 100 : notAttainPercent;
 
@@ -1006,37 +1006,49 @@ function getNoticeList() {
 					},
 				];
 
-				if(result.length < gridListLength){
-					gridListLength = result.length;
-				}
-			
-				for (let i = 0; i < gridListLength; i++) {
-					disDate = CommonDatas.dateDis(new Date(result[i].regDate).getTime());
-					setDate = CommonDatas.dateFnc(disDate, "mm-dd");
-
+				
+				if (result === "" || result.length == 0) {
 					str = [
 						{
-							"setData": setDate,
-							"align" : "center",
-						},
-						{
-							"setData": result[i].noticeTitle,
-							"align" : "left",
-						},
-						{
-							"setData": storage.user[result[i].userNo].userName,
-							"align" : "center",
+							"setData": undefined,
+							"align": "center",
+							"col": 3,
 						},
 					];
-
-					dataFunc.push("rootDetailView(\"notice\", this);");
-					ids.push(result[i].noticeNo);
+					
 					data.push(str);
+				} else {
+					if(result.length < gridListLength){
+						gridListLength = result.length;
+					}
+
+					for (let i = 0; i < gridListLength; i++) {
+						disDate = CommonDatas.dateDis(new Date(result[i].regDate).getTime());
+						setDate = CommonDatas.dateFnc(disDate, "mm-dd");
+	
+						str = [
+							{
+								"setData": setDate,
+								"align" : "center",
+							},
+							{
+								"setData": result[i].noticeTitle,
+								"align" : "left",
+							},
+							{
+								"setData": storage.user[result[i].userNo].userName,
+								"align" : "center",
+							},
+						];
+	
+						dataFunc.push("rootDetailView(\"notice\", this);");
+						ids.push(result[i].noticeNo);
+						data.push(str);
+					}
+	
 				}
 
-				if(data.length > 0){
-					CommonDatas.createGrid(container, header, data, ids, dataJob, dataFunc, idName);
-				}
+				CommonDatas.createGrid(container, header, data, ids, dataJob, dataFunc, idName);
 			} else {
 				msg.set("등록된 공지사항이 없습니다");
 			}
@@ -1091,63 +1103,73 @@ function getScheduleList() {
 					},
 				];
 
-				if(result.length < gridListLength){
-					gridListLength = result.length;
-				}
-
-				for (let i = 0; i < gridListLength; i++) {
-					let title, userName, fromDate, fromSetDate, toDate, toSetDate, desc, disDate;
-					
-					title = (result[i].title === null || result[i].title === "" || result[i].title === undefined) ? "없음" : result[i].title;
-					userName = (result[i].userNo == 0 || result[i].userNo === null || result[i].userNo === undefined) ? "없음" : storage.user[result[i].userNo].userName;
-					desc = (result[i].desc === null || result[i].desc === "" || result[i].desc === undefined) ? "없음" : result[i].desc;
-					desc = desc.replaceAll("<p>", "").replaceAll("</p>", "").replaceAll("<br />", "");
-
-					disDate = CommonDatas.dateDis(new Date(result[i].regDatetime).getTime());
-					disDate = CommonDatas.dateFnc(disDate, "mm-dd");
-					
-					fromDate = CommonDatas.dateDis(new Date(result[i].schedFrom).getTime());
-					fromSetDate = CommonDatas.dateFnc(fromDate, "mm-dd");
-					
-					toDate = CommonDatas.dateDis(new Date(result[i].schedTo).getTime());
-					toSetDate = CommonDatas.dateFnc(toDate, "mm-dd");
-			
+				if (result === "" || result.length == 0) {
 					str = [
 						{
-							"setData": disDate,
-							"align" : "center",
-						},
-						{
-							"setData": fromSetDate + " ~ " + toSetDate,
-							"align" : "center",
-						},
-						{
-							"setData": storage.code.etc[result[i].schedType],
-							"align" : "center",
-						},
-						{
-							"setData": title,
-							"align" : "left",
-						},
-						{
-							"setData": desc,
-							"align" : "left",
-						},
-						{
-							"setData": userName,
-							"align" : "center",
+							"setData": undefined,
+							"align": "center",
+							"col": 6,
 						},
 					];
 					
-					dataFunc.push("rootDetailView(\"schedule\", this);");
-					ids.push(result[i].no);
-					dataJob.push(storage.code.etc[result[i].schedType]);
 					data.push(str);
+				} else {
+					if(result.length < gridListLength){
+						gridListLength = result.length;
+					}
+	
+					for (let i = 0; i < gridListLength; i++) {
+						let title, userName, fromDate, fromSetDate, toDate, toSetDate, desc, disDate;
+						
+						title = (result[i].title === null || result[i].title === "" || result[i].title === undefined) ? "없음" : result[i].title;
+						userName = (result[i].userNo == 0 || result[i].userNo === null || result[i].userNo === undefined) ? "없음" : storage.user[result[i].userNo].userName;
+						desc = (result[i].desc === null || result[i].desc === "" || result[i].desc === undefined) ? "없음" : result[i].desc;
+						desc = desc.replaceAll("<p>", "").replaceAll("</p>", "").replaceAll("<br />", "");
+	
+						disDate = CommonDatas.dateDis(new Date(result[i].regDatetime).getTime());
+						disDate = CommonDatas.dateFnc(disDate, "mm-dd");
+						
+						fromDate = CommonDatas.dateDis(new Date(result[i].schedFrom).getTime());
+						fromSetDate = CommonDatas.dateFnc(fromDate, "mm-dd");
+						
+						toDate = CommonDatas.dateDis(new Date(result[i].schedTo).getTime());
+						toSetDate = CommonDatas.dateFnc(toDate, "mm-dd");
+				
+						str = [
+							{
+								"setData": disDate,
+								"align" : "center",
+							},
+							{
+								"setData": fromSetDate + " ~ " + toSetDate,
+								"align" : "center",
+							},
+							{
+								"setData": storage.code.etc[result[i].schedType],
+								"align" : "center",
+							},
+							{
+								"setData": title,
+								"align" : "left",
+							},
+							{
+								"setData": desc,
+								"align" : "left",
+							},
+							{
+								"setData": userName,
+								"align" : "center",
+							},
+						];
+						
+						dataFunc.push("rootDetailView(\"schedule\", this);");
+						ids.push(result[i].no);
+						dataJob.push(storage.code.etc[result[i].schedType]);
+						data.push(str);
+					}
 				}
 
-				if(data.length > 0){
-					CommonDatas.createGrid(container, header, data, ids, dataJob, dataFunc, idName);
-				}
+				CommonDatas.createGrid(container, header, data, ids, dataJob, dataFunc, idName);
 			} else {
 				msg.set("등록된 일정이 없습니다");
 			}

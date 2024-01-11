@@ -27,10 +27,10 @@ public interface ScheduleMapper {
     @Select("SELECT * FROM swc_sched WHERE attrib NOT LIKE 'XXX%' AND schedNo = #{schedNo} AND compNo = #{compNo}")
     public Schedule getScheduleOne(@Param("schedNo") String schedNo, @Param("compNo") int compNo);
 
-    @Insert("INSERT INTO swc_sched (userNo, compNo, soppNo, custNo, schedFrom, schedTo, `title`, `desc`, schedType, schedPlace, `type`, regDatetime) VALUES (#{schedule.userNo}, #{schedule.compNo}, #{schedule.soppNo}, #{schedule.custNo}, #{schedule.schedFrom}, #{schedule.schedTo}, #{schedule.title}, #{schedule.desc}, #{schedule.schedType}, #{schedule.schedPlace}, #{schedule.type}, now())")
+    @Insert("INSERT INTO swc_sched (userNo, compNo, soppNo, custNo, schedFrom, schedTo, `title`, `desc`, schedType, schedPlace, `type`, regDatetime) VALUES (#{schedule.userNo}, #{schedule.compNo}, #{schedule.soppNo}, #{schedule.custNo}, #{schedule.schedFrom}, #{schedule.schedTo}, #{schedule.title}, #{schedule.desc}, '10168', #{schedule.schedPlace}, #{schedule.type}, now())")
     public int scheduleInsert(@Param("schedule") Schedule schedule);
 
-    @Update("UPDATE swc_sched SET userNo = #{schedule.userNo}, soppNo = #{schedule.soppNo}, custNo = #{schedule.custNo}, schedFrom = #{schedule.schedFrom}, schedTo = #{schedule.schedTo}, schedPlace = #{schedule.schedPlace}, schedType = #{schedule.schedType}, `desc` = #{schedule.desc}, `title` = #{schedule.title}, `type` = #{schedule.type}, modDatetime = now() WHERE schedNo = #{schedule.schedNo} AND compNo = #{schedule.compNo}")
+    @Update("UPDATE swc_sched SET userNo = #{schedule.userNo}, soppNo = #{schedule.soppNo}, custNo = #{schedule.custNo}, schedFrom = #{schedule.schedFrom}, schedTo = #{schedule.schedTo}, schedPlace = #{schedule.schedPlace}, `desc` = #{schedule.desc}, `title` = #{schedule.title}, `type` = #{schedule.type}, modDatetime = now() WHERE schedNo = #{schedule.schedNo} AND compNo = #{schedule.compNo}")
     public int updateSchedule(@Param("schedule") Schedule schedule);
 
     @Update("UPDATE swc_sched SET attrib = 'XXXXX' WHERE schedNo = #{schedNo} AND compNo = #{compNo}")

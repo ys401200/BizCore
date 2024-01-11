@@ -294,7 +294,7 @@ class Notice {
 			{
 				"title": "내용(*)",
 				"elementId": "noticeContents",
-				"value": this.noticeContents.replaceAll("\"", "'"),
+				"value": this.noticeContents.replaceAll("\"", "'").replaceAll("\n", "<br />"),
 				"type": "textarea",
 				"col": 4,
 			},
@@ -1098,6 +1098,7 @@ class Sales{
 		}, 200);
 	}
 
+	//영업활동 등록
 	insert(){
 		if(document.getElementById("schedFrom").value === ""){
 			msg.set("활동 시작일을 선택해주세요.");
@@ -1540,7 +1541,7 @@ class SoppSet{
 		let container, result, job, jsonData, header = [], data = [], ids = [], disDate, str, fnc = [], pageContainer, containerTitle, crudAddBtn, crudUpdateBtn, hideArr, showArr;
 
 		if (storage.soppEstimateList !== undefined) jsonData = storage.soppEstimateList.sort(function(a, b){return new Date(b.date) - new Date(a.date);});
-		else jsonData = undefined
+		else jsonData = undefined;
 
 		if(document.getElementById("tabEstimate") !== null){
 			document.getElementById("tabEstimate").remove();
@@ -2263,6 +2264,10 @@ class SoppSet{
 		let files = soppFileUpload.files;
 		let fileArrays = Array.prototype.slice.call(files);
 		let createDiv = document.createElement("div");
+
+		if(document.getElementsByClassName("filePreview")[0] !== undefined){
+			document.getElementsByClassName("filePreview")[0].remove();
+		}
 		
 		html += "<div class=\"filePreviewHeader\">";
 		html += "<div>파일명</div>";
@@ -2493,6 +2498,7 @@ class SoppSet{
 		divHtml += "<div>할당</div>";
 		divHtml += "<div>수정</div>";
 		divHtml += "</div>";
+		console.log(storage.inoutInSoppList);
 			
 		if(storage.inoutInSoppList.length > 0){
 			for(let i = 0; i < storage.inoutInSoppList.length; i++){
@@ -3054,10 +3060,12 @@ class SoppSet{
 			CommonDatas.Temps.soppSet.tabEstimateListGet();
 		}else if(dataKey === "tabInoutSopp"){
 			let inoutSoppForm = document.getElementsByClassName("inoutSoppForm")[0];
+			let tabInoutSopp = document.getElementById("tabInoutSopp");
 			let tabInoutCont = document.getElementsByClassName("tabInoutCont");
 			let inoutTotalContents = document.getElementsByClassName("inoutTotalContents")[0];
 
 			inoutSoppForm.style.display = "block";
+			tabInoutSopp.style.display = "block";
 
 			for(let i = 0; i < tabInoutCont.length; i++){
 				tabInoutCont[i].style.display = "block";
@@ -6594,6 +6602,10 @@ class ContSet{
 		let files = contFileUpload.files;
 		let fileArrays = Array.prototype.slice.call(files);
 		let createDiv = document.createElement("div");
+
+		if(document.getElementsByClassName("filePreview")[0] !== undefined){
+			document.getElementsByClassName("filePreview")[0].remove();
+		}
 		
 		html += "<div class=\"filePreviewHeader\">";
 		html += "<div>파일명</div>";
@@ -6710,8 +6722,8 @@ class ContSet{
 	drawContSalesList() {
 		let container, contContainer, jsonData, createDiv, job, header = [], data = [], ids = [], disDate, setDate, str, fnc = [];
 
-		if(storage.soppSalesList !== undefined){
-			jsonData = storage.soppSalesList;
+		if(storage.contSalesList !== undefined){
+			jsonData = storage.contSalesList;
 		}else{
 			jsonData = "";
 		}
@@ -9601,7 +9613,7 @@ class Schedule{
 				"elementId": "desc",
 				"type": "textarea",
 				"col": 4,
-				"value": (CommonDatas.emptyValuesCheck(this.desc)) ? "" : this.desc.replaceAll("\"", "'"),
+				"value": (CommonDatas.emptyValuesCheck(this.desc)) ? "" : this.desc.replaceAll("\"", "'").replaceAll("\n", "<br />"),
 			}
 		];
 
@@ -9773,7 +9785,7 @@ class Schedule{
 				"elementId": "desc",
 				"type": "textarea",
 				"col": 4,
-				"value": (CommonDatas.emptyValuesCheck(this.desc)) ? "" : this.desc.replaceAll("\"", "'")
+				"value": (CommonDatas.emptyValuesCheck(this.desc)) ? "" : this.desc.replaceAll("\"", "'").replaceAll("\n", "<br />")
 			}
 		];
 	
@@ -9796,11 +9808,11 @@ class Schedule{
 			document.getElementById("type").value = this.type;
 			let modalFootSpan = document.querySelectorAll(".modalFoot span");
 
+			if(modalFootSpan[1].id === "delete"){
+				modalFootSpan[1].remove();
+			}
+
 			if(this.userNo == storage.my && storage.myUserKey.indexOf("AA7") > -1){
-				if(modalFootSpan[1].id === "delete"){
-					modalFootSpan[1].remove();
-				}
-				
 				let createSpan = document.createElement("span");
 				createSpan.innerText = "삭제";
 				createSpan.className = "modalBtns";
@@ -9989,11 +10001,11 @@ class Schedule{
 		setTimeout(() => {
 			let modalFootSpan = document.querySelectorAll(".modalFoot span");
 
+			if(modalFootSpan[1].id === "delete"){
+				modalFootSpan[1].remove();
+			}
+
 			if(this.userNo == storage.my && storage.myUserKey.indexOf("EE7") > -1){
-				if(modalFootSpan[1].id === "delete"){
-					modalFootSpan[1].remove();
-				}
-				
 				let createSpan = document.createElement("span");
 				createSpan.innerText = "삭제";
 				createSpan.className = "modalBtns";
@@ -10155,7 +10167,7 @@ class Schedule{
 				"elementId": "desc",
 				"type": "textarea",
 				"col": 4,
-				"value": (CommonDatas.emptyValuesCheck(this.desc)) ? "" : this.desc.replaceAll("\"", "'"),
+				"value": (CommonDatas.emptyValuesCheck(this.desc)) ? "" : this.desc.replaceAll("\"", "'").replaceAll("\n", "<br />"),
 			}
 		];
 
@@ -10176,11 +10188,11 @@ class Schedule{
 		setTimeout(() => {
 			let modalFootSpan = document.querySelectorAll(".modalFoot span");
 
+			if(modalFootSpan[1].id === "delete"){
+				modalFootSpan[1].remove();
+			}
+
 			if(this.userNo == storage.my){
-				if(modalFootSpan[1].id === "delete"){
-					modalFootSpan[1].remove();
-				}
-				
 				let createSpan = document.createElement("span");
 				createSpan.innerText = "삭제";
 				createSpan.className = "modalBtns";
@@ -10867,7 +10879,7 @@ class WorkReportSet{
 					type = "tech";
 				}
 				
-				bodyHtml += "<div class=\"workReportDesc\">" + item.desc + "</div>";
+				bodyHtml += "<div class=\"workReportDesc\">" + item.desc.replaceAll("\n", "<br />") + "</div>";
 				bodyHtml += "<div style=\"justify-content: center;\">" + item.schedFrom + "</div>";
 				bodyHtml += "<div style=\"justify-content: center;\">" + item.schedTo + "</div>";
 				
@@ -11113,9 +11125,9 @@ class WorkJournalSet{
 		storage.lastWorkJournalDatas = {};
 		storage.thisWorkJournalDatas = {};
 		storage.nextWorkJournalDatas = {};
-		storage.lastTempArray = [];
-		storage.thisTempArray = [];
-		storage.nextTempArray = [];
+		storage.lastTempArray = {};
+		storage.thisTempArray = {};
+		storage.nextTempArray = {};
 	}
 
 	//업무일지검토 유저목록 데이터 불러오는 함수
@@ -11237,32 +11249,37 @@ class WorkJournalSet{
 							result = cipher.decAes(res.data.data);
 							result = JSON.parse(result);
 							result = workReportSet.setWorkLongDate(result);
-							console.log(result);
 
-							let now = new Date();
-							let lastDate = new Date(new Date().setHours(24, 0, 0, 0));
-							let tempDate = new Date(new Date().setHours(24, 0, 0, 0));
-							lastDate.setDate(now.getDate() - 7);
-							tempDate.setDate(now.getDate() - 7);
-							let day = lastDate.getDay() - 1;
-							let lastMonday = new Date(lastDate.setDate(lastDate.getDate() - day));
-							let tempMonday = new Date(tempDate.setDate(tempDate.getDate() - day));
-							let lastSunday = new Date(lastMonday.setDate(lastMonday.getDate() + 7));
-
-							for(let t = 0; t < result.length; t++){
-								let item = result[t];
-								let dateTime = new Date(item.schedFrom);
-
-								if(tempMonday <= dateTime && lastSunday > dateTime){
-									storage.lastTempArray.push(item);
-								}else if(lastSunday <= dateTime){
-									storage.thisTempArray.push(item);
+							if(result.length > 0){
+								let now = new Date();
+								let lastDate = new Date(new Date().setHours(24, 0, 0, 0));
+								let tempDate = new Date(new Date().setHours(24, 0, 0, 0));
+								lastDate.setDate(now.getDate() - 7);
+								tempDate.setDate(now.getDate() - 7);
+								let day = lastDate.getDay() - 1;
+								let lastMonday = new Date(lastDate.setDate(lastDate.getDate() - day));
+								let tempMonday = new Date(tempDate.setDate(tempDate.getDate() - day));
+								let lastSunday = new Date(lastMonday.setDate(lastMonday.getDate() + 7));
+	
+								if(storage.lastTempArray[result[0].userNo] === undefined) storage.lastTempArray[result[0].userNo] = [];
+								if(storage.thisTempArray[result[0].userNo] === undefined) storage.thisTempArray[result[0].userNo] = [];
+								
+								for(let t = 0; t < result.length; t++){
+									let secondItem = result[t];
+									let dateTime = new Date(secondItem.schedFrom);
+	
+	
+									if(tempMonday <= dateTime && lastSunday > dateTime){
+										storage.lastTempArray[result[0].userNo].push(secondItem);
+									}else if(lastSunday <= dateTime){
+										storage.thisTempArray[result[0].userNo].push(secondItem);
+									}
 								}
-							}
-
-							if(result[0] !== undefined){
-								storage.lastWorkJournalDatas[result[0].userNo] = storage.lastTempArray.sort(function(a, b){return new Date(a.schedFrom).getDay() - new Date(b.schedFrom).getDay();});
-								storage.thisWorkJournalDatas[result[0].userNo] = storage.thisTempArray.sort(function(a, b){return new Date(a.schedFrom).getDay() - new Date(b.schedFrom).getDay();});
+	
+								if(result[0] !== undefined){
+									storage.lastWorkJournalDatas[result[0].userNo] = storage.lastTempArray[result[0].userNo].sort(function(a, b){return new Date(a.schedFrom).getDay() - new Date(b.schedFrom).getDay();});
+									storage.thisWorkJournalDatas[result[0].userNo] = storage.thisTempArray[result[0].userNo].sort(function(a, b){return new Date(a.schedFrom).getDay() - new Date(b.schedFrom).getDay();});
+								}
 							}
 						}
 					});
@@ -11305,30 +11322,36 @@ class WorkJournalSet{
 							result = JSON.parse(result);
 							result = workReportSet.setWorkLongDate(result);
 			
-							let now = new Date(new Date().setHours(24, 0, 0, 0));
-							let tempNow = new Date(new Date().setHours(24, 0, 0, 0));
-							let day = now.getDay() - 1;
-							let thisMonday = new Date(now.setDate(now.getDate() - day));
-							let tempMonday = new Date(tempNow.setDate(tempNow.getDate() - day));
-							let thisSunday = new Date(thisMonday.setDate(thisMonday.getDate() + 7));
+							if(result.length > 0){
+								let now = new Date(new Date().setHours(24, 0, 0, 0));
+								let tempNow = new Date(new Date().setHours(24, 0, 0, 0));
+								let day = now.getDay() - 1;
+								let thisMonday = new Date(now.setDate(now.getDate() - day));
+								let tempMonday = new Date(tempNow.setDate(tempNow.getDate() - day));
+								let thisSunday = new Date(thisMonday.setDate(thisMonday.getDate() + 7));
 
-							for(let i = 0; i < result.length; i++){
-								let item = result[i];
-								let dateTime = new Date(item.schedFrom);
-								
-								if(tempMonday <= dateTime && thisSunday > dateTime){
-									storage.thisTempArray.push(item);
-								}else if(tempMonday > dateTime){
-									storage.lastTempArray.push(item);
-								}else if(thisSunday <= dateTime){
-									storage.nextTempArray.push(item);
+								if(storage.lastTempArray[result[0].userNo] === undefined) storage.lastTempArray[result[0].userNo] = [];
+								if(storage.thisTempArray[result[0].userNo] === undefined) storage.thisTempArray[result[0].userNo] = [];
+								if(storage.nextTempArray[result[0].userNo] === undefined) storage.nextTempArray[result[0].userNo] = [];
+
+								for(let i = 0; i < result.length; i++){
+									let secondItem = result[i];
+									let dateTime = new Date(secondItem.schedFrom);
+									
+									if(tempMonday <= dateTime && thisSunday > dateTime){
+										storage.thisTempArray[result[0].userNo].push(secondItem);
+									}else if(tempMonday > dateTime){
+										storage.lastTempArray[result[0].userNo].push(secondItem);
+									}else if(thisSunday <= dateTime){
+										storage.nextTempArray[result[0].userNo].push(secondItem);
+									}
 								}
-							}
 
-							if(result[0] !== undefined){
-								storage.lastWorkJournalDatas[result[0].userNo] = storage.lastTempArray.sort(function(a, b){return new Date(a.schedFrom).getDay() - new Date(b.schedFrom).getDay();});
-								storage.thisWorkJournalDatas[result[0].userNo] = storage.thisTempArray.sort(function(a, b){return new Date(a.schedFrom).getDay() - new Date(b.schedFrom).getDay();});
-								storage.nextWorkJournalDatas[result[0].userNo] = storage.nextTempArray.sort(function(a, b){return new Date(a.schedFrom).getDay() - new Date(b.schedFrom).getDay();});
+								if(result[0] !== undefined){
+									storage.lastWorkJournalDatas[result[0].userNo] = storage.lastTempArray[result[0].userNo].sort(function(a, b){return new Date(a.schedFrom).getDay() - new Date(b.schedFrom).getDay();});
+									storage.thisWorkJournalDatas[result[0].userNo] = storage.thisTempArray[result[0].userNo].sort(function(a, b){return new Date(a.schedFrom).getDay() - new Date(b.schedFrom).getDay();});
+									storage.nextWorkJournalDatas[result[0].userNo] = storage.nextTempArray[result[0].userNo].sort(function(a, b){return new Date(a.schedFrom).getDay() - new Date(b.schedFrom).getDay();});
+								}
 							}
 						}
 					});
@@ -11371,30 +11394,35 @@ class WorkJournalSet{
 							result = JSON.parse(result);
 							result = workReportSet.setWorkLongDate(result);
 			
-							let now = new Date();
-							let nextDate = new Date(new Date().setHours(24, 0, 0, 0));
-							let tempDate = new Date(new Date().setHours(24, 0, 0, 0));
-							nextDate.setDate(now.getDate() + 7);
-							tempDate.setDate(now.getDate() + 7);
-							let day = nextDate.getDay() - 1;
-							let nextMonday = new Date(nextDate.setDate(nextDate.getDate() - day));
-							let tempMonday = new Date(tempDate.setDate(tempDate.getDate() - day));
-							let nextSunday = new Date(nextMonday.setDate(nextMonday.getDate() + 7));
+							if(result.length > 0){
+								let now = new Date();
+								let nextDate = new Date(new Date().setHours(24, 0, 0, 0));
+								let tempDate = new Date(new Date().setHours(24, 0, 0, 0));
+								nextDate.setDate(now.getDate() + 7);
+								tempDate.setDate(now.getDate() + 7);
+								let day = nextDate.getDay() - 1;
+								let nextMonday = new Date(nextDate.setDate(nextDate.getDate() - day));
+								let tempMonday = new Date(tempDate.setDate(tempDate.getDate() - day));
+								let nextSunday = new Date(nextMonday.setDate(nextMonday.getDate() + 7));
 
-							for(let i = 0; i < result.length; i++){
-								let item = result[i];
-								let dateTime = new Date(item.schedFrom).getTime();
-		
-								if(tempMonday.getTime() <= dateTime && nextSunday.getTime() > dateTime){
-									storage.nextTempArray.push(item);
-								}else if(tempMonday.getTime() > dateTime){
-									storage.thisTempArray.push(item);
+								if(storage.thisTempArray[result[0].userNo] === undefined) storage.thisTempArray[result[0].userNo] = [];
+								if(storage.nextTempArray[result[0].userNo] === undefined) storage.nextTempArray[result[0].userNo] = [];
+
+								for(let i = 0; i < result.length; i++){
+									let secondItem = result[i];
+									let dateTime = new Date(secondItem.schedFrom).getTime();
+			
+									if(tempMonday.getTime() <= dateTime && nextSunday.getTime() > dateTime){
+										storage.nextTempArray[result[0].userNo].push(secondItem);
+									}else if(tempMonday.getTime() > dateTime){
+										storage.thisTempArray[result[0].userNo].push(secondItem);
+									}
 								}
-							}
 
-							if(result[0] !== undefined){
-								storage.thisWorkJournalDatas[result[0].userNo] = storage.thisTempArray.sort(function(a, b){return new Date(a.schedFrom).getDay() - new Date(b.schedFrom).getDay();});
-								storage.nextWorkJournalDatas[result[0].userNo] = storage.nextTempArray.sort(function(a, b){return new Date(a.schedFrom).getDay() - new Date(b.schedFrom).getDay();});
+								if(result[0] !== undefined){
+									storage.thisWorkJournalDatas[result[0].userNo] = storage.thisTempArray[result[0].userNo].sort(function(a, b){return new Date(a.schedFrom).getDay() - new Date(b.schedFrom).getDay();});
+									storage.nextWorkJournalDatas[result[0].userNo] = storage.nextTempArray[result[0].userNo].sort(function(a, b){return new Date(a.schedFrom).getDay() - new Date(b.schedFrom).getDay();});
+								}
 							}
 						}
 					});
@@ -11524,7 +11552,7 @@ class WorkJournalSet{
 				else if(item.schedType === 10168 || item.schedType === 10262) html += "<div>" + "# " + item.title + "</div>";
 				else html += "<div>" + "@ " + item.title + "</div>";
 	
-				html += "<div>" + item.desc + "</div>";
+				html += "<div>" + item.desc.replaceAll("\n", "<br />") + "</div>";
 				html += "</div>";
 			}
 		}
@@ -11555,7 +11583,7 @@ class WorkJournalSet{
 				else if(item.schedType === 10168 || item.schedType === 10262) html += "<div>" + "# " + item.title + "</div>";
 				else html += "<div>" + "@ " + item.title + "</div>";
 	
-				html += "<div>" + item.desc + "</div>";
+				html += "<div>" + item.desc.replaceAll("\n", "<br />") + "</div>";
 				html += "</div>";
 			}
 		}
@@ -13998,7 +14026,7 @@ class Tech{
 				"title": "내용",
 				"type": "textarea",
 				"elementId": "desc",
-				"value": (CommonDatas.emptyValuesCheck(this.desc)) ? "" : this.desc.replaceAll("\"", "'"),
+				"value": (CommonDatas.emptyValuesCheck(this.desc)) ? "" : this.desc.replaceAll("\"", "'").replaceAll("\n", "<br />"),
 				"col": 4,
 			},
 		];
@@ -18475,8 +18503,6 @@ class GoalSet{
 					}
 				}
 
-				console.log(storage.goalList);
-
 				this.drawGoalList();
 				CommonDatas.searchListSet("goalList");
 				$('.theme-loader').fadeOut("slow");
@@ -20447,9 +20473,9 @@ class Common {
 			html += "</select>";
 		} else if (dataType === "file") {
 			if(dataMultiple){
-				html += "<input type='file' id='" + elementId + "' name='" + elementName + "' onchange='" + dataChangeEvent + "' multiple>";
+				html += "<input type=\"file\" " + attributeHtml + " multiple>";
 			}else{
-				html += "<input type='file' id='" + elementId + "' name='" + elementName + "' onchange='" + dataChangeEvent + "'>";
+				html += "<input type=\"file\" " + attributeHtml + ">";
 			}
 		} else if (dataType === "") {
 			html += "";

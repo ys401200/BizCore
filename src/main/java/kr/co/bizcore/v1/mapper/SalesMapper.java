@@ -26,7 +26,7 @@ public interface SalesMapper {
     @Select("SELECT * FROM swc_sales WHERE attrib NOT LIKE 'XXX%' AND compNo = #{sales.compNo} and regDatetime between #{sales.fromDate} and #{sales.toDate} ORDER BY regDatetime DESC")
     public List<Sales> getSalesList(@Param("sales") Sales sales);
 
-    @Insert("INSERT INTO swc_sales (soppNo, userNo, compNo, custNo, schedFrom, schedTo, salesPlace, `type`, `desc`, `title`, ptncNo, regDatetime) VALUES (#{sales.soppNo}, #{sales.userNo}, #{sales.compNo}, #{sales.custNo}, #{sales.schedFrom}, #{sales.schedTo}, #{sales.salesPlace}, #{sales.type}, #{sales.desc}, #{sales.title}, #{sales.ptncNo}, now())")
+    @Insert("INSERT INTO swc_sales (soppNo, userNo, compNo, custNo, schedFrom, schedTo, salesPlace, schedType, `type`, `desc`, `title`, ptncNo, regDatetime) VALUES (#{sales.soppNo}, #{sales.userNo}, #{sales.compNo}, #{sales.custNo}, #{sales.schedFrom}, #{sales.schedTo}, #{sales.salesPlace}, '10165', #{sales.type}, #{sales.desc}, #{sales.title}, #{sales.ptncNo}, now())")
     public int salesInsert(@Param("sales") Sales sales);
 
     @Update("UPDATE swc_sales SET attrib = 'XXXXX' WHERE salesNo = #{salesNo} AND compNo = #{compNo}")
