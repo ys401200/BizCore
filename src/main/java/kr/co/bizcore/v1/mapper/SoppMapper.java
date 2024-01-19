@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
+import kr.co.bizcore.v1.domain.Cont;
 import kr.co.bizcore.v1.domain.Inout;
 import kr.co.bizcore.v1.domain.Sales;
 import kr.co.bizcore.v1.domain.Sopp;
@@ -66,6 +67,15 @@ public interface SoppMapper {
     @Update("UPDATE swc_soppdata01 SET userNo = #{inout.userNo}, productNo = #{inout.productNo}, salesCustNo = #{inout.salesCustNo}, dataTitle = #{inout.dataTitle}, dataType = #{inout.dataType}, dataQuanty = #{inout.dataQuanty}, dataAmt = #{inout.dataAmt}, dataNetprice = #{inout.dataNetprice}, dataVat = #{inout.dataVat}, dataTotal = #{inout.dataTotal}, vatDate = #{inout.vatDate}, dataRemark = #{inout.dataRemark} WHERE soppdataNo = #{inout.soppdataNo}")
     public int soppInoutUpdate(@Param("inout") Inout inout);
 
+    @Update("UPDATE swc_sopp SET soppTargetAmt = #{sopp.soppTargetAmt}, soppStatus = #{sopp.soppStatus}, soppSrate = #{sopp.soppSrate}, modDatetime = now() WHERE soppNo = #{sopp.soppNo}")
+    public int soppStatusUpdate(@Param("sopp") Sopp sopp);
+
+    @Update("UPDATE swc_sopp SET soppStatus = '10183', modDatetime = now() WHERE soppNo = #{soppNo} AND compNo = #{compNo}")
+    public int contOrderSalesUpdate(@Param("soppNo") int soppNo);
+
+    @Update("UPDATE swc_sopp SET soppStatus = '10185', modDatetime = now() WHERE soppNo = #{cont.soppNo} AND compNo = #{cont.compNo}")
+    public int orderSalesCom(@Param("cont") Cont cont);
+    
     // @Select("SELECT soppno AS no, sopptype AS soppType, cntrctMth AS contType, sopptitle AS title, buyrno AS customer, custNo AS enduser, userNo AS employee, sopptargetamt AS expectedSales, soppstatus AS status, " + 
     //         "contno AS contract, custMemberNo AS picOfCustomer, " + 
     //         "ptncno AS ptnc, ptncmemberno AS picOfPtnc, buyrmemberno AS picOfBuyer, soppDesc AS detail,  " + 

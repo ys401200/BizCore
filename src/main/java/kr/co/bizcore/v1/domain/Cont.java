@@ -49,4 +49,7 @@ public class Cont extends Domain{
     private String calDateMonth;
     private int calAmtTotal;
     private int getCount;
+
+    private String maintenance_S;
+    private String maintenance_E;
 }

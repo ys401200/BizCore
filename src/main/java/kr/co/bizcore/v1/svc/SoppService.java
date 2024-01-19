@@ -1,20 +1,13 @@
 package kr.co.bizcore.v1.svc;
 
-import java.time.LocalDate;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import org.slf4j.LoggerFactory;
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.springframework.stereotype.Service;
-import kr.co.bizcore.v1.domain.Estimate;
-import kr.co.bizcore.v1.domain.EstimateItem;
+
+import kr.co.bizcore.v1.domain.Cont;
 import kr.co.bizcore.v1.domain.Inout;
 import kr.co.bizcore.v1.domain.Sales;
-import kr.co.bizcore.v1.domain.Schedule;
-import kr.co.bizcore.v1.domain.SimpleEstimate;
 import kr.co.bizcore.v1.domain.Sopp;
 import kr.co.bizcore.v1.domain.SoppFileData;
 import kr.co.bizcore.v1.domain.Tech;
@@ -94,6 +87,23 @@ public class SoppService extends Svc {
 
     public int soppInoutUpdate(Inout inout) {
         return soppMapper.soppInoutUpdate(inout);
+    }
+
+    public int soppStatusUpdate(Sopp sopp) {
+        return soppMapper.soppStatusUpdate(sopp);
+    }
+
+    public int contOrderSalesUpdate(Cont cont){
+        int soppNo = cont.getSoppNo();
+        return soppMapper.contOrderSalesUpdate(soppNo);
+    }
+
+    public int soppCopyContInsert(Cont cont, String maintenance_S, String maintenance_E){
+        return contMapper.soppCopyContInsert(cont, maintenance_S, maintenance_E);
+    }
+
+    public int orderSalesCom(Cont cont){
+        return soppMapper.orderSalesCom(cont);
     }
     
     // public String getSopp(int soppNo, String compId, String aesKey, String aesIv){

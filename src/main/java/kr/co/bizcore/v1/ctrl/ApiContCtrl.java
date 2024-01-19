@@ -1,6 +1,7 @@
 package kr.co.bizcore.v1.ctrl;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -172,6 +173,78 @@ public class ApiContCtrl extends Ctrl{
         }
 
         check = contService.insertCont(cont);
+
+        if (check > 0) {
+            result = "{\"result\":\"ok\"}";
+        } else {
+            result = "{\"result\":\"failure\" ,\"msg\":\"Error occured when write.\"}";
+        }
+
+        return result;
+    }
+
+    @RequestMapping(value = "/orderSalesApp", method = RequestMethod.POST)
+    public String orderSalesApp(HttpServletRequest req, @RequestBody String requestBody) throws JsonMappingException, JsonProcessingException {
+        int compNo = 0;
+        HttpSession session = null;
+        String result = null;
+        String data = null, aesKey = null, aesIv = null;
+        ObjectMapper mapper = new ObjectMapper();
+        int check = 0;
+        Inout inout = new Inout();
+        int amt1101 = 0;
+        int amt1102 = 0;
+        int totalAmt = 0;
+
+        session = req.getSession();
+
+        aesKey = (String) session.getAttribute("aesKey");
+        aesIv = (String) session.getAttribute("aesIv");
+        compNo = (int) session.getAttribute("compNo");
+        data = soppService.decAes(requestBody, aesKey, aesIv);
+        Cont cont = mapper.readValue(data, Cont.class);
+        cont.setCompNo(compNo);
+        soppService.contOrderSalesUpdate(cont);
+        inout.setSoppNo(cont.getSoppNo());
+        List<Inout> soppInoutList = soppService.getSoppInoutList(inout);
+
+        for(int i = 0; i < soppInoutList.size(); i++){
+            if(soppInoutList.get(i).getDataType() == "1101") amt1101 += soppInoutList.get(i).getDataAmt().intValue();
+            else amt1102 += soppInoutList.get(i).getDataAmt().intValue();
+        }
+
+        totalAmt = amt1102 - amt1101;
+        cont.setNet_profit(totalAmt);
+
+        check = soppService.soppCopyContInsert(cont, null, null);
+
+        if (check > 0) {
+            result = "{\"result\":\"ok\"}";
+        } else {
+            result = "{\"result\":\"failure\" ,\"msg\":\"Error occured when write.\"}";
+        }
+
+        return result;
+    }
+
+    @RequestMapping(value = "/orderSalesCom", method = RequestMethod.PUT)
+    public String orderSalesCom(HttpServletRequest req, @RequestBody String requestBody) throws JsonMappingException, JsonProcessingException {
+        int compNo = 0;
+        HttpSession session = null;
+        String result = null;
+        String data = null, aesKey = null, aesIv = null;
+        ObjectMapper mapper = new ObjectMapper();
+        int check = 0;
+
+        session = req.getSession();
+
+        aesKey = (String) session.getAttribute("aesKey");
+        aesIv = (String) session.getAttribute("aesIv");
+        compNo = (int) session.getAttribute("compNo");
+        data = soppService.decAes(requestBody, aesKey, aesIv);
+        Cont cont = mapper.readValue(data, Cont.class);
+        cont.setCompNo(compNo);
+        check = soppService.orderSalesCom(cont);
 
         if (check > 0) {
             result = "{\"result\":\"ok\"}";

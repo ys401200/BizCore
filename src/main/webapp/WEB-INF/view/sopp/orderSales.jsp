@@ -67,30 +67,25 @@
 				</div>
             </div>
         </div>
-        <div class="soppContainer">
+        <div class="orderSalesContainer">
             <div class="contentHeaders">
                 <hr />
-                <span id="containerTitle">영업기회조회</span>
+                <span id="containerTitle">수주판매보고</span>
                 <div class="listRange">
-                    <input type="range" class="listRangeInput" max="100" step="10" value="0" oninput="CommonDatas.listRangeChange(this, CommonDatas.Temps.soppSet.drawSoppList);">
+                    <input type="range" class="listRangeInput" max="100" step="10" value="0" oninput="CommonDatas.listRangeChange(this, CommonDatas.Temps.orderSalesSet.drawOrderSalesList);">
                     <span class="listRangeSpan">0</span>
                 </div>
                 <div class="listSearchInput">
-                    <input type="text" class="searchAllInput" id="searchAllInput" onkeyup="CommonDatas.Temps.soppSet.searchInputKeyup();" placeholder="단어를 입력해주세요.">
+                    <input type="text" class="searchAllInput" id="searchAllInput" onkeyup="CommonDatas.Temps.orderSalesSet.searchInputKeyup();" placeholder="단어를 입력해주세요.">
                 </div>
                 <div class="crudBtns">
-                    <button type="button" class="contractReqBtn">계약요청</button>
-                    <button type="button" class="crudAddBtn" onclick="CommonDatas.Temps.soppSet.soppInsertForm();">등록</button>
-                    <button type="button" class="crudUpdateBtn">수정</button>
-                    <button type="button" class="crudDeleteBtn">삭제</button>
-                    <a href="#" onclick="CommonDatas.hideDetailView(CommonDatas.Temps.soppSet.drawSoppList);" class="detailBackBtn">Back</a>
+                    <button type="button" class="crudAddBtn">승인</button>
+                    <button type="button" class="crudUpdateBtn">반려</button>
+                    <a href="#" onclick="CommonDatas.hideDetailView(CommonDatas.Temps.orderSalesSet.drawOrderSalesList);" class="detailBackBtn">Back</a>
                 </div>
             </div>
             <div class="gridList"></div>
             <div class="pageContainer"></div>
-            <div class="addPdfForm">
-				<jsp:include page="../business/form.jsp" />
-			</div>
         </div>
 	</div>
 </div>

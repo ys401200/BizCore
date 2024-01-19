@@ -676,6 +676,32 @@ public class ApiSoppCtrl extends Ctrl{
 
         return result;
     }
+    
+    @RequestMapping(value = "/soppStatusUpdate", method = RequestMethod.PUT)
+    public String soppStatusUpdate(HttpServletRequest req, @RequestBody String requestBody) throws JsonMappingException, JsonProcessingException {
+        String compId = null;
+        String result = null;
+        HttpSession session = null;
+        String data = null, aesKey = null, aesIv = null;
+        ObjectMapper mapper = new ObjectMapper();
+
+        session = req.getSession();
+        compId = (String) session.getAttribute("compId");
+        if (compId == null) {
+            compId = (String) req.getAttribute("compId");
+        }
+
+        aesKey = (String) session.getAttribute("aesKey");
+        aesIv = (String) session.getAttribute("aesIv");
+        data = soppService.decAes(requestBody, aesKey, aesIv);
+        Sopp sopp = mapper.readValue(data, Sopp.class);
+
+        if (soppService.soppStatusUpdate(sopp) > 0) {
+            result = "{\"result\":\"ok\"}";
+        }
+
+        return result;
+    }
 
     // @RequestMapping(value = "/{no:\\d+}", method = RequestMethod.GET)
     // public String apiSoppNumber(HttpServletRequest request, @PathVariable int no){

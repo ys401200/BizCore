@@ -64,6 +64,12 @@
 					<a href="/business/estimate">견적관리</a>
 				</div>
 			</div>
+			<div class="menuItem" data-key="orderSales">
+				<a href="/business/orderSales">
+					<img src="/images/main/icons/mainSoppIcon.png" id="mainSoppIcon" />
+					<span>수주판매보고</span>
+				</a>
+			</div>
 			<div class="menuItem" data-key="cont">
 				<input type="radio" id="cont" name="sideMenu" onclick="CommonDatas.sideMenuItemClick();">
 				<label for="cont">

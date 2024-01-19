@@ -62,4 +62,9 @@ public interface ContMapper {
 
     @Select("SELECT concat(year(regDatetime), '-', MONTH(regDatetime)) as calDateMonth, sum(contAmt) as calAmtTotal from swc_cont WHERE compNo = #{cont.compNo} and year(regDatetime) = #{getYear} and cntrctMth = 10248 AND attrib not like 'XXX%' group by calDateMonth")
     public List<Cont> calContractTypeTotal(@Param("cont") Cont cont, @Param("getYear") int getYear);
+
+    @Insert("INSERT INTO swc_cont (compNo, soppNo, cntrctMth, contType, exContNo, userNo, custNo, custMemberNo, contTitle, buyrNo, buyrMemberNo, ptncNo, supplyNo, contAmt, vatYn, net_profit, regDatetime, modDatetime, paymaintSdate, paymaintEdate, attrib) SELECT compNo, soppNo, cntrctMth, soppType, 0, userNo, custNo, 0, #{cont.contTitle}, buyrNo, buyrMemberNo, ptncNo, 0, soppTargetAmt, 'N', #{cont.net_profit}, now(), now(), #{maintenance_S}, #{maintenance_E}, '100000' FROM swc_sopp WHERE soppNo = #{cont.soppNo} AND compNo = #{cont.compNo}")
+    public int soppCopyContInsert(@Param("cont") Cont cont, @Param("maintenance_S") String maintenance_S, @Param("maintenance_E") String maintenance_E);
 }
+
+
