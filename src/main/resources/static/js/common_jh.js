@@ -5788,18 +5788,18 @@ class OrderSalesSet {
 					},
 				];
 
-				fnc.push("CommonDatas.Temps.soppSet.soppDetailView(this, \"page\")");
+				fnc.push("CommonDatas.Temps.orderSalesSet.orderSalesDetailView(this, \"page\")");
 				ids.push(jsonData[i].soppNo);
 				data.push(str);
 			}
 
-			let pageNation = CommonDatas.createPaging(pageContainer, result[3], "CommonDatas.pageMove", "CommonDatas.Temps.soppSet.drawSoppList", result[0]);
+			let pageNation = CommonDatas.createPaging(pageContainer, result[3], "CommonDatas.pageMove", "CommonDatas.Temps.orderSalesSet.drawOrderSalesList", result[0]);
 			pageContainer.innerHTML = pageNation;
 		}
 
 		CommonDatas.createGrid(container, header, data, ids, job, fnc);
 		CommonDatas.setViewContents(hideArr, showArr);
-		document.getElementById("multiSearchBtn").setAttribute("onclick", "CommonDatas.Temps.soppSet.searchSubmit();");
+		document.getElementById("multiSearchBtn").setAttribute("onclick", "CommonDatas.Temps.orderSalesSet.searchSubmit();");
 		containerTitle.innerText = "수주판매보고";
 
 		let crudAddBtn = document.getElementsByClassName("crudAddBtn")[0];
@@ -5814,6 +5814,970 @@ class OrderSalesSet {
 			let content = document.querySelector(".gridContent[data-id=\"" + path[3] + "\"]");
 			CommonDatas.Temps.soppSet.soppDetailView(content, "page");
 		}
+	}
+
+	//수주판매보고 상세보기
+	orderSalesDetailView(e, type) {
+		let thisEle = e;
+
+		CommonDatas.Temps.orderSalesSet.orderSalesDetailInoutSet(thisEle.dataset.id);
+		CommonDatas.Temps.orderSalesSet.orderSalesDetailEstimateBasic();
+		CommonDatas.Temps.orderSalesSet.orderSalesDetailEstimateNo(thisEle.dataset.id);
+		CommonDatas.Temps.orderSalesSet.orderSalesDetailFileListSet(thisEle.dataset.id);
+
+		axios.get("/api/sopp/soppTech/" + thisEle.dataset.id).then((response) => {
+			if (response.data.result === "ok") {
+				let result;
+				result = cipher.decAes(response.data.data);
+				result = JSON.parse(result);
+				storage.soppTechList = result;
+			}
+		}).catch((error) => {
+			msg.set("기술지원내역 에러 입니다.\n" + error);
+			console.log(error);
+		});
+
+		axios.get("/api/sopp/soppSales/" + thisEle.dataset.id).then((response) => {
+			if (response.data.result === "ok") {
+				let result;
+				result = cipher.decAes(response.data.data);
+				result = JSON.parse(result);
+				storage.soppSalesList = result;
+			}
+		}).catch((error) => {
+			msg.set("영업활동내역 에러 입니다.\n" + error);
+			console.log(error);
+		});
+
+		setTimeout(() => {
+			axios.get("/api/sopp/" + thisEle.dataset.id).then((response) => {
+				if (response.data.result === "ok") {
+					let result;
+					result = cipher.decAes(response.data.data);
+					result = JSON.parse(result);
+	
+					if(type === "page"){
+						let orderSales = new OrderSales(result);
+						orderSales.detail();
+						
+						localStorage.setItem("loadSetPage", window.location.pathname);
+					}else{
+						CommonDatas.detailSetFormList(result);
+					}
+				}
+			}).catch((error) => {
+				msg.set("상세보기 에러 입니다.\n" + error);
+				console.log(error);
+			});
+		}, 300);
+	}
+
+	//수주판매보고 매입매출내역 데이터 세팅 함수
+	orderSalesDetailInoutSet(id){
+		let dataObjects = {};
+
+		axios.get("/api/sopp/soppInout/" + id).then((response) => {
+			if (response.data.result === "ok") {
+				storage.inoutInSoppList = [];
+				storage.inoutOutSoppList = [];
+				storage.inoutContList = [];
+				let result;
+				result = cipher.decAes(response.data.data);
+				result = JSON.parse(result);
+				storage.soppInoutAllList = result;
+
+				for(let i = 0; i < result.length; i++){
+					if(result[i].contNo == 100){
+						if(result[i].dataType === "1101"){
+							storage.inoutInSoppList.push(result[i]);
+						}else{
+							storage.inoutOutSoppList.push(result[i]);
+						}
+					}else{
+						if(dataObjects[result[i].contNo] === undefined){
+							dataObjects[result[i].contNo] = {};
+							dataObjects[result[i].contNo][Object.keys(dataObjects[result[i].contNo]).length] = result[i];
+						}else{
+							dataObjects[result[i].contNo][Object.keys(dataObjects[result[i].contNo]).length] = result[i];
+						}
+					}
+				}
+				storage.inoutContList.push(dataObjects);
+
+				storage.inoutInSoppList = storage.inoutInSoppList.sort(function(a, b){
+					if(a.vatDate !== undefined && a.vatDate != null && a.vatDate != ""){
+						if(a.endvataDate !== undefined && a.endvataDate != null && a.endvataDate != ""){
+							return new Date(a.endvataDate).getTime() - new Date(b.endvataDate).getTime();
+						}else{
+							return new Date(a.vatDate).getTime() - new Date(b.vatDate).getTime();
+						}
+					}else{
+						return new Date(a.regDatetime).getTime() - new Date(b.regDatetime).getTime();
+					}
+				});
+
+				storage.inoutOutSoppList = storage.inoutOutSoppList.sort(function(a, b){
+					if(a.vatDate !== undefined && a.vatDate != null && a.vatDate != ""){
+						if(a.endvataDate !== undefined && a.endvataDate != null && a.endvataDate != ""){
+							return new Date(a.endvataDate).getTime() - new Date(b.endvataDate).getTime();
+						}else{
+							return new Date(a.vatDate).getTime() - new Date(b.vatDate).getTime();
+						}
+					}else{
+						return new Date(a.regDatetime).getTime() - new Date(b.regDatetime).getTime();
+					}
+				});
+
+				storage.inoutContList = storage.inoutContList.sort(function(a, b){
+					if(a.vatDate !== undefined && a.vatDate != null && a.vatDate != ""){
+						if(a.endvataDate !== undefined && a.endvataDate != null && a.endvataDate != ""){
+							return new Date(a.endvataDate).getTime() - new Date(b.endvataDate).getTime();
+						}else{
+							return new Date(a.vatDate).getTime() - new Date(b.vatDate).getTime();
+						}
+					}else{
+						return new Date(a.regDatetime).getTime() - new Date(b.regDatetime).getTime();
+					}
+				});
+			}
+		}).catch((error) => {
+			msg.set("매입매출내역 에러 입니다.\n" + error);
+			console.log(error);
+		});
+	}
+
+	//수주판매보고 파일 내역 데이터 세팅 함수
+	orderSalesDetailFileListSet(id){
+		axios.get("/api/sopp/soppFile/" + id).then((response) => {
+			if (response.data.result === "ok") {
+				let result;
+				result = cipher.decAes(response.data.data);
+				result = JSON.parse(result);
+				storage.soppFileList = result;
+			}
+		}).catch((error) => {
+			msg.set("첨부파일내역 에러 입니다.\n" + error);
+			console.log(error);
+		});
+	}
+
+	//베이직 견적 storage 저장 함수
+	orderSalesDetailEstimateBasic() {
+		axios.get("/api/estimate/basic").then((response) => {
+			if (response.data.result === "ok") {
+				let form, info, x;
+				x = cipher.decAes(response.data.data);
+				x = JSON.parse(x);
+				form = x.form;
+				info = x.info;
+				for (x = 0; x < form.length; x++)	form[x].form = cipher.decAes(form[x].form);
+				storage.estimateForm = form;
+				storage.estimateBasic = info;
+			} else {
+				msg.set("[getEstimateBasic] Fail to get estimate form(s).");
+			}
+		}).catch((error) => {
+			msg.set("getEstimateBasic 통신 에러입니다.\n" + error);
+		});
+	}
+
+	//수주판매보고 견적번호 및 현재 영업기회 번호 저장 함수
+	orderSalesDetailEstimateNo(soppNo) {
+		axios.get("/api/estimate/sopp/" + soppNo).then((response) => {
+			if (response.data.result === "ok") {
+				storage.soppEstimateList = [];
+				let getList = response.data.data;
+				getList = cipher.decAes(getList);
+				getList = JSON.parse(getList);
+
+				for (let i = 0; i < getList.length; i++) {
+					getList[i].doc = cipher.decAes(getList[i].doc);
+					storage.soppEstimateList.push(getList[i]);
+				}
+				
+				storage.estimateVerSoppNo = soppNo;
+			}
+		});
+	}
+
+	//수주판매보고 매입매출내역 등록 폼 세팅 함수
+	drawInoutForm(){
+		let orderSalesContainer = document.getElementsByClassName("orderSalesContainer")[0];
+
+		if(document.getElementsByClassName("inoutSoppForm").length > 0){
+			let inoutSoppForm = document.getElementsByClassName("inoutSoppForm");
+
+			for(let i = 0; i < inoutSoppForm.length; i++){
+				let item = inoutSoppForm[i];
+				item.remove();
+			}
+		}
+
+		let createDiv = document.createElement("div");
+		let nowDate = new Date();
+		createDiv.className = "inoutSoppForm tabPage";
+		let html = "";
+
+		html += "<div>";
+		html += "<button type=\"button\" onclick=\"CommonDatas.Temps.sopp.soppInoutDivisionInsert();\"/>분할추가</button>";
+		html += "<button type=\"button\" onclick=\"CommonDatas.Temps.sopp.soppInoutSingleInsert();\"/>매입매출추가</button>";
+		html += "<button type=\"button\" onclick=\"CommonDatas.Temps.sopp.soppInoutUpdate(this);\"/>매입매출수정</button>";
+		html += "<button type=\"button\" onclick=\"CommonDatas.Temps.sopp.soppInoutCheckDelete();\"/>선택삭제</button>";
+		html += "</div>";
+
+		html += "<div>";
+		html += "<div>구분</div>";
+		html += "<div>거래일자</div>";
+		html += "<div>분할횟수</div>";
+		html += "<div>단위(개월)</div>";
+		html += "<div>계약금액</div>";
+		html += "<div>상품</div>";
+		html += "<div>거래처(매입/매출처)</div>";
+		html += "</div>";
+
+		html += "<div>";
+		html += "<div><select id=\"inoutSoppDataType\"><option value=\"1101\" selected>매입</option><option value=\"1102\">매출</option></select></div>";
+		html += "<div><input type=\"date\" id=\"inoutSoppVatDate\" value=\"" + nowDate.toISOString().substring(0, 10) + "\" /></div>";
+		html += "<div><input type=\"text\" id=\"inoutSoppDivisionNum\" value=\"1\"/></div>";
+		html += "<div><input type=\"text\" id=\"inoutSoppDivisionMonth\" value=\"1\"/></div>";
+		html += "<div><input type=\"text\" id=\"inoutSoppDivisionContAmt\" onkeyup=\"CommonDatas.inputNumberFormat(this);\" style=\"text-align: right;\" value=\"0\"/></div>";
+		html += "<div><input type=\"text\" data-complete=\"product\" data-key=\"productNo\" autocomplete=\"off\" id=\"inoutSoppProductNo\" onclick=\"CommonDatas.addAutoComplete(this);\" onkeyup=\"CommonDatas.addAutoComplete(this);\" style=\"text-align: center;\"></div>";
+		html += "<div><input type=\"text\" data-complete=\"customer\" data-key=\"productNo\" autocomplete=\"off\" id=\"inoutSoppCustNo\" onclick=\"CommonDatas.addAutoComplete(this);\" onkeyup=\"CommonDatas.addAutoComplete(this);\" style=\"text-align: center;\"></div>";
+		html += "</div>";
+
+		html += "<div>";
+		html += "<div>단가</div>";
+		html += "<div>수량</div>";
+		html += "<div>공급가</div>";
+		html += "<div>부가세</div>";
+		html += "<div>합계금액</div>";
+		html += "<div style=\"grid-column: span 2;\">비고</div>";
+		html += "</div>";
+
+		html += "<div>";
+		html += "<div><input type=\"text\" style=\"text-align: right;\" id=\"inoutSoppNetprice\" onkeyup=\"CommonDatas.Temps.soppSet.inoutSoppCalNetprice(this);\" value=\"0\" /></div>";
+		html += "<div><input type=\"text\" style=\"text-align: right;\" id=\"inoutSoppQuanty\" onkeyup=\"CommonDatas.Temps.soppSet.inoutSoppCalQuanty(this);\" value=\"1\" /></div>";
+		html += "<div><input type=\"text\" style=\"text-align: right;\" id=\"inoutSoppAmt\" placeholder=\"자동으로 계산 됩니다.\" value=\"0\" disabled/></div>";
+		html += "<div><input type=\"text\" style=\"text-align: right;\" id=\"inoutSoppVat\" onkeyup=\"CommonDatas.Temps.soppSet.inoutSoppCalVat(this);\" value=\"0\" /></div>";
+		html += "<div><input type=\"text\" style=\"text-align: right;\" id=\"inoutSoppTotal\" onkeyup=\"CommonDatas.Temps.soppSet.inoutSoppCalTotal(this);\" value=\"0\" /></div>";
+		html += "<div style=\"grid-column: span 2;\"><input type=\"text\" id=\"inoutSoppRemark\"></div>";
+		html += "</div>";
+
+		createDiv.innerHTML = html;
+		orderSalesContainer.append(createDiv);
+	}
+
+	//수주판매보고 탭 매입매출내역 영업기회 출력 함수
+	drawInoutSoppList() {
+		let orderSalesContainer, createDiv, divHtml = "", calInTotal = 0, calOutTotal = 0;
+
+		if(document.getElementById("tabInoutSopp") !== null){
+			document.getElementById("tabInoutSopp").remove();
+		}
+
+		divHtml += "<div class=\"inoutSoppListHeader\">";
+		divHtml += "<div>선택</div>";
+		divHtml += "<div>구분(등록/수정일)</div>";
+		divHtml += "<div>거래처(매입/매출처)</div>";
+		divHtml += "<div>상품</div>";
+		divHtml += "<div>단가</div>";
+		divHtml += "<div>수량</div>";
+		divHtml += "<div>부가세액</div>";
+		divHtml += "<div>공급가액</div>";
+		divHtml += "<div>금액</div>";
+		divHtml += "<div>비고</div>";
+		divHtml += "<div>계약선택</div>";
+		divHtml += "<div>할당</div>";
+		divHtml += "<div>수정</div>";
+		divHtml += "</div>";
+			
+		if(storage.inoutInSoppList.length > 0){
+			for(let i = 0; i < storage.inoutInSoppList.length; i++){
+				let item = storage.inoutInSoppList[i];
+				let custName = (CommonDatas.emptyValuesCheck(item.salesCustNo)) ? "" : storage.customer[item.salesCustNo].custName;
+				let productName = (CommonDatas.emptyValuesCheck(item.productNo)) ? "" : CommonDatas.getProductFind(item.productNo, "name");
+				calInTotal += item.dataTotal;
+	
+				divHtml += "<div class=\"inoutSoppListItem\">";
+				divHtml += "<div style=\"text-align: center;\"><input type=\"checkbox\" data-id=\"" + item.soppdataNo + "\" /></div>";
+				
+				if(item.vatDate !== undefined && item.vatDate !== null){
+					divHtml += "<div style=\"text-align: center;\">매입(" + item.vatDate.substring(0, 10) + ")</div>";
+				}else{
+					divHtml += "<div style=\"text-align: center;\">매입(" + item.regDatetime.substring(0, 10) + ")</div>";
+				}
+
+				divHtml += "<div style=\"text-align: center;\">" + custName + "</div>";
+				divHtml += "<div style=\"text-align: center;\">" + productName + "</div>";
+				divHtml += "<div style=\"text-align: right;\">" + item.dataNetprice.toLocaleString("en-US") + "</div>";
+				divHtml += "<div style=\"text-align: center;\">" + item.dataQuanty + "</div>";
+				divHtml += "<div style=\"text-align: right;\">" + item.dataVat.toLocaleString("en-US") + "</div>";
+				divHtml += "<div style=\"text-align: right;\">" + item.dataAmt.toLocaleString("en-US") + "</div>";
+				divHtml += "<div style=\"text-align: right;\">" + item.dataTotal.toLocaleString("en-US") + "</div>";
+				divHtml += "<div>" + item.dataRemark + "</div>";
+				divHtml += "<div style=\"text-align: center;\">";
+				divHtml += "<select>";
+				
+				if(Object.keys(storage.inoutContList[0]).length > 0){
+					divHtml += "<option value=\"\">계약선택</option>";
+
+					for(let key in storage.inoutContList[0]){
+						let contTitle = (CommonDatas.emptyValuesCheck(key)) ? "" : CommonDatas.getContFind(key, "name");
+						divHtml += "<option value=\"" + key + "\">" + contTitle + "</option>";
+					}
+				}else{
+					divHtml += "<option>계약없음</option>";
+				}
+
+				divHtml += "</select>";
+				divHtml += "</div>";
+				divHtml += "<div style=\"text-align: center;\"><button type=\"button\" class=\"assignButton\" data-id=\"" + item.soppdataNo + "\" onclick=\"let sopp = new Sopp(); sopp.assignUpdate(this);\">할당</button></div>";
+				divHtml += "<div style=\"text-align: center;\"><button type=\"button\" class=\"updateButton\" data-id=\"" + item.soppdataNo + "\" data-status=\"false\" onclick=\"CommonDatas.Temps.soppSet.soppInoutUpdateButtonSet(this);\">수정</button></div>";
+				divHtml += "</div>";
+			}
+		}else{
+			divHtml += "<div class=\"emptyInData\">데이터가 없습니다.</div>";
+		}
+
+		divHtml += "<div class=\"inSoppListTotal\">";
+		divHtml += "<div>매입합계</div>";
+		divHtml += "<div>" + calInTotal.toLocaleString("en-US") + "</div>";
+		divHtml += "</div>";
+
+		if(storage.inoutOutSoppList.length > 0){
+			for(let i = 0; i < storage.inoutOutSoppList.length; i++){
+				let item = storage.inoutOutSoppList[i];
+				let custName = (CommonDatas.emptyValuesCheck(item.salesCustNo)) ? "" : storage.customer[item.salesCustNo].custName;
+				let productName = (CommonDatas.emptyValuesCheck(item.productNo)) ? "" : CommonDatas.getProductFind(item.productNo, "name");
+				calOutTotal += item.dataTotal;
+	
+				divHtml += "<div class=\"inoutSoppListItem\">";
+				divHtml += "<div style=\"text-align: center;\"><input type=\"checkbox\" data-id=\"" + item.soppdataNo + "\" /></div>";
+				
+				if(item.vatDate !== undefined && item.vatDate !== null){
+					if(item.endvataDate !== undefined && item.endvataDate !== null){
+						divHtml += "<div style=\"text-align: center;\">유지보수(" + item.vatDate.substring(0, 10) + " ~ " + item.endvataDate.substring(0, 10) + ")</div>";
+					}else{
+						divHtml += "<div style=\"text-align: center;\">매출(" + item.vatDate.substring(0, 10) + ")</div>";
+					}
+				}else{
+					divHtml += "<div style=\"text-align: center;\">매출(" + item.regDatetime.substring(0, 10) + ")</div>";
+				}
+
+				divHtml += "<div style=\"text-align: center;\">" + custName + "</div>";
+				divHtml += "<div style=\"text-align: center;\">" + productName + "</div>";
+				divHtml += "<div style=\"text-align: right;\">" + item.dataNetprice.toLocaleString("en-US") + "</div>";
+				divHtml += "<div style=\"text-align: center;\">" + item.dataQuanty + "</div>";
+				divHtml += "<div style=\"text-align: right;\">" + item.dataVat.toLocaleString("en-US") + "</div>";
+				divHtml += "<div style=\"text-align: right;\">" + item.dataAmt.toLocaleString("en-US") + "</div>";
+				divHtml += "<div style=\"text-align: right;\">" + item.dataTotal.toLocaleString("en-US") + "</div>";
+				divHtml += "<div>" + item.dataRemark + "</div>";
+				divHtml += "<div style=\"text-align: center;\">";
+				divHtml += "<select>";
+				
+				if(Object.keys(storage.inoutContList[0]).length > 0){
+					divHtml += "<option value=\"\">계약선택</option>";
+
+					for(let key in storage.inoutContList[0]){
+						let contTitle = (CommonDatas.emptyValuesCheck(key)) ? "" : CommonDatas.getContFind(key, "name");
+						divHtml += "<option value=\"" + key + "\">" + contTitle + "</option>";
+					}
+				}else{
+					divHtml += "<option>계약없음</option>";
+				}
+
+				divHtml += "</select>";
+				divHtml += "</div>";
+				divHtml += "<div style=\"text-align: center;\"><button type=\"button\" class=\"assignButton\" data-id=\"" + item.soppdataNo + "\" onclick=\"let sopp = new Sopp(); sopp.assignUpdate(this);\">할당</button></div>";
+				divHtml += "<div style=\"text-align: center;\"><button type=\"button\" class=\"updateButton\" data-id=\"" + item.soppdataNo + "\" data-status=\"false\" onclick=\"CommonDatas.Temps.soppSet.soppInoutUpdateButtonSet(this);\">수정</button></div>";
+				divHtml += "</div>";
+			}
+		}else{
+			divHtml += "<div class=\"emptyInData\">데이터가 없습니다.</div>";
+		}
+
+		divHtml += "<div class=\"outSoppListTotal\">";
+		divHtml += "<div>매출합계</div>";
+		divHtml += "<div>" + calOutTotal.toLocaleString("en-US") + "</div>";
+		divHtml += "</div>";
+		
+		orderSalesContainer = document.getElementsByClassName("orderSalesContainer")[0];
+		createDiv = document.createElement("div");
+		createDiv.innerHTML = "<div class=\"tabInoutSoppTitle\"><div>영업기회명</div><div onclick=\"CommonDatas.Temps.soppSet.inoutTitleClick(this);\">" + storage.formList.soppTitle + " (※ 클릭하여 상세보기)" + "</div></div><div class=\"tabInoutTableList\" id=\"tabInoutSoppList\">" + divHtml + "</div>";
+		createDiv.id = "tabInoutSopp";
+		createDiv.className = "tabPage";
+		orderSalesContainer.append(createDiv);
+	}
+
+	//수주판매보고 탭 매입매출내역 계약 출력 함수
+	drawInoutContList() {
+		let orderSalesContainer, createDiv, divHtml = "", inDatas = {}, outDatas = {};
+
+		if(document.getElementsByClassName("tabInoutCont").length > 0){
+			let tabInoutCont = document.getElementsByClassName("tabInoutCont");
+
+			for(let i = 0; i < tabInoutCont.length; i++){
+				let item = tabInoutCont[i];
+				item.remove();
+			}
+		}
+
+		if(storage.inoutContList !== undefined && Object.keys(storage.inoutContList[0]).length > 0){
+			for(let key in storage.inoutContList[0]){
+				let item = storage.inoutContList[0][key];
+				
+				if(inDatas[key] === undefined) inDatas[key] = {};
+				if(outDatas[key] === undefined) outDatas[key] = {};
+
+				for(let i = 0; i < Object.keys(item).length; i++){
+					let secondItem = item[i];
+
+					if(secondItem.dataType === "1101"){
+						if(Object.keys(inDatas[key]).length == 0){
+							inDatas[key][0] = secondItem;
+						}else{
+							inDatas[key][Object.keys(inDatas[key]).length] = secondItem;
+						}
+					}else{
+						if(Object.keys(outDatas[key]).length == 0){
+							outDatas[key][0] = secondItem;
+						}else{
+							outDatas[key][Object.keys(outDatas[key]).length] = secondItem;
+						}
+					}
+				}
+			}
+
+			for(let key in inDatas){
+				for(let outKey in outDatas){
+					let outItem = outDatas[outKey];
+					if(key == outKey){
+						for(let i = 0; i < Object.keys(outItem).length; i++){
+							inDatas[key][Object.keys(inDatas[key]).length] = outItem[i];
+						}
+					}
+				}
+			}
+
+			for(let key in inDatas){
+				let calInTotal = 0, calOutTotal = 0;
+				let item = inDatas[key];
+				let contTitle = (CommonDatas.emptyValuesCheck(item[0].contNo)) ? "" : CommonDatas.getContFind(item[0].contNo, "name");
+
+				divHtml += "<div class=\"tabInoutContTitle\"><div>계약명</div><div onclick=\"CommonDatas.Temps.soppSet.inoutTitleClick(this);\">" + contTitle + " (※ 클릭하여 상세보기, 수정 또는 삭제는 계약페이지에서 진행해주십시오.)" + "</div></div>";
+				divHtml += "<div class=\"tabInoutTableList\" id=\"tabInoutContList\">";
+				divHtml += "<div class=\"inoutContListHeader\">";
+				divHtml += "<div>선택</div>";
+				divHtml += "<div>구분(등록/수정일)</div>";
+				divHtml += "<div>거래처(매입/매출처)</div>";
+				divHtml += "<div>상품</div>";
+				divHtml += "<div>단가</div>";
+				divHtml += "<div>수량</div>";
+				divHtml += "<div>부가세액</div>";
+				divHtml += "<div>공급가액</div>";
+				divHtml += "<div>금액</div>";
+				divHtml += "<div>비고</div>";
+				divHtml += "</div>";
+
+				for(let i = 0; i < Object.keys(item).length; i++){
+					let secondItem = item[i];
+					let custName = (CommonDatas.emptyValuesCheck(secondItem.custNo)) ? "" : storage.customer[secondItem.custNo].custName;
+					let productName = (CommonDatas.emptyValuesCheck(secondItem.productNo)) ? "" : CommonDatas.getProductFind(secondItem.productNo, "name");
+					
+					divHtml += "<div class=\"inoutContListItem\">";
+					divHtml += "<div style=\"text-align: center;\"><input type=\"checkbox\" data-id=\"" + secondItem.soppdataNo + "\" disabled/></div>";
+					
+					if(secondItem.dataType === "1101"){
+						calInTotal += secondItem.dataTotal;
+
+						if(secondItem.vatDate !== undefined){
+							divHtml += "<div style=\"text-align: center;\">매입(" + secondItem.vatDate.substring(0, 10) + ")</div>";
+						}else{
+							divHtml += "<div style=\"text-align: center;\">매입(" + secondItem.regDatetime.substring(0, 10) + ")</div>";
+						}
+					}else{
+						calOutTotal += secondItem.dataTotal;
+
+						if(secondItem.vatDate !== undefined){
+							if(secondItem.endvataDate !== undefined && secondItem.endvataDate != null){
+								divHtml += "<div style=\"text-align: center;\">유지보수(" + secondItem.vatDate.substring(0, 10) + " ~ " + secondItem.endvataDate.substring(0, 10) + ")</div>";
+							}else{
+								divHtml += "<div style=\"text-align: center;\">매출(" + secondItem.regDatetime.substring(0, 10) + ")</div>";
+							}
+						}else{
+							divHtml += "<div style=\"text-align: center;\">매출(" + secondItem.regDatetime.substring(0, 10) + ")</div>";
+						}
+					}
+
+					divHtml += "<div style=\"text-align: center;\">" + custName + "</div>";
+					divHtml += "<div style=\"text-align: center;\">" + productName + "</div>";
+					divHtml += "<div style=\"text-align: right;\">" + secondItem.dataNetprice.toLocaleString("en-US") + "</div>";
+					divHtml += "<div style=\"text-align: center;\">" + secondItem.dataQuanty + "</div>";
+					divHtml += "<div style=\"text-align: right;\">" + secondItem.dataVat.toLocaleString("en-US") + "</div>";
+					divHtml += "<div style=\"text-align: right;\">" + secondItem.dataAmt.toLocaleString("en-US") + "</div>";
+					divHtml += "<div style=\"text-align: right;\">" + secondItem.dataTotal.toLocaleString("en-US") + "</div>";
+					divHtml += "<div>" + secondItem.dataRemark + "</div>";
+					divHtml += "</div>";
+
+					if((secondItem.dataType === "1101" && item[i + 1] === undefined) || (secondItem.dataType === "1101" && item[i + 1].dataType === "1102")){
+						divHtml += "<div class=\"inContListTotal\">";
+						divHtml += "<div>매입합계</div>";
+						divHtml += "<div>" + calInTotal.toLocaleString("en-US") + "</div>";
+						divHtml += "</div>";
+					}
+
+					if(secondItem.dataType === "1102" && item[i + 1] === undefined){
+						divHtml += "<div class=\"outContListTotal\">";
+						divHtml += "<div>매출합계</div>";
+						divHtml += "<div>" + calOutTotal.toLocaleString("en-US") + "</div>";
+						divHtml += "</div>";
+					}
+				}
+
+				divHtml += "</div>";
+			}
+		}
+		
+		orderSalesContainer = document.getElementsByClassName("orderSalesContainer")[0];
+		createDiv = document.createElement("div");
+		createDiv.innerHTML = divHtml;
+		createDiv.className = "tabInoutCont tabPage";
+		orderSalesContainer.append(createDiv);
+	}
+
+	//수주판매보고 탭 파일첨부 페이지 출력 함수
+	drawSoppFileUpload() {
+		let container, orderSalesContainer, jsonData, createDiv, job, header = [], data = [], ids = [], disDate, setDate, str, fnc = [], createInputDiv, inputHtml = "", fileName;
+
+		if(storage.soppFileList !== undefined){
+			jsonData = storage.soppFileList;
+		}else{
+			jsonData = "";
+		}
+
+		if(document.getElementById("tabFileUpload") !== null){
+			document.getElementById("tabFileUpload").remove();
+		}
+		
+		orderSalesContainer = document.getElementsByClassName("orderSalesContainer")[0];
+		createDiv = document.createElement("div");
+		createDiv.id = "tabFileUpload";
+		createDiv.className = "tabPage";
+		orderSalesContainer.append(createDiv);
+		container = document.getElementById("tabFileUpload");
+
+		createInputDiv = document.createElement("div");
+		createInputDiv.className = "fileUploadButtons";
+		inputHtml += "<button type=\"button\" onclick=\"CommonDatas.Temps.soppSet.soppFileInsertForm();\">파일등록</button>";
+		inputHtml += "<button type=\"button\" onclick=\"let sopp = new Sopp('" + jsonData + "'); sopp.soppFileDelete();\">선택삭제</button>";
+		createInputDiv.innerHTML = inputHtml;
+
+		header = [
+			{
+				"title": "선택",
+				"align": "center",
+			},
+			{
+				"title": "일자",
+				"align": "center",
+			},
+			{
+				"title": "파일명",
+				"align": "center",
+			},
+			{
+				"title": "파일설명",
+				"align": "center",
+			},
+			{
+				"title": "담당자",
+				"align": "center",
+			},
+		];
+
+		if (jsonData === "" || jsonData.length == 0) {
+			str = [
+				{
+					"setData": undefined,
+					"align": "center",
+					"col": 5,
+				},
+			];
+
+			data.push(str);
+		} else {
+			for (let i = 0; i < jsonData.length; i++) {
+				let item = jsonData[i];
+
+				disDate = CommonDatas.dateDis(new Date(item.regDatetime).getTime(), new Date(item.modDatetime).getTime());
+				setDate = CommonDatas.dateFnc(disDate, "yy.mm.dd");
+				fileName = (CommonDatas.emptyValuesCheck(item.fileName)) ? "" : item.fileName;
+
+				str = [
+					{
+						"setData": "<input type=\"checkbox\" class=\"soppFileCheck\" data-id=\"" + item.fileId + "\">",
+						"align": "center",
+					},
+					{
+						"setData": setDate,
+						"align": "center",
+					},
+					{
+						"setData": "<a href=\"#\" data-id=\"" + item.fileId + "\" onclick=\"let sopp = new Sopp(); sopp.soppDownloadFile(this);\">" + fileName + "</a>",
+						"align": "left",
+					},
+					{
+						"setData": (CommonDatas.emptyValuesCheck(item.fileDesc)) ? "" : item.fileDesc,
+						"align": "left",
+					},
+					{
+						"setData": (CommonDatas.emptyValuesCheck(item.userNo)) ? "" : storage.user[item.userNo].userName,
+						"align": "center",
+					},
+				];
+
+				fnc.push("");
+				ids.push(jsonData[i].fileId);
+				data.push(str);
+			}
+		}
+
+		CommonDatas.createGrid(container, header, data, ids, job, fnc, "tabFileUpload");
+		container.prepend(createInputDiv);
+	}
+
+	//영업기회 탭 기술지원리스트 출력 함수
+	drawSoppTechList() {
+		let container, orderSalesContainer, jsonData, createDiv, job, header = [], data = [], ids = [], disDate, setDate, str, fnc = [];
+
+		if(storage.soppTechList !== undefined){
+			jsonData = storage.soppTechList;
+		}else{
+			jsonData = "";
+		}
+
+		orderSalesContainer = document.getElementsByClassName("orderSalesContainer")[0];
+		createDiv = document.createElement("div");
+		createDiv.id = "tabTech";
+		createDiv.className = "tabPage";
+		orderSalesContainer.append(createDiv);
+
+		container = document.getElementById("tabTech");
+
+		header = [
+			{
+				"title": "일자",
+				"align": "center",
+			},
+			{
+				"title": "지원형태",
+				"align": "center",
+			},
+			{
+				"title": "장소",
+				"align": "center",
+			},
+			{
+				"title": "담당자",
+				"align": "center",
+			},
+			{
+				"title": "비고",
+				"align": "center",
+			},
+		];
+
+		if (jsonData === "" || jsonData.length == 0) {
+			str = [
+				{
+					"setData": undefined,
+					"align": "center",
+					"col": 5,
+				},
+			];
+
+			data.push(str);
+		} else {
+			for (let i = 0; i < jsonData.length; i++) {
+				let item = jsonData[i];
+
+				disDate = CommonDatas.dateDis(new Date(item.regDatetime).getTime(), new Date(item.modDatetime).getTime());
+				setDate = CommonDatas.dateFnc(disDate, "yy.mm.dd");
+
+				str = [
+					{
+						"setData": setDate,
+						"align": "center",
+					},
+					{
+						"setData": (CommonDatas.emptyValuesCheck(item.type)) ? "" : storage.code.etc[item.type],
+						"align": "center",
+					},
+					{
+						"setData": (CommonDatas.emptyValuesCheck(item.techdPlace)) ? "" : item.techdPlace,
+						"align": "center",
+					},
+					{
+						"setData": (CommonDatas.emptyValuesCheck(item.userNo)) ? "" : storage.user[item.userNo].userName,
+						"align": "center",
+					},
+					{
+						"setData": (CommonDatas.emptyValuesCheck(item.desc)) ? "" : item.desc,
+						"align": "left",
+					},
+				];
+
+				fnc.push("");
+				ids.push("");
+				data.push(str);
+			}
+		}
+
+		CommonDatas.createGrid(container, header, data, ids, job, fnc, "tabTech");
+	}
+
+	//영업기회 탭 영업활동내역 출력 함수
+	drawSoppSalesList() {
+		let container, orderSalesContainer, jsonData, createDiv, job, header = [], data = [], ids = [], disDate, setDate, str, fnc = [];
+
+		if(storage.soppSalesList !== undefined){
+			jsonData = storage.soppSalesList;
+		}else{
+			jsonData = "";
+		}
+
+		orderSalesContainer = document.getElementsByClassName("orderSalesContainer")[0];
+		createDiv = document.createElement("div");
+		createDiv.id = "tabSales";
+		createDiv.className = "tabPage";
+		orderSalesContainer.append(createDiv);
+
+		container = document.getElementById("tabSales");
+
+		header = [
+			{
+				"title": "일자",
+				"align": "center",
+			},
+			{
+				"title": "활동종류",
+				"align": "center",
+			},
+			{
+				"title": "장소",
+				"align": "center",
+			},
+			{
+				"title": "담당자",
+				"align": "center",
+			},
+			{
+				"title": "비고",
+				"align": "center",
+			},
+		];
+
+		if (jsonData === "" || jsonData.length == 0) {
+			str = [
+				{
+					"setData": undefined,
+					"align": "center",
+					"col": 6,
+				},
+			];
+
+			data.push(str);
+		} else {
+			for (let i = 0; i < jsonData.length; i++) {
+				let item = jsonData[i];
+
+				disDate = CommonDatas.dateDis(new Date(item.regDatetime).getTime(), new Date(item.modDatetime).getTime());
+				setDate = CommonDatas.dateFnc(disDate, "yy.mm.dd");
+
+				str = [
+					{
+						"setData": setDate,
+						"align": "center",
+					},
+					{
+						"setData": (CommonDatas.emptyValuesCheck(item.type)) ? "" : storage.code.etc[item.type],
+						"align": "center",
+					},
+					{
+						"setData": (CommonDatas.emptyValuesCheck(item.salesPlace)) ? "" : item.salesPlace,
+						"align": "center",
+					},
+					{
+						"setData": (CommonDatas.emptyValuesCheck(item.userNo)) ? "" : storage.user[item.userNo].userName,
+						"align": "center",
+					},
+					{
+						"setData": (CommonDatas.emptyValuesCheck(item.desc)) ? "" : item.desc,
+						"align": "left",
+					},
+				];
+
+				fnc.push("");
+				ids.push("");
+				data.push(str);
+			}
+		}
+
+		CommonDatas.createGrid(container, header, data, ids, job, fnc, "tabSales");
+	}
+
+	//탭 radio 버튼 클릭 함수
+	detailRadioChange(thisEle){
+		let tabPage = document.getElementsByClassName("tabPage");
+		let defaultFormContainer = document.getElementsByClassName("defaultFormContainer")[0];
+		let versionPreview = document.getElementsByClassName("versionPreview")[0];
+		let addPdfForm = document.getElementsByClassName("addPdfForm")[0];
+		let tabEstimateBtns = document.getElementsByClassName("tabEstimateBtns")[0];
+		let dataKey;
+
+		if(versionPreview !== undefined) versionPreview.style.display = "none";
+		if(addPdfForm !== undefined) addPdfForm.style.display = "none";
+		if(tabEstimateBtns !== undefined) tabEstimateBtns.style.display = "none";
+		if(thisEle === undefined) dataKey = document.querySelector(".tabRadio:checked").dataset.key;
+		else dataKey = thisEle.dataset.key;
+		
+		for(let i = 0; i < tabPage.length; i++){
+			defaultFormContainer.style.display = "none";
+			tabPage[i].style.display = "none";
+		}
+		
+		if(dataKey === "tabDefault") defaultFormContainer.style.display = "grid";
+		else if(dataKey === "tabEstimate") {
+			CommonDatas.Temps.soppSet.tabEstimateListGet();
+		}else if(dataKey === "tabInoutSopp"){
+			let inoutSoppForm = document.getElementsByClassName("inoutSoppForm")[0];
+			let tabInoutSopp = document.getElementById("tabInoutSopp");
+			let tabInoutCont = document.getElementsByClassName("tabInoutCont");
+			let inoutTotalContents = document.getElementsByClassName("inoutTotalContents")[0];
+
+			inoutSoppForm.style.display = "block";
+			tabInoutSopp.style.display = "block";
+
+			for(let i = 0; i < tabInoutCont.length; i++){
+				tabInoutCont[i].style.display = "block";
+			}
+
+			inoutTotalContents.style.display = "block";
+		} else {
+			document.getElementById(dataKey).style.display = "block";
+		}
+	}
+
+	//매입매출내역 제목 부분 클릭 시 실행 함수
+	inoutTitleClick(thisEle){
+		let tabInoutTableList = document.getElementsByClassName("tabInoutTableList");
+		let rightDetailInoutTableList = document.getElementsByClassName("rightDetailInoutTableList");
+
+		if(tabInoutTableList !== undefined){
+			for(let i = 0; i < tabInoutTableList.length; i++){
+				tabInoutTableList[i].style.display = "none";
+			}
+		}
+
+		if(rightDetailInoutTableList !== undefined){
+			for(let i = 0; i < rightDetailInoutTableList.length; i++){
+				rightDetailInoutTableList[i].style.display = "none";
+			}
+		}
+
+		thisEle.parentElement.nextElementSibling.style.display = "block";
+	}
+
+	//매입매출내역 총 계 계산 후 세팅 함수
+	inoutTotalSet(){
+		let orderSalesContainer = document.getElementsByClassName("orderSalesContainer")[0];
+
+		if(document.getElementsByClassName("inoutTotalContents").length > 0){
+			let inoutTotalContents = document.getElementsByClassName("inoutTotalContents");
+
+			for(let i = 0; i < inoutTotalContents.length; i++){
+				let item = inoutTotalContents[i];
+				item.remove();
+			}
+		}
+
+		let inSoppListTotal = document.getElementById("tabInoutSopp").children[1].querySelector(".inSoppListTotal");
+		let outSoppListTotal = document.getElementById("tabInoutSopp").children[1].querySelector(".outSoppListTotal");
+		let inSoppTotal = (inSoppListTotal === undefined || inSoppListTotal === null) ? 0 : parseInt(inSoppListTotal.children[1].innerText.replace(/,/g, ""));
+		let outSoppTotal = (outSoppListTotal === undefined|| outSoppListTotal === null) ? 0 : parseInt(outSoppListTotal.children[1].innerText.replace(/,/g, ""));
+		let calInSoppTotal = parseInt(inSoppTotal - (inSoppTotal/11));
+		let calOutSoppTotal = parseInt(outSoppTotal - (outSoppTotal/11));
+		let calInoutProfitSoppTotal = parseInt(outSoppTotal - inSoppTotal - ((outSoppTotal - inSoppTotal)/11));
+		let calInoutprofitSoppPersent = (calInoutProfitSoppTotal / calOutSoppTotal * 100).toFixed(2);
+		let inContTotal = 0;
+		let outContTotal = 0;
+		let createDiv = document.createElement("div");
+		let html = "", contTableList, inContListTotal, outContListTotal, calInContTotal = 0, calOutContTotal = 0, calInoutProfitContTotal = 0, calInoutprofitContPersent = 0;
+		
+		if(document.getElementsByClassName("tabInoutCont")[0] !== undefined){
+			contTableList = document.getElementsByClassName("tabInoutCont")[0].querySelectorAll(".tabInoutTableList");
+			
+			for(let i = 0; i < contTableList.length; i++){
+				let item = contTableList[i];
+				inContListTotal = item.querySelectorAll(".inContListTotal");
+				outContListTotal = item.querySelectorAll(".outContListTotal");
+
+				for(let i = 0; i < inContListTotal.length; i++){
+					let item = inContListTotal[i];
+					inContTotal += (inContListTotal === undefined || inContListTotal === null) ? 0 : parseInt(item.children[1].innerText.replace(/,/g, ""));
+				}
+		
+				for(let i = 0; i < outContListTotal.length; i++){
+					let item = outContListTotal[i];
+					outContTotal += (outContListTotal === undefined || outContListTotal === null) ? 0 : parseInt(item.children[1].innerText.replace(/,/g, ""));
+				}
+			}
+		}
+
+		if(calInoutProfitSoppTotal >= 0) calInoutProfitSoppTotal = "+" + calInoutProfitSoppTotal.toLocaleString("en-Us");
+		else calInoutProfitSoppTotal = calInoutProfitSoppTotal.toLocaleString("en-US");
+
+		if(calInoutprofitSoppPersent >= 0) calInoutprofitSoppPersent = "+" + calInoutprofitSoppPersent + "%";
+		else calInoutprofitSoppPersent = (isNaN(calInoutprofitSoppPersent)) ? "0%" : calInoutprofitSoppPersent + "%";
+
+		calInContTotal = parseInt(inContTotal - (inContTotal/11));
+		calOutContTotal = parseInt(outContTotal - (outContTotal/11));
+		calInoutProfitContTotal = parseInt(outContTotal - inContTotal - ((outContTotal - inContTotal)/11));
+		calInoutprofitContPersent = (calInoutProfitContTotal / calOutContTotal * 100).toFixed(2);
+
+		if(calInoutProfitContTotal >= 0) calInoutProfitContTotal = "+" + calInoutProfitContTotal.toLocaleString("en-Us");
+		else calInoutProfitContTotal = calInoutProfitContTotal.toLocaleString("en-US");
+
+		if(calInoutprofitContPersent >= 0) calInoutprofitContPersent = "+" + calInoutprofitContPersent + "%";
+		else calInoutprofitContPersent = (isNaN(calInoutprofitContPersent)) ? "0%" : calInoutprofitContPersent + "%";
+
+		html += "<div>영업기회 총 계</div>";
+		html += "<div class=\"inoutSoppTotal\">";
+		html += "<div style=\"text-align: center;\">매입 합계</div>";
+		html += "<div style=\"text-align: right;\">" + calInSoppTotal.toLocaleString("en-US") + "</div>";
+		html += "<div style=\"text-align: center;\">매출 합계</div>";
+		html += "<div style=\"text-align: right;\">" + calOutSoppTotal.toLocaleString("en-US") + "</div>";
+		html += "<div style=\"text-align: center;\">이익 합계</div>";
+		html += "<div style=\"text-align: right;\">" + calInoutProfitSoppTotal + "</div>";
+		html += "<div style=\"text-align: center;\">이익률</div>";
+		html += "<div style=\"text-align: right;\">" + calInoutprofitSoppPersent + "</div>";
+		html += "</div>";
+
+		html += "<div>계약 총 계</div>";
+		html += "<div class=\"inoutContTotal\">";
+		html += "<div style=\"text-align: center;\">매입 합계</div>";
+		html += "<div style=\"text-align: right;\">" + calInContTotal.toLocaleString("en-US") + "</div>";
+		html += "<div style=\"text-align: center;\">매출 합계</div>";
+		html += "<div style=\"text-align: right;\">" + calOutContTotal.toLocaleString("en-US") + "</div>";
+		html += "<div style=\"text-align: center;\">이익 합계</div>";
+		html += "<div style=\"text-align: right;\">" + calInoutProfitContTotal + "</div>";
+		html += "<div style=\"text-align: center;\">이익률</div>";
+		html += "<div style=\"text-align: right;\">" + calInoutprofitContPersent + "</div>";
+		html += "</div>";
+
+		createDiv.innerHTML = html;
+		createDiv.className = "inoutTotalContents tabPage";
+		orderSalesContainer.append(createDiv);
 	}
 
 	listAllCheck(thisEle) {
@@ -5840,8 +6804,426 @@ class OrderSalesSet {
 
 //수주판매보고 crud
 class OrderSales {
-	constructor(){
+	constructor(getData){
 		CommonDatas.Temps.orderSales = this;
+
+		if (getData !== undefined) {
+			this.getData = getData;
+			this.soppNo = getData.soppNo;
+			this.compNo = getData.compNo;
+			this.userNo = getData.userNo;
+			this.custNo = getData.custNo;
+			this.contNo = getData.contNo;
+			this.custMemberNo = getData.custMemberNo;
+			this.ptncNo = getData.ptncNo;
+			this.ptncMemberNo = getData.ptncMemberNo;
+			this.buyrNo = getData.buyrNo;
+			this.buyrMemberNo = getData.buyrMemberNo;
+			this.cntrctMth = getData.cntrctMth;
+			this.soppTitle = getData.soppTitle;
+			this.soppDesc = getData.soppDesc;
+			this.soppTargetAmt = getData.soppTargetAmt;
+			this.soppTargetDate = getData.soppTargetDate;
+			this.maintenance_S = getData.maintenance_S;
+			this.maintenance_E = getData.maintenance_E;
+			this.soppType = getData.soppType;
+			this.soppStatus = getData.soppStatus;
+			this.soppSrate = getData.soppSrate;
+			this.soppSource = getData.soppSource;
+			this.sopp2Desc = getData.sopp2Desc;
+			this.sopp2regDatetime = getData.sopp2regDatetime;
+			this.businessType = getData.businessType;
+			this.op_priority = getData.op_priority;
+			this.regDatetime = getData.regDatetime;
+			this.modDatetime = getData.modDatetime;
+			this.attrib = getData.attrib;
+			this.productNo = getData.productNo;
+			this.maintenanceTarget = getData.maintenanceTarget;
+			this.secondUserNo = getData.secondUserNo;
+			this.categories = getData.categories;
+		} else {
+			this.soppNo = 0;
+			this.compNo = 0;
+			this.userNo = 0;
+			this.custNo = 0;
+			this.contNo = 0;
+			this.custMemberNo = 0;
+			this.ptncNo = 0;
+			this.ptncMemberNo = 0;
+			this.buyrNo = 0;
+			this.buyrMemberNo = 0;
+			this.cntrctMth = 0;
+			this.soppTitle = "";
+			this.soppDesc = "";
+			this.soppTargetAmt = 0;
+			this.soppTargetDate = "";
+			this.maintenance_S = "";
+			this.maintenance_E = "";
+			this.soppType = 0;
+			this.soppStatus = "";
+			this.soppSrate = "";
+			this.soppSource = 0;
+			this.sopp2Desc = "";
+			this.sopp2regDatetime = "";
+			this.businessType = "";
+			this.op_priority = "";
+			this.regDatetime = "";
+			this.modDatetime = "";
+			this.attrib = "";
+			this.productNo = 0;
+			this.maintenanceTarget = "";
+			this.secondUserNo = 0;
+			this.categories = "";
+		}
+	}
+
+	//수주판매보고 상세보기
+	detail() {
+		let html = "";
+		let setDate, soppTargetDate, maintenance_S, maintenance_E, datas, dataArray, notIdArray, splitCategories;
+		storage.categoryArr = [];
+		
+		if(this.categories !== undefined && this.categories !== null){
+			splitCategories = this.categories.split(",");
+			
+			for(let i = 0; i < splitCategories.length; i++){
+				CommonDatas.makeCategories(splitCategories[i]);
+			}
+		}
+
+		CommonDatas.detailSetFormList(this.getData);
+
+		let gridList = document.getElementsByClassName("gridList")[0];
+		let containerTitle = document.getElementById("containerTitle");
+		let detailBackBtn = document.getElementsByClassName("detailBackBtn")[0];
+
+		setDate = CommonDatas.dateDis(new Date(this.soppTargetDate).getTime());
+		soppTargetDate = CommonDatas.dateFnc(setDate);
+
+		setDate = CommonDatas.dateDis(new Date(this.maintenance_S).getTime());
+		maintenance_S = CommonDatas.dateFnc(setDate);
+
+		setDate = CommonDatas.dateDis(new Date(this.maintenance_E).getTime());
+		maintenance_E = CommonDatas.dateFnc(setDate);
+
+		notIdArray = ["userNo", "categories"];
+		datas = ["userNo", "secondUserNo", "custNo", "cip", "buyrNo"];
+
+		dataArray = [
+			{
+				"title": "담당자(*)",
+				"elementId": "userNo",
+				"complete": "user",
+				"keyup": "CommonDatas.addAutoComplete(this);",
+				"onClick": "CommonDatas.addAutoComplete(this);",
+				"value": (CommonDatas.emptyValuesCheck(this.userNo)) ? "" : storage.user[this.userNo].userName,
+			},
+			{
+				"title": "(부)담당자(*)",
+				"elementId": "secondUserNo",
+				"complete": "user",
+				"keyup": "CommonDatas.addAutoComplete(this);",
+				"onClick": "CommonDatas.addAutoComplete(this);",
+				"value": (CommonDatas.emptyValuesCheck(this.secondUserNo)) ? "" : storage.user[this.secondUserNo].userName,
+			},
+			{
+				"title": "매출처(*)",
+				"elementId": "custNo",
+				"complete": "customer",
+				"keyup": "CommonDatas.addAutoComplete(this);",
+				"onClick": "CommonDatas.addAutoComplete(this);",
+				"value": (CommonDatas.emptyValuesCheck(this.custNo)) ? "" : storage.customer[this.custNo].custName,
+			},
+			{
+				"title": "매출처 담당자",
+				"complete": "cip",
+				"keyup": "CommonDatas.addAutoComplete(this);",
+				"onClick": "CommonDatas.addAutoComplete(this);",
+				"elementId": "custMemberNo",
+				"value": (CommonDatas.emptyValuesCheck(this.custMemberNo)) ? "" : storage.cip[this.custMemberNo].name,
+			},
+			{
+				"title": "엔드유저(*)",
+				"elementId": "buyrNo",
+				"complete": "customer",
+				"keyup": "CommonDatas.addAutoComplete(this);",
+				"onClick": "CommonDatas.addAutoComplete(this);",
+				"value": (CommonDatas.emptyValuesCheck(this.buyrNo)) ? "" : storage.customer[this.buyrNo].custName,
+			},
+			{
+				"title": "진행단계(*)",
+				"selectValue": [
+					{
+						"key": "10178",
+						"value": "영업정보파악",
+					},
+					{
+						"key": "10179",
+						"value": "초기접촉",
+					},
+					{
+						"key": "10180",
+						"value": "제안서제출 및 PT",
+					},
+					{
+						"key": "10181",
+						"value": "견적서 제출",
+					},
+				],
+				"type": "select",
+				"elementId": "soppStatus",
+			},
+			{
+				"title": "가능성",
+				"elementId": "soppSrate",
+				"value": (CommonDatas.emptyValuesCheck(this.soppSrate)) ? "" : this.soppSrate,
+			},
+			{
+				"title": "계약구분(*)",
+				"selectValue": [
+					{
+						"key": "",
+						"value": "선택",
+					},
+					{
+						"key": "10247",
+						"value": "판매계약",
+					},
+					{
+						"key": "10248",
+						"value": "유지보수",
+					},
+					{
+						"key": "10254",
+						"value": "임대계약",
+					},
+				],
+				"type": "select",
+				"elementId": "cntrctMth",
+				"onChange": "CommonDatas.Temps.soppSet.cntrctMthChange(this);",
+			},
+			{
+				"title": "매출예정일",
+				"elementId": "soppTargetDate",
+				"type": "date",
+				"value": soppTargetDate,
+			},
+			{
+				"title": "판매방식(*)",
+				"selectValue": [
+					{
+						"key": "",
+						"value": "선택",
+					},
+					{
+						"key": "10173",
+						"value": "조달직판",
+					},
+					{
+						"key": "10174",
+						"value": "조달간판",
+					},
+					{
+						"key": "10175",
+						"value": "조달대행",
+					},
+					{
+						"key": "10176",
+						"value": "직접판매",
+					},
+					{
+						"key": "10218",
+						"value": "간접판매",
+					},
+					{
+						"key": "10255",
+						"value": "기타",
+					},
+				],
+				"type": "select",
+				"elementId": "soppType",
+			},
+			{
+				"title": "예상매출액",
+				"elementId": "soppTargetAmt",
+				"keyup": "CommonDatas.inputNumberFormat(this);",
+				"col": 2,
+				"value": (CommonDatas.emptyValuesCheck(this.soppTargetAmt)) ? "" : this.soppTargetAmt.toLocaleString("en-US"),
+			},
+			{
+				"title": "카테고리<br />(제품회사명)",
+				"complete": "categories",
+				"keyup": "CommonDatas.addAutoComplete(this);",
+				"onClick": "CommonDatas.addAutoComplete(this);",
+			},
+			{
+				"title": "카테고리 선택 시<br />자동 입력(*)",
+				"elementId": "categories",
+				"col": 2,
+				"value": (CommonDatas.emptyValuesCheck(this.categories)) ? "" : this.categories,
+			},
+			{
+				"title": "카테고리 삭제<br />선택 시 삭제",
+				"selectValue": [
+					{
+						"key": "",
+						"value": "선택",
+					},
+				],
+				"type": "select",
+			},
+			{
+				"title": "유지보수대상(*)",
+				"selectValue": [
+					{
+						"key": "N",
+						"value": "No",
+					},
+					{
+						"key": "Y",
+						"value": "Yes",
+					},
+				],
+				"type": "select",
+				"elementId": "maintenanceTarget",
+				"col": 2,
+			},
+			{
+				"title": "유지보수 시작일<br />유지보수 계약 시(*)",
+				"elementId": "maintenance_S",
+				"type": "date",
+				"value": maintenance_S,
+			},
+			{
+				"title": "유지보수 종료일<br />유지보수 계약 시(*)",
+				"elementId": "maintenance_E",
+				"type": "date",
+				"value": maintenance_E,
+			},
+			{
+				"title": "영업기회명(*)",
+				"elementId": "soppTitle",
+				"col": 4,
+				"value": (CommonDatas.emptyValuesCheck(this.soppTitle)) ? "" : this.soppTitle,
+			},
+			{
+				"title": "내용",
+				"elementId": "soppDesc",
+				"type": "textarea",
+				"col": 4,
+				"value": (CommonDatas.emptyValuesCheck(this.soppDesc)) ? "" : this.soppDesc.replaceAll("\"", "'"),
+			}
+		];
+
+		html = CommonDatas.detailViewForm(dataArray);
+		let createGrid = document.createElement("div");
+		createGrid.className = "defaultFormContainer";
+		createGrid.innerHTML = html;
+		gridList.after(createGrid);
+		containerTitle.innerText = this.soppTitle;
+		let hideArr = ["gridList", "listRange", "listSearchInput", "searchContainer", "pageContainer", "addPdfForm"];
+		let showArr = ["defaultFormContainer", "crudAddBtn"];
+		CommonDatas.setViewContents(hideArr, showArr);
+		detailBackBtn.style.display = "flex";
+		CommonDatas.detailTrueDatas(datas);
+
+		let tabArrays = [
+			{
+				"text": "기본정보",
+				"id": "tabDefaultPage",
+				"key": "tabDefault",
+				"class": "tabRadio",
+				"onChange": "let soppSet = new SoppSet(); soppSet.detailRadioChange(this);",
+			},
+			{
+				"text": "매입매출내역",
+				"id": "tabInoutSoppPage",
+				"key": "tabInoutSopp",
+				"class": "tabRadio",
+				"onChange": "let soppSet = new SoppSet(); soppSet.detailRadioChange(this);",
+			},
+			{
+				"text": "견적내역",
+				"id": "tabEstimatePage",
+				"key": "tabEstimate",
+				"class": "tabRadio",
+				"onChange": "let soppSet = new SoppSet(); soppSet.detailRadioChange(this);",
+			},
+			{
+				"text": "파일첨부",
+				"id": "tabFileUploadPage",
+				"key": "tabFileUpload",
+				"class": "tabRadio",
+				"onChange": "let soppSet = new SoppSet(); soppSet.detailRadioChange(this);",
+			},
+			{
+				"text": "기술지원내역",
+				"id": "tabTechPage",
+				"key": "tabTech",
+				"class": "tabRadio",
+				"onChange": "let soppSet = new SoppSet(); soppSet.detailRadioChange(this);",
+			},
+			{
+				"text": "영업활동내역",
+				"id": "tabSalesPage",
+				"key": "tabSales",
+				"class": "tabRadio",
+				"onChange": "let soppSet = new SoppSet(); soppSet.detailRadioChange(this);",
+			}
+		];
+
+		CommonDatas.setDetailTabs(tabArrays);
+
+		let crudAddBtn = document.getElementsByClassName("crudAddBtn")[0];
+		crudAddBtn.setAttribute("onclick", "let orderSales = new OrderSales(); orderSales.singleOrderSalesApp(this);");
+		crudAddBtn.dataset.id = this.soppNo;
+		crudAddBtn.dataset.title = this.soppTitle + " (자동생성)";
+		crudAddBtn.innerText = "승인";
+
+		let crudUpdateBtn = document.getElementsByClassName("crudUpdateBtn")[0];
+		crudUpdateBtn.setAttribute("onclick", "let orderSales = new OrderSales(); orderSales.singleOrderSalesCom(this);");
+		crudUpdateBtn.dataset.id = this.soppNo;
+		crudUpdateBtn.innerText = "반려";
+	
+		setTimeout(() => {
+			let categories = document.getElementById("categories");
+			let categorySelect = categories.parentElement.parentElement.nextElementSibling.children[1].children[0];
+			let defaultFormContainer = document.getElementsByClassName("defaultFormContainer")[0];
+			
+			if(this.categories !== undefined && this.categories !== null){
+				CommonDatas.makeCategoryOptions(categorySelect, "categories");
+			}
+			
+			document.getElementById("soppStatus").value = this.soppStatus;
+			document.getElementById("cntrctMth").value = this.cntrctMth;
+			document.getElementById("soppType").value = this.soppType;
+			
+			if(storage.formList.soppStatus === "10182" || storage.formList.soppStatus === "10183"){
+				let soppStatus = document.getElementById("soppStatus");
+				soppStatus.innerHTML = "";
+				let createOption = document.createElement("option");
+				createOption.innerText = "계약중";
+				createOption.value = "10182";
+				createOption.selected = true;
+				soppStatus.append(createOption);
+			}else if(storage.formList.soppStatus === "10185") document.getElementById("soppStatus").value = "10178";
+
+			ckeditor.config.readOnly = true;
+			window.setTimeout(setEditor(defaultFormContainer), 100);
+		}, 200);
+		
+		setTimeout(() => {
+			let soppSet = new SoppSet();
+			let orderSalesSet = new OrderSalesSet();
+			orderSalesSet.drawInoutForm();
+			orderSalesSet.drawInoutSoppList();
+			orderSalesSet.drawInoutContList();
+			soppSet.drawEstmVerList();
+			orderSalesSet.drawSoppFileUpload();
+			orderSalesSet.drawSoppTechList();
+			orderSalesSet.drawSoppSalesList();
+			orderSalesSet.inoutTotalSet();
+		}, 700);
 	}
 
 	//수주판매보고 승인 함수
@@ -5916,6 +7298,61 @@ class OrderSales {
 					msg.set("반려되었습니다.");
 				}
 			}
+		} else return false;
+	}
+
+	//수주판매보고 상세 승인 함수
+	singleOrderSalesApp(thisEle){
+		if(confirm("승인하시겠습니까?")){
+			let data = {};
+			data.soppNo = thisEle.dataset.id;
+			data.contTitle = thisEle.dataset.title;
+			data = JSON.stringify(data);
+			data = cipher.encAes(data);
+
+			axios.post("/api/cont/orderSalesApp", data, {
+				headers: { "Content-Type": "text/plain" }
+			}).then((response) => {
+				if (response.data.result === "ok") {
+					location.reload();
+					msg.set("승인되었습니다.");
+				}else{
+					msg.set("승인 중 에러가 발생하였습니다.");
+					return false;
+				}
+			}).catch((error) => {
+				msg.set("승인 중 에러가 발생하였습니다.\n" + error);
+				console.log(error);
+				return false;
+			});
+
+		} else return false;
+	} 
+
+	//수주판매보고 상세 반려 함수
+	singleOrderSalesCom(thisEle){
+		if(confirm("반려하시겠습니까?")){
+			let data = {};
+			data.soppNo = thisEle.dataset.id;
+			data = JSON.stringify(data);
+			data = cipher.encAes(data);
+
+			axios.put("/api/cont/orderSalesCom", data, {
+				headers: { "Content-Type": "text/plain" }
+			}).then((response) => {
+				if (response.data.result === "ok") {
+					location.reload();
+					msg.set("반려되었습니다.");
+				}else{
+					msg.set("반려 중 에러가 발생하였습니다.");
+					return false;
+				}
+			}).catch((error) => {
+				msg.set("반려 중 에러가 발생하였습니다.\n" + error);
+				console.log(error);
+				return false;
+			});
+
 		} else return false;
 	}
 }

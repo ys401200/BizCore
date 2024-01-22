@@ -71,7 +71,7 @@ public interface SoppMapper {
     public int soppStatusUpdate(@Param("sopp") Sopp sopp);
 
     @Update("UPDATE swc_sopp SET soppStatus = '10183', modDatetime = now() WHERE soppNo = #{soppNo} AND compNo = #{compNo}")
-    public int contOrderSalesUpdate(@Param("soppNo") int soppNo);
+    public int contOrderSalesUpdate(@Param("soppNo") int soppNo, @Param("compNo") int compNo);
 
     @Update("UPDATE swc_sopp SET soppStatus = '10185', modDatetime = now() WHERE soppNo = #{cont.soppNo} AND compNo = #{cont.compNo}")
     public int orderSalesCom(@Param("cont") Cont cont);
