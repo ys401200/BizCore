@@ -39,7 +39,7 @@
 <script src="/js/common_sh.js"></script>
 <script src="/js/common_bi.js"></script>
 
-<title>BizCore 2024.01.23</title>
+<title>BizCore 2024.01.24</title>
 </head>
 <body>
 <input type="hidden" id="pathName" value="${getPathName}" />
