@@ -991,6 +991,13 @@ function getNoticeList() {
 				result = cipher.decAes(result.data);
 				result = JSON.parse(result);
 
+				let myDatas = [];
+
+				for(let i = 0; i < result.length; i++){
+					let item = result[i];
+					if(item.userNo == storage.my) myDatas.push(item);
+				}
+
 				header = [
 					{
 						"title" : "등록일",
@@ -1007,7 +1014,7 @@ function getNoticeList() {
 				];
 
 				
-				if (result === "" || result.length == 0) {
+				if (myDatas === "" || myDatas.length == 0) {
 					str = [
 						{
 							"setData": undefined,
@@ -1018,12 +1025,12 @@ function getNoticeList() {
 					
 					data.push(str);
 				} else {
-					if(result.length < gridListLength){
-						gridListLength = result.length;
+					if(myDatas.length < gridListLength){
+						gridListLength = myDatas.length;
 					}
 
 					for (let i = 0; i < gridListLength; i++) {
-						disDate = CommonDatas.dateDis(new Date(result[i].regDate).getTime());
+						disDate = CommonDatas.dateDis(new Date(myDatas[i].regDate).getTime());
 						setDate = CommonDatas.dateFnc(disDate, "mm-dd");
 	
 						str = [
@@ -1032,17 +1039,17 @@ function getNoticeList() {
 								"align" : "center",
 							},
 							{
-								"setData": result[i].noticeTitle,
+								"setData": myDatas[i].noticeTitle,
 								"align" : "left",
 							},
 							{
-								"setData": storage.user[result[i].userNo].userName,
+								"setData": storage.user[myDatas[i].userNo].userName,
 								"align" : "center",
 							},
 						];
 	
 						dataFunc.push("rootDetailView(\"notice\", this);");
-						ids.push(result[i].noticeNo);
+						ids.push(myDatas[i].noticeNo);
 						data.push(str);
 					}
 	
@@ -1074,7 +1081,15 @@ function getScheduleList() {
 			if (result.result === "ok") {
 				result = cipher.decAes(result.data);
 				result = JSON.parse(result);
-				result = result.sort(function(a, b){return new Date(b.regDatetime).getTime() - new Date(a.regDatetime).getTime();});
+				let myDatas = [];
+
+				for(let i = 0; i < result.length; i++){
+					let item = result[i];
+					
+					if(item.userNo == storage.my) myDatas.push(item);
+				}
+
+				myDatas = myDatas.sort(function(a, b){return new Date(b.regDatetime).getTime() - new Date(a.regDatetime).getTime();});
 
 				header = [
 					{
@@ -1103,7 +1118,7 @@ function getScheduleList() {
 					},
 				];
 
-				if (result === "" || result.length == 0) {
+				if (myDatas === "" || myDatas.length == 0) {
 					str = [
 						{
 							"setData": undefined,
@@ -1114,25 +1129,25 @@ function getScheduleList() {
 					
 					data.push(str);
 				} else {
-					if(result.length < gridListLength){
-						gridListLength = result.length;
+					if(myDatas.length < gridListLength){
+						gridListLength = myDatas.length;
 					}
 	
 					for (let i = 0; i < gridListLength; i++) {
 						let title, userName, fromDate, fromSetDate, toDate, toSetDate, desc, disDate;
 						
-						title = (result[i].title === null || result[i].title === "" || result[i].title === undefined) ? "없음" : result[i].title;
-						userName = (result[i].userNo == 0 || result[i].userNo === null || result[i].userNo === undefined) ? "없음" : storage.user[result[i].userNo].userName;
-						desc = (result[i].desc === null || result[i].desc === "" || result[i].desc === undefined) ? "없음" : result[i].desc;
+						title = (myDatas[i].title === null || myDatas[i].title === "" || myDatas[i].title === undefined) ? "없음" : myDatas[i].title;
+						userName = (myDatas[i].userNo == 0 || myDatas[i].userNo === null || myDatas[i].userNo === undefined) ? "없음" : storage.user[myDatas[i].userNo].userName;
+						desc = (myDatas[i].desc === null || myDatas[i].desc === "" || myDatas[i].desc === undefined) ? "없음" : myDatas[i].desc;
 						desc = desc.replaceAll("<p>", "").replaceAll("</p>", "").replaceAll("<br />", "");
 	
-						disDate = CommonDatas.dateDis(new Date(result[i].regDatetime).getTime());
+						disDate = CommonDatas.dateDis(new Date(myDatas[i].regDatetime).getTime());
 						disDate = CommonDatas.dateFnc(disDate, "mm-dd");
 						
-						fromDate = CommonDatas.dateDis(new Date(result[i].schedFrom).getTime());
+						fromDate = CommonDatas.dateDis(new Date(myDatas[i].schedFrom).getTime());
 						fromSetDate = CommonDatas.dateFnc(fromDate, "mm-dd");
 						
-						toDate = CommonDatas.dateDis(new Date(result[i].schedTo).getTime());
+						toDate = CommonDatas.dateDis(new Date(myDatas[i].schedTo).getTime());
 						toSetDate = CommonDatas.dateFnc(toDate, "mm-dd");
 				
 						str = [
@@ -1145,7 +1160,7 @@ function getScheduleList() {
 								"align" : "center",
 							},
 							{
-								"setData": storage.code.etc[result[i].schedType],
+								"setData": storage.code.etc[myDatas[i].schedType],
 								"align" : "center",
 							},
 							{
@@ -1163,8 +1178,8 @@ function getScheduleList() {
 						];
 						
 						dataFunc.push("rootDetailView(\"schedule\", this);");
-						ids.push(result[i].no);
-						dataJob.push(storage.code.etc[result[i].schedType]);
+						ids.push(myDatas[i].no);
+						dataJob.push(storage.code.etc[myDatas[i].schedType]);
 						data.push(str);
 					}
 				}
@@ -1395,6 +1410,8 @@ function getSoppList() {
 				result = cipher.decAes(result.data);
 				result = JSON.parse(result);
 				
+				let myDatas = [];
+
 				for(let i = 0; i < result.length; i++){
 					let item = result[i];
 
@@ -1405,10 +1422,11 @@ function getSoppList() {
 					}
 				}
 
-				storage.rootSoppAllList = result;
-				storage.rootSoppList = [];
-				
-				CommonDatas.disListSet(storage.rootSoppAllList, storage.rootSoppList, 3, "regDatetime");
+				for(let i = 0; i < result.length; i++){
+					let item = result[i];
+
+					if(item.userNo == storage.my) myDatas.push(item);
+				}
 
 				header = [
 					{
@@ -1449,68 +1467,81 @@ function getSoppList() {
 					},
 				];
 
-				if(storage.rootSoppList.length < gridListLength){
-					gridListLength = storage.rootSoppList.length;
-				}
-
-				for (let i = 0; i < gridListLength; i++) {
-					let soppType, cntrctMth, soppTitle, custName, endUser, userName, soppTargetAmt, soppStatus;
-					
-					disDate = CommonDatas.dateDis(new Date(storage.rootSoppList[i].regDatetime).getTime());
-					setDate = CommonDatas.dateFnc(disDate, "mm-dd");
-
-					soppType = (storage.rootSoppList[i].soppType === null || storage.rootSoppList[i].soppType === "") ? "없음" : storage.code.etc[storage.rootSoppList[i].soppType];
-					cntrctMth = (storage.rootSoppList[i].cntrctMth === null || storage.rootSoppList[i].cntrctMth === "") ? "없음" : storage.code.etc[storage.rootSoppList[i].cntrctMth];
-					soppTitle = (storage.rootSoppList[i].soppTitle === null || storage.rootSoppList[i].soppTitle === "") ? "제목 없음" : storage.rootSoppList[i].soppTitle;
-					custName = (storage.rootSoppList[i].custNo === null || storage.rootSoppList[i].custNo == 0) ? "없음" : storage.customer[storage.rootSoppList[i].custNo].custName;
-					buyrName = (storage.rootSoppList[i].buyrNo === null || storage.rootSoppList[i].buyrNo == 0) ? "없음" : storage.customer[storage.rootSoppList[i].buyrNo].custName;
-					userName = (storage.rootSoppList[i].userNo === null || storage.rootSoppList[i].userNo == 0) ? "없음" : storage.user[storage.rootSoppList[i].userNo].userName;
-					soppTargetAmt = (storage.rootSoppList[i].soppTargetAmt === null || storage.rootSoppList[i].soppTargetAmt == 0) ? 0 : CommonDatas.numberFormat(storage.rootSoppList[i].soppTargetAmt);
-					soppStatus = (storage.rootSoppList[i].soppStatus === null || storage.rootSoppList[i].soppStatus === "") ? "없음" : storage.code.etc[storage.rootSoppList[i].soppStatus];
-			
+				if (myDatas === "" || myDatas.length == 0) {
 					str = [
 						{
-							"setData": setDate,
-							"align" : "center",
-						},
-						{
-							"setData": soppTitle,
-							"align" : "left",
-						},
-						{
-							"setData": userName,
-							"align" : "center",
-						},
-						{
-							"setData": soppType,
-							"align" : "center",
-						},
-						{
-							"setData": cntrctMth,
-							"align" : "center",
-						},
-						{
-							"setData": custName,
-							"align" : "center",
-						},
-						{
-							"setData": buyrName,
-							"align" : "center",
-						},
-						{
-							"setData": soppTargetAmt,
-							"align" : "right",
-						},
-						{
-							"setData": soppStatus,
-							"align" : "center",
+							"setData": undefined,
+							"align": "center",
+							"col": 9,
 						},
 					];
-
-					dataFunc.push("rootDetailView(\"sopp\", this);");
-					ids.push(storage.rootSoppList[i].soppNo);
+					
 					data.push(str);
+				} else {
+					if(myDatas.length < gridListLength){
+						gridListLength = myDatas.length;
+					}
+
+					for (let i = 0; i < gridListLength; i++) {
+						let soppType, cntrctMth, soppTitle, custName, endUser, userName, soppTargetAmt, soppStatus;
+						
+						disDate = CommonDatas.dateDis(new Date(myDatas[i].regDatetime).getTime());
+						setDate = CommonDatas.dateFnc(disDate, "mm-dd");
+
+						soppType = (myDatas[i].soppType === null || myDatas[i].soppType === "") ? "없음" : storage.code.etc[myDatas[i].soppType];
+						cntrctMth = (myDatas[i].cntrctMth === null || myDatas[i].cntrctMth === "") ? "없음" : storage.code.etc[myDatas[i].cntrctMth];
+						soppTitle = (myDatas[i].soppTitle === null || myDatas[i].soppTitle === "") ? "제목 없음" : myDatas[i].soppTitle;
+						custName = (myDatas[i].custNo === null || myDatas[i].custNo == 0) ? "없음" : storage.customer[myDatas[i].custNo].custName;
+						buyrName = (myDatas[i].buyrNo === null || myDatas[i].buyrNo == 0) ? "없음" : storage.customer[myDatas[i].buyrNo].custName;
+						userName = (myDatas[i].userNo === null || myDatas[i].userNo == 0) ? "없음" : storage.user[myDatas[i].userNo].userName;
+						soppTargetAmt = (myDatas[i].soppTargetAmt === null || myDatas[i].soppTargetAmt == 0) ? 0 : CommonDatas.numberFormat(myDatas[i].soppTargetAmt);
+						soppStatus = (myDatas[i].soppStatus === null || myDatas[i].soppStatus === "") ? "없음" : storage.code.etc[myDatas[i].soppStatus];
+				
+						str = [
+							{
+								"setData": setDate,
+								"align" : "center",
+							},
+							{
+								"setData": soppTitle,
+								"align" : "left",
+							},
+							{
+								"setData": userName,
+								"align" : "center",
+							},
+							{
+								"setData": soppType,
+								"align" : "center",
+							},
+							{
+								"setData": cntrctMth,
+								"align" : "center",
+							},
+							{
+								"setData": custName,
+								"align" : "center",
+							},
+							{
+								"setData": buyrName,
+								"align" : "center",
+							},
+							{
+								"setData": soppTargetAmt,
+								"align" : "right",
+							},
+							{
+								"setData": soppStatus,
+								"align" : "center",
+							},
+						];
+
+						dataFunc.push("rootDetailView(\"sopp\", this);");
+						ids.push(myDatas[i].soppNo);
+						data.push(str);
+					}
 				}
+
 				CommonDatas.createGrid(container, header, data, ids, dataJob, dataFunc, idName);
 			} else {
 				msg.set("등록된 영업기회가 없습니다");
@@ -1536,10 +1567,14 @@ function getContractList() {
 			if (result.result === "ok") {
 				result = cipher.decAes(result.data);
 				result = JSON.parse(result);
-				storage.rootContAllList = result;
-				storage.rootContList = [];
-				
-				CommonDatas.disListSet(storage.rootContAllList, storage.rootContList, 3, "regDatetime");
+
+				let myDatas = [];
+
+				for(let i = 0; i < result.length; i++){
+					let item = result[i];
+
+					if(item.userNo == storage.my) myDatas.push(item);
+				}
 
 				header = [
 					{
@@ -1584,87 +1619,101 @@ function getContractList() {
 					},
 				];
 
-				if(storage.rootContList.length < gridListLength){
-					gridListLength = storage.rootContList.length;
-				}
-			
-				for (let i = 0; i < gridListLength; i++) {
-					let contType, cntrctMth, contTitle, buyrName, contAmt, net_profit, userName, startMaintenance, endMaintenance, contOrddate, setDate;
-		
-					contType = (storage.rootContList[i].contType === null || storage.rootContList[i].contType === "") ? "없음" : storage.code.etc[storage.rootContList[i].contType];
-					cntrctMth = (storage.rootContList[i].cntrctMth === null || storage.rootContList[i].cntrctMth === "") ? "없음" : storage.code.etc[storage.rootContList[i].cntrctMth];
-					contTitle = (storage.rootContList[i].contTitle === null || storage.rootContList[i].contTitle === "") ? "제목 없음" : storage.rootContList[i].contTitle;
-					buyrName = (storage.rootContList[i].buyrNo === null || storage.rootContList[i].buyrNo == 0) ? "없음" : storage.customer[storage.rootContList[i].buyrNo].custName;
-					contAmt = (storage.rootContList[i].contAmt == 0 || storage.rootContList[i].contAmt === null) ? 0 : CommonDatas.numberFormat(storage.rootContList[i].contAmt);
-					net_profit = (storage.rootContList[i].net_profit == 0 || storage.rootContList[i].net_profit === null) ? 0 : CommonDatas.numberFormat(storage.rootContList[i].net_profit);
-					userName = (storage.rootContList[i].userName === null || storage.rootContList[i].userName == 0) ? "없음" : storage.user[storage.rootContList[i].userNo].userName;
-					
-					if(cntrctMth === "유지보수"){
-						disDate = CommonDatas.dateDis(new Date(storage.rootContList[i].paymaintSdate).getTime());
-						startMaintenance = (storage.rootContList[i].paymaintSdate === null || storage.rootContList[i].paymaintSdate === "") ? "" : CommonDatas.dateFnc(disDate, "yy-mm-dd");
-				
-						disDate = CommonDatas.dateDis(new Date(storage.rootContList[i].paymaintEdate).getTime());
-						endMaintenance = (storage.rootContList[i].paymaintEdate === null || storage.rootContList[i].paymaintEdate === "") ? "" : CommonDatas.dateFnc(disDate, "yy-mm-dd");
-					}else{
-						disDate = CommonDatas.dateDis(new Date(storage.rootContList[i].freemaintSdate).getTime());
-						startMaintenance = (storage.rootContList[i].freemaintSdate === null || storage.rootContList[i].freemaintSdate === "") ? "" : CommonDatas.dateFnc(disDate, "yy-mm-dd");
-				
-						disDate = CommonDatas.dateDis(new Date(storage.rootContList[i].freemaintEdate).getTime());
-						endMaintenance = (storage.rootContList[i].freemaintEdate === null || storage.rootContList[i].freemaintEdate === "") ? "" : CommonDatas.dateFnc(disDate, "yy-mm-dd");
-					}
-					
-					disDate = CommonDatas.dateDis(storage.rootContList[i].contOrddate);
-					contOrddate = CommonDatas.dateFnc(disDate, "mm-dd");
-
-					disDate = CommonDatas.dateDis(new Date(storage.rootContList[i].regDatetime).getTime());
-					setDate = CommonDatas.dateFnc(disDate, "mm-dd");
-
+				if (myDatas === "" || myDatas.length == 0) {
 					str = [
 						{
-							"setData": setDate,
-							"align" : "center",
-						},
-						{
-							"setData": startMaintenance + " ~ " + endMaintenance,
-							"align" : "center",
-						},
-						{
-							"setData": contTitle,
-							"align" : "left",
-						},
-						{
-							"setData": userName,
-							"align" : "center",
-						},
-						{
-							"setData": contType,
-							"align" : "center",
-						},
-						{
-							"setData": cntrctMth,
-							"align" : "center",
-						},
-						{
-							"setData": buyrName,
-							"align" : "center",
-						},
-						{
-							"setData": contAmt,
-							"align" : "right",
-						},
-						{
-							"setData": net_profit,
-							"align" : "right",
-						},
-						{
-							"setData": contOrddate,
-							"align" : "center",
+							"setData": undefined,
+							"align": "center",
+							"col": 10,
 						},
 					];
-
-					dataFunc.push("rootDetailView(\"cont\", this);");
-					ids.push(storage.rootContList[i].contNo);
+					
 					data.push(str);
+				} else {
+
+					if(myDatas.length < gridListLength){
+						gridListLength = myDatas.length;
+					}
+				
+					for (let i = 0; i < gridListLength; i++) {
+						let contType, cntrctMth, contTitle, buyrName, contAmt, net_profit, userName, startMaintenance, endMaintenance, contOrddate, setDate;
+			
+						contType = (myDatas[i].contType === null || myDatas[i].contType === "") ? "없음" : storage.code.etc[myDatas[i].contType];
+						cntrctMth = (myDatas[i].cntrctMth === null || myDatas[i].cntrctMth === "") ? "없음" : storage.code.etc[myDatas[i].cntrctMth];
+						contTitle = (myDatas[i].contTitle === null || myDatas[i].contTitle === "") ? "제목 없음" : myDatas[i].contTitle;
+						buyrName = (myDatas[i].buyrNo === null || myDatas[i].buyrNo == 0) ? "없음" : storage.customer[myDatas[i].buyrNo].custName;
+						contAmt = (myDatas[i].contAmt == 0 || myDatas[i].contAmt === null) ? 0 : CommonDatas.numberFormat(myDatas[i].contAmt);
+						net_profit = (myDatas[i].net_profit == 0 || myDatas[i].net_profit === null) ? 0 : CommonDatas.numberFormat(myDatas[i].net_profit);
+						userName = (myDatas[i].userName === null || myDatas[i].userName == 0) ? "없음" : storage.user[myDatas[i].userNo].userName;
+						
+						if(cntrctMth === "유지보수"){
+							disDate = CommonDatas.dateDis(new Date(myDatas[i].paymaintSdate).getTime());
+							startMaintenance = (myDatas[i].paymaintSdate === null || myDatas[i].paymaintSdate === "") ? "" : CommonDatas.dateFnc(disDate, "yy-mm-dd");
+					
+							disDate = CommonDatas.dateDis(new Date(myDatas[i].paymaintEdate).getTime());
+							endMaintenance = (myDatas[i].paymaintEdate === null || myDatas[i].paymaintEdate === "") ? "" : CommonDatas.dateFnc(disDate, "yy-mm-dd");
+						}else{
+							disDate = CommonDatas.dateDis(new Date(myDatas[i].freemaintSdate).getTime());
+							startMaintenance = (myDatas[i].freemaintSdate === null || myDatas[i].freemaintSdate === "") ? "" : CommonDatas.dateFnc(disDate, "yy-mm-dd");
+					
+							disDate = CommonDatas.dateDis(new Date(myDatas[i].freemaintEdate).getTime());
+							endMaintenance = (myDatas[i].freemaintEdate === null || myDatas[i].freemaintEdate === "") ? "" : CommonDatas.dateFnc(disDate, "yy-mm-dd");
+						}
+						
+						disDate = CommonDatas.dateDis(myDatas[i].contOrddate);
+						contOrddate = CommonDatas.dateFnc(disDate, "mm-dd");
+
+						disDate = CommonDatas.dateDis(new Date(myDatas[i].regDatetime).getTime());
+						setDate = CommonDatas.dateFnc(disDate, "mm-dd");
+
+						str = [
+							{
+								"setData": setDate,
+								"align" : "center",
+							},
+							{
+								"setData": startMaintenance + " ~ " + endMaintenance,
+								"align" : "center",
+							},
+							{
+								"setData": contTitle,
+								"align" : "left",
+							},
+							{
+								"setData": userName,
+								"align" : "center",
+							},
+							{
+								"setData": contType,
+								"align" : "center",
+							},
+							{
+								"setData": cntrctMth,
+								"align" : "center",
+							},
+							{
+								"setData": buyrName,
+								"align" : "center",
+							},
+							{
+								"setData": contAmt,
+								"align" : "right",
+							},
+							{
+								"setData": net_profit,
+								"align" : "right",
+							},
+							{
+								"setData": contOrddate,
+								"align" : "center",
+							},
+						];
+
+						dataFunc.push("rootDetailView(\"cont\", this);");
+						ids.push(myDatas[i].contNo);
+						data.push(str);
+					}
+
 				}
 				CommonDatas.createGrid(container, header, data, ids, dataJob, dataFunc, idName);
 			} else {

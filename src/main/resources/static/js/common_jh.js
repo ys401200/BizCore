@@ -5946,6 +5946,76 @@ class OrderSalesSet {
 		});
 	}
 
+	//수주판매보고 검색 버튼 클릭 함수
+	searchSubmit() {
+		let dataArray = [], resultArray, eachIndex = 0, user, title, cust, categories, soppType, cntrctMth, soppStatus, searchUser, searchTitle, searchCust, searchCategories, searchSoppType, searchCntrctMth, searchSoppStatus, searchDateFrom, keyIndex = 0, targetList;
+		searchUser = document.getElementById("searchUser");
+		searchTitle = document.getElementById("searchTitle");
+		searchCust = document.getElementById("searchCust");
+		searchCategories = document.getElementById("searchCategories");
+		searchSoppType = document.getElementById("searchSoppType");
+		searchCntrctMth = document.getElementById("searchCntrctMth");
+		searchSoppStatus = document.getElementById("searchSoppStatus");
+		searchDateFrom = (document.getElementById("searchDateFrom").value === "") ? "" : document.getElementById("searchDateFrom").value.replaceAll("-", "") + "#regDatetime" + document.getElementById("searchDateTo").value.replaceAll("-", "");
+		
+		CommonDatas.searchListSet("orderSalesList");
+		targetList = storage.orderSalesList;
+
+		for(let key in targetList[0]){
+			if(key === searchUser.dataset.key) user = "#" + keyIndex + "/" + searchUser.value;
+			else if(key === searchTitle.dataset.key) title = "#" + keyIndex + "/" + searchTitle.value;
+			else if(key === searchCust.dataset.key) cust = "#" + keyIndex + "/" + searchCust.value;
+			else if(key === searchCategories.dataset.key) categories = "#" + keyIndex + "/" + searchCategories.value;
+			else if(key === searchSoppType.dataset.key) soppType = "#" + keyIndex + "/" + searchSoppType.value;
+			else if(key === searchCntrctMth.dataset.key) cntrctMth = "#" + keyIndex + "/" + searchCntrctMth.value;
+			else if(key === searchSoppStatus.dataset.key) soppStatus = "#" + keyIndex + "/" + searchSoppStatus.value;
+			keyIndex++;
+		}
+
+		let searchValues = [user, title, cust, categories, soppType, cntrctMth, soppStatus, searchDateFrom];
+
+		for (let i = 0; i < searchValues.length; i++) {
+			if(searchValues[i] !== ""){
+				let tempArray = CommonDatas.searchDataFilter(targetList, searchValues[i], "multi", ["#regDatetime"]);
+	
+				for (let t = 0; t < tempArray.length; t++) {
+					dataArray.push(tempArray[t]);
+				}
+	
+				eachIndex++;
+			}
+		}
+		
+		resultArray = CommonDatas.searchMultiFilter(eachIndex, dataArray, targetList);
+
+		storage.searchDatas = resultArray;
+
+		if (storage.searchDatas.length == 0) {
+			msg.set("찾는 데이터가 없습니다.");
+			storage.searchDatas = storage.orderSalesList;
+		}
+
+		this.drawOrderSalesList();
+	}
+
+	//수주판매보고 단일 검색 keyup 이벤트
+	searchInputKeyup() {
+		let searchAllInput, tempArray, targetList;
+		searchAllInput = document.getElementById("searchAllInput").value;
+		CommonDatas.searchListSet("orderSalesList");
+		targetList = storage.orderSalesList;
+
+		tempArray = CommonDatas.searchDataFilter(targetList, searchAllInput, "input");
+
+		if (tempArray.length > 0) {
+			storage.searchDatas = tempArray;
+		} else {
+			storage.searchDatas = "";
+		}
+
+		this.drawOrderSalesList();
+	}
+
 	//수주판매보고 파일 내역 데이터 세팅 함수
 	orderSalesDetailFileListSet(id){
 		axios.get("/api/sopp/soppFile/" + id).then((response) => {
