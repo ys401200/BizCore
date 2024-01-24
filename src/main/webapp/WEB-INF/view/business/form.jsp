@@ -70,8 +70,8 @@
     <div class="pdfMainContainer">
         <div class="pdfMainContentHeader">
             <div>No</div>
-            <div>구분</div>
-            <div>품명/규격</div>
+            <div>품명</div>
+            <div>규격</div>
             <div>수량</div>
             <div>소비자가</div>
             <div>공급단가</div>
@@ -80,7 +80,7 @@
             <div>추가/삭제</div>
         </div>
         <div class="pdfMainContentAddBtns">
-            <button type="button" onclick="CommonDatas.Temps.estimateSet.addEstTitle(this);">타이틀추가</button>
+            <!-- <button type="button" onclick="CommonDatas.Temps.estimateSet.addEstTitle(this);">타이틀추가</button> -->
             <button type="button" onclick="CommonDatas.Temps.estimateSet.addEstItem(this);">항목추가</button>
             <button type="button" onclick="CommonDatas.Temps.estimateSet.removeEstItem(this);">항목제거</button>
         </div>

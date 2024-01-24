@@ -55,8 +55,8 @@
     <div class="pdfMainContainer">
         <div class="pdfMainContent">
             <div>No</div>
-            <div>구분</div>
-            <div>품명/규격</div>
+            <div>품명</div>
+            <div>규격</div>
             <div>수량</div>
             <div>소비자가</div>
             <div>공급단가</div>

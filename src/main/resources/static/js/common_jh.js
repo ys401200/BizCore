@@ -19183,6 +19183,27 @@ class UserSet{
 		user.detail();
 	}
 
+	drawUserList() {
+		let container, result, jsonData, containerTitle, job, header = [], data = [], ids = [], disDate, setData, str, fnc = [], pageContainer, hideArr, showArr, soppTargetDate;
+
+		if (storage.userList === undefined) {
+			msg.set("등록된 유저가 없습니다");
+		}
+		else {
+			if (storage.searchDatas === undefined) {
+				jsonData = storage.userList;
+			} else {
+				jsonData = storage.searchDatas;
+			}
+		}
+
+		result = CommonDatas.paging(jsonData.length, storage.currentPage, storage.articlePerPage);
+		containerTitle = document.getElementById("containerTitle");
+		pageContainer = document.getElementsByClassName("pageContainer")[0];
+		container = document.getElementsByClassName("gridList")[0];
+		hideArr = ["detailBackBtn", "crudUpdateBtn", ""]
+	}
+
 	//사용자설정 리스트 출력 함수
 	drawUserList() {
 		let container, result, jsonData, containerTitle, job, header = [], data = [], ids = [], disDate, setDate, str, fnc = [], pageContainer, hideArr, showArr, soppTargetDate;
@@ -19789,6 +19810,25 @@ class User{
 					},
 					{
 						"key": "EE0",
+						"value": "권한없음",
+					},
+				],
+				"type": "select",
+				"elementClass": "userKey",
+			},
+			{
+				"title": "재고조회(권한)",
+				"selectValue": [
+					{
+						"key": "JJ7",
+						"value": "읽기쓰기",
+					},
+					{
+						"key": "JJ5",
+						"value": "읽기전용",
+					},
+					{
+						"key": "JJ0",
 						"value": "권한없음",
 					},
 				],
@@ -21731,7 +21771,7 @@ class Common {
 	}
 
 	//상품 값 찾는 함수
-	getProductFind(value, type){
+	getProductFind(value, type) {
 		let result;
 		let flag = false;
 
@@ -21895,10 +21935,10 @@ class Common {
 		let replaceStr = [];
 		let formatStr = "";
 		thisEle.setAttribute("maxlength", 12);
-		
+	
 		for(let i = 0; i < thisEle.value.length; i++){
 			let strFlag = false;
-
+		
 			if(thisEle.value[i] !== " " && !regexp.test(thisEle.value[i])){
 				replaceStr.push(thisEle.value[i]);
 				strFlag = true;
@@ -21962,6 +22002,7 @@ class Common {
 			else if(storage.myUserKey.indexOf("CC0") > -1 && key === "sopp") item.style.display = "none";
 			else if(storage.myUserKey.indexOf("DD0") > -1 && key === "cont") item.style.display = "none";
 			else if(storage.myUserKey.indexOf("EE0") > -1 && key === "tech") item.style.display = "none";
+			else if(storage.myUserKey.indexOf("JJ0") > -1 && key === "store") item.style.display = "none";
 			else if(storage.myUserKey.indexOf("FF0") > -1 && key === "setting") item.style.display = "none";
 			else if(storage.myUserRole !== "ADMIN" && key === "orderSales") item.style.display = "none";
 		}
@@ -21985,6 +22026,9 @@ class Common {
 			location.href = "/";
 		}else if(storage.myUserKey.indexOf("EE0") > -1 && (pathName.indexOf("tech") > -1 || pathName.indexOf("store") > -1)){
 			alert("기술지원관리에 대한 읽기 권한이 없습니다.\n사용자 권한을 설정해주세요.");
+			location.href = "/";
+		}else if(storage.myUserKey.indexOf("JJ0") > -1 && pathName.indexOf("store") > -1){
+			alert("계약에 대한 읽기 권한이 없습니다.\n사용자 권한을 설정해주세요.");
 			location.href = "/";
 		}else if(storage.myUserRole !== "ADMIN" && storage.myUserKey.indexOf("FF0") > -1 && (pathName.indexOf("customer") > -1 || pathName.indexOf("product") > -1 || pathName.indexOf("category") > -1 || pathName.indexOf("goal") > -1 || pathName.indexOf("user") > -1)){
 			alert("설정에 대한 읽기 권한이 없습니다.\n사용자 권한을 설정해주세요.");
