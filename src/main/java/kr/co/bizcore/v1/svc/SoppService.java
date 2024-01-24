@@ -95,7 +95,8 @@ public class SoppService extends Svc {
 
     public int contOrderSalesUpdate(Cont cont){
         int soppNo = cont.getSoppNo();
-        return soppMapper.contOrderSalesUpdate(soppNo);
+        int compNo = cont.getCompNo();
+        return soppMapper.contOrderSalesUpdate(soppNo, compNo);
     }
 
     public int soppCopyContInsert(Cont cont, String maintenance_S, String maintenance_E){

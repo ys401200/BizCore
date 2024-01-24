@@ -86,6 +86,9 @@
             </div>
             <div class="gridList"></div>
             <div class="pageContainer"></div>
+            <div class="addPdfForm">
+				<jsp:include page="../business/form.jsp" />
+			</div>
         </div>
 	</div>
 </div>
