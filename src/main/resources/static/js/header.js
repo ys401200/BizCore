@@ -31,16 +31,16 @@ let promiseInit = function init() {
 					modal.noteHide();
 				}
 			});
-		
+
 			window.onpageshow = function(event) {
-				if ( event.persisted || (window.performance && window.performance.navigation.type == 2)) {
+								if ( event.persisted || (window.performance && window.performance.navigation.type == 2)) {
 					if(localStorage.getItem("loadSetPage") != null){
 						location.href = localStorage.getItem("loadSetPage");
 						localStorage.removeItem("loadSetPage");
-					}
+															}
 				}
 		  }
-		
+
 			// if (storage.customer === undefined || storage.code === undefined || storage.dept === undefined || storage.user === undefined) {
 			// 	window.setTimeout(addNoteContainer, 1500);
 			// } else {
@@ -56,8 +56,8 @@ let promiseInit = function init() {
 		
 			// getCustomer();
 			getCommonCode();
-			// getUserMap();
-			// getDeptMap();
+			getUserMap();
+			getDeptMap();
 			// setDeptTree();
 			// getBasicInfo();
 			// getUserRank();
@@ -878,7 +878,7 @@ function getCustomer() {
 	// 	customerData = sessionStorage.getItem("customerData");
 	// 	customerData = JSON.parse(customerData);
 	// 	storage.customer = customerData;
-	// 	console.log("[getUserMap] set customer data from sessionStorage.");
+		// 	console.log("[getUserMap] set customer data from sessionStorage.");
 	// } else {
 	// 	$.ajax({
 	// 		"url": url,

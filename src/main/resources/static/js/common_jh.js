@@ -23504,7 +23504,8376 @@ class Common {
 	}
 }
 
+//전자결제 시작
+//전자결제 셋팅 클래스
+class GwHomeSet {
+	constructor() {
+		CommonDatas.Temps.gwHomeSet = this;
+	}
 
+	drawGwDiv() {
+		$.ajax({
+		  url: "/api/gw/app/wait",
+		  method: "get",
+		  dataType: "json",
+		  cache: false,
+		  success: (data) => {
+			let list;
+			if (data.result === "ok") {
+			  list = cipher.decAes(data.data);
+			  list = JSON.parse(list);
+			  storage.waitList = list;
+			  storage.container = 0;
+			  storage.cardStart = 0;
+			  this.drawWaitCard();
+			  this.drawMyDraft();
+			  this.getWaitListCount();
+			  $('.theme-loader').fadeOut("slow");
+			  // $(".pageContainer").hide();
+			} else {
+			  alert("양식 정보를 불러오지 못했습니다");
+			}
+		  },
+		});
+	  }
+  
+  
+  
+	  getWaitListCount() {
+		let tab = $(".tabItem");
+		$(tab[0]).html("결재 대기 문서 (" + storage.waitList.wait.length + ")");
+		$(tab[1]).html("결재 예정 문서 (" + storage.waitList.due.length + ")")
+		$(tab[2]).html("결재 수신 문서 (" + storage.waitList.receive.length + ")")
+		$(tab[3]).html("참조/열람 대기 문서 (" + storage.waitList.refer.length + ")")
+	  }
+	  
+	  drawWaitCard() {
+		let typeList = storage.waitList;
+		let html = "";
+		let types = ["wait", "due", "receive", "refer"];
+	  
+		for (let j = 0; j < types.length; j++) {
+		  let cardLength = typeList[types[j]].length;
+		  if (cardLength > 0) {
+			for (let i = 0; i < cardLength; i++) {
+			  console.log("확인0");
+			  html +=
+				"<div class='waitCard' onClick='cardClick(this)' data-detail='" +
+				types[j] +
+				"!!!" +
+				typeList[types[j]][i].docNo +
+				"'><div>" +
+				typeList[types[j]][i].title +
+				"</div>" +
+				"<div class='subWaitCard'><div class='type'><div>결재타입</div><div>" +
+				typeList[types[j]][i].form +
+				"</div></div>" +
+				"<div class='writer'><div>기안자</div><div>" +
+				storage.user[typeList[types[j]][i].writer].userName +
+				"</div></div>" +
+				"<div class='created'><div>작성일</div><div>" +
+				this.getYmdSlash(typeList[types[j]][i].created) +
+				"</div></div></div></div>";
+	  
+			}
+	  
+		  } else {
+			console.log("확인1");
+			html += "<div class='defaultWaitCard'>대기 문서가 없습니다.</div>"
+	  
+		  }
+		  let target = $(".card")[j];
+		  $(target).html(html);
+		  html = "";
+		}
+	  
+	  }
+	  
+	  
+	  
+	  cardClick(obj) {
+		let val = obj.dataset.detail;
+		let middle = val.split("!!!")[0];
+		let docNo = val.split("!!!")[1];
+		$(".waitCard").click((location.href = "/gw/" + middle + "/" + docNo));
+	  }
+	  
+	  detailView(obj) {
+		let middle = $(obj).parent().parent();
+		middle = middle[0].className.split(" ")[1].split("List")[0];
+		let docNo = obj.dataset.id;
+		location.href = "/gw/" + middle + "/" + docNo;
+	  }
+	  
+	  showList(num) {
+		let targetList = $(".detailList")[num];
+		let targetCard = $(".card")[num];
+		let targetPage = $(".pageContainer")[num];
+		$(targetCard).hide();
+		$(targetList).show();
+		$(targetPage).show();
+	  }
+	  
+	  showCard(num) {
+		let targetList = $(".detailList")[num];
+		let targetCard = $(".card")[num];
+		let targetPage = $(".pageContainer")[num];
+		$(targetCard).show();
+		$(targetList).hide();
+		$(targetPage).hide();
+	  }
+	  
+	  drawMyDraft() {
+		let typeList = storage.waitList;
+		let html = "";
+		let types = ["wait", "due", "receive", "refer"];
+		console.log("확인1")
+	  
+		let container,
+		  result,
+		  jsonData,
+		  job,
+		  header = [],
+		  data = [],
+		  ids = [],
+		  disDate,
+		  setDate,
+		  str,
+		  fnc;
+		for (let x = 0; x < 4; x++) {
+		  if (storage.waitList[types[x]] === undefined || storage.waitList[types[x]].length == 0) {
+			let target = $(".detailList")[x];
+			console.log("확인2")
+	  
+			container = $(target);
+	  
+			header = [
+	  
+			  {
+				title: "작성일",
+				align: "center",
+			  },
+			  {
+				title: "결재 타입",
+				align: "left",
+			  },
+			  {
+				title: "문서 양식",
+				align: "center",
+			  },
+			  {
+				title: "제목",
+				align: "center",
+			  },
+			  {
+				title: "작성자",
+				align: "center",
+			  },
+	  
+			];
+			createGrid(container, header, data, ids, job, fnc);
+	  
+			container.append("<div class='noListDefault'>대기 문서가 없습니다.</div>")
+	  
+	  
+	  
+			console.log("확인3" + container);
+	  
+	  
+		  } else {
+			// jsonData = storage.waitList[types[0]]
+			let tt = [];
+			for (let i = storage.waitList[types[x]].length - 1; i >= 0; i--) { tt.push(storage.waitList[types[x]][i]) };
+			jsonData = tt;
+	  
+			result = paging(jsonData.length, storage.currentPage, 18);
+	  
+			let pageContainer = document.getElementsByClassName("pageContainer");
+			let target = $(".detailList")[x];
+			container = $(target);
+			console.log("확인" + container);
+			header = [
+			  {
+				title: "작성일",
+				align: "center",
+			  },
+			  {
+				title: "결재 타입",
+				align: "center",
+			  },
+			  {
+				title: "문서 양식",
+				align: "center",
+			  },
+			  {
+				title: "제목",
+				align: "left",
+			  },
+			  {
+				title: "작성자",
+				align: "center",
+			  },
+	  
+			];
+	  
+			for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
+			  disDate = dateDis(jsonData[i].created, jsonData[i].modified);
+			  setDate = this.getYmdSlash(disDate);
+			  let appType;
+			  if (jsonData[i].appType == 0) {
+				appType = "검토";
+			  } else if (jsonData[i].appType == 1) {
+				appType = "합의";
+			  } else if (jsonData[i].appType == 2) {
+				appType = "결재";
+			  } else if (jsonData[i].appType == 3) {
+				appType = "수신";
+			  } else if (jsonData[i].appType == 4) {
+				appType = "참조";
+			  }
+	  
+			  str = [
+				// {
+				//   "setData": jsonData[i].docNo,
+				//   "align": "center"
+				// },
+				{
+				  "setData": setDate,
+				  "align": "center"
+				},
+				{
+				  "setData": appType,
+				  "align": "center"
+				},
+				{
+				  "setData": jsonData[i].form,
+				  "align": "center"
+				},
+	  
+				{
+				  "setData": jsonData[i].title,
+				  "align": "left"
+				},
+				{
+				  "setData": storage.user[jsonData[i].writer].userName,
+				  "align": "center"
+				},
+	  
+			  ];
+	  
+			  fnc = "detailView(this)";
+			  ids.push(jsonData[i].docNo);
+			  data.push(str);
+			}
+	  
+			let pageNation = createPaging(
+			  pageContainer[0],
+			  result[3],
+			  "pageMove",
+			  "drawMyDraft",
+			  result[0]
+			);
+			pageContainer[x].innerHTML = pageNation;
+			createGrid(container, header, data, ids, job, fnc);
+			data = [];
+			ids = [];
+		  }
+		}
+	  
+	  
+		$(".detailList").hide();
+		$(".pageContainer").hide();
+	  
+	  }
+	  
+	  
+	  getYmdSlash(date) {
+		let d = new Date(date);
+		return (
+		  (d.getFullYear() % 100) +
+		  "/" +
+		  (d.getMonth() + 1 > 9
+			? (d.getMonth() + 1).toString()
+			: "0" + (d.getMonth() + 1)) +
+		  "/" +
+		  (d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString())
+		);
+	  }
+}
+
+class GwWriteSet{
+	constructor(){
+		CommonDatas.Temps.gwWriteSet = this;
+	}
+
+
+	getformList() {
+		// console.log(storage.dept.dept)
+		// console.log(storage.user[storage.my])
+		// console.log(storage.user[storage.my].deptId)
+		// let dept =
+		//   storage.dept.dept[storage.user[storage.my].deptId].deptName;
+		$(".setWriter").html("vtek" + "&nbsp" + storage.user[storage.my].userName);
+
+		let url = "/api/gw/form";
+	  
+		$.ajax({
+		  url: url,
+		  type: "get",
+		  dataType: "json",
+		  success: (result) => {
+			if (result.result == "ok") {
+			  let jsondata;
+			  jsondata = cipher.decAes(result.data);
+			  jsondata = JSON.parse(jsondata);
+			  storage.formList = jsondata;
+			  storage.container = 0;
+			  storage.cardStart = 0;
+			  this.drawFormList();
+			  $('.theme-loader').fadeOut("slow");
+			} else {
+			  alert("에러");
+			}
+		  },
+		});
+	  
+		$(".modal-wrap").hide();
+		$(".insertedDetail").hide();
+		$(".createLineBtn").hide();
+
+		let checkHref = location.href;
+		checkHref = checkHref.split("//");
+		checkHref = checkHref[1];
+		let splitArr = checkHref.split("/");
+	  
+		if (splitArr.length > 3) {
+		  $.ajax({
+			url: apiServer + "/api/gw/app/temp/" + splitArr[3],
+			method: "get",
+			dataType: "json",
+			cache: false,
+			success: (data) => {
+			  let detailData;
+			  if (data.result === "ok") {
+				detailData = cipher.decAes(data.data);
+				detailData = JSON.parse(detailData);
+				detailData.doc = cipher.decAes(detailData.doc);
+				detailData.doc = detailData.doc.replaceAll('\\"', '"');
+				storage.reportDetailData = detailData;
+				this.setTempReport();
+			  } else {
+				alert("임시 저장 문서 정보를 가져오는 데 실패했습니다");
+			  }
+			},
+		  });
+		}
+
+		let tt = $(".stepLabel")[0];
+		$(tt).css("color", "black");
+		$(".simpleAppLine").hide();
+
+	}
+
+	 
+
+	drawFormList() {
+		let data = storage.formList;
+		let titles = new Array();
+		let nums = new Array();
+		let ids = new Array();
+	  
+		let target = $(".formListDiv");
+		let targetHtml = "";
+	  
+		for (let i = 0; i < data.length; i++) {
+		  titles.push(data[i].title);
+		  ids.push(data[i].id);
+		  nums.push(data[i].no);
+		}
+		targetHtml += "<select class='formSelector'>";
+		for (let i = 0; i < titles.length; i++) {
+		  targetHtml += "<option value='" + nums[i] + "'>" + titles[i] + "</option>";
+		}
+	  
+		targetHtml += "</select>";
+	  
+		target.html(targetHtml);
+	  }
+
+	// 결재양식 선택에서 양식 선택 버튼 눌렀을 때 함수
+	selectForm() {
+		let data, selectedFormNo, stepLabel, my, writer, formId, date;
+	  
+		data = storage.formList;
+		selectedFormNo = $(".formSelector").val();
+		$(".formNumHidden").val(selectedFormNo);
+	  
+	  
+		stepLabel = $(".stepLabel")[1];
+		$(stepLabel).css("color", "black");
+		$(".lineBtnContainer").css("border-left", "2px solid black");
+		$(".guide").remove();
+		$(".simpleAppLine").show();
+		$(".simpleAppLineData").html("");
+		$(".lineDetail").show();
+		$(".createLineBtn").show();
+		$(".reportInsertForm").html(data[$(".formNumHidden").val()].form);
+	  
+		//작성자 작성일 자동 입력
+		my = storage.my;
+		writer = storage.user[my].userName;
+		formId = data[$(".formNumHidden").val()].id;
+		$("#" + formId + "_writer").val(writer);
+		$("#" + formId + "_writer").attr("data-detail", writer);
+	  
+		date = this.getYmdSlash();
+		$("#" + formId + "_created").attr("data-detail", date);
+		$("#" + formId + "_created").val(date);
+		$(".testClass").prop("checked", false);
+		$(".typeContainer").html("");
+	  
+	  
+		if (formId != "doc_Form_leave" && formId != "doc_Form_extension") {
+		  $.ajax({
+			url: "/api/project/sopp",
+			type: "get",
+			dataType: "json",
+			success: (result) => {
+			  if (result.result == "ok") {
+				let jsondata;
+				jsondata = cipher.decAes(result.data);
+				jsondata = JSON.parse(jsondata);
+				storage.soppList = jsondata;
+				this.setSoppList();
+				this.setInfoCusDataList();
+			  } else {
+				alert("에러");
+			  }
+			},
+		  });
+	  
+		}
+	  
+		// 데이터 추가시 insertbtn에 거래처 항목 리스트 추가하는 함수 
+		$(".insertbtn").click(setCusDataList);
+		$(".insertbtn").click(setProductData);
+	  
+		this.setModalhtml();
+		storage.editorArray = [formId + "_content"];
+		ckeditor.config.readOnly = false;
+		window.setTimeout(setEditor, 100);
+	  
+	}
+
+	  // 영업기회 데이터 리스트 가져오는 함수
+	setSoppList() {
+		let data = storage.formList;
+		let formId = storage.reportDetailData != undefined ? storage.reportDetailData.formId : data[$(".formNumHidden").val()].id;
+		let soppTarget = $(".infoContent")[3];
+		let soppHtml = soppTarget.innerHTML;
+		let soppListHtml = "";
+	
+		soppListHtml = "<datalist id='_infoSopp'>";
+	
+		for (let i = 0; i < storage.soppList.length; i++) {
+			soppListHtml +=
+			"<option data-value='" +
+			storage.soppList[i].no +
+			"' value='" +
+			storage.soppList[i].title +
+			"'></option> ";
+		}
+	
+		soppListHtml += "</datalist>";
+		soppHtml += soppListHtml;
+		soppTarget.innerHTML = soppHtml;
+		$("#" + formId + "_sopp").attr("list", "_infoSopp");
+	
+		//선택 후 수정하는 경우에
+		if (formId == "doc_Form_Resolution" && $(".btnDiv").children.length == 2) {
+			$(".btnDiv").append(
+				"<button onclick='this.getCardDetails()'>법인카드 내역</button>"
+			);
+		}
+	}
+  
+
+	// 항목 데이터 리스트 가져오는 함수 
+	setProductData() {
+		let data = storage.formList;
+	
+		let formId = storage.reportDetailData != undefined ? storage.reportDetailData.formId : data[$(".formNumHidden").val()].id;
+		if ($("." + formId + "_product").length > 0) {
+		let targetHtml = $("." + formId + "_product")[0].innerHTML;
+		let y;
+		let productListhtml = "";
+		productListhtml = "<datalist id='_product'>";
+		for (let y = 0; y < storage.product.length; y++) {
+			productListhtml +=
+			"<option data-value='" +
+			storage.product[y].no +
+			"' value='" +
+			storage.product[y].name +
+			"'></option> ";
+		}
+	
+		targetHtml += productListhtml;
+		$("." + formId + "_product")[0].innerHTML = targetHtml;
+		$("." + formId + "_product").attr("list", "_product");
+		}
+	}
+
+	// 결재선 생성 버튼 눌렀을 때 모달 띄움
+showModal() {
+
+	$(".modal-wrap").show();
+	this.getSavedLine();
+	// let tt = location.href.split("/");
+	this.setModalhtml();
+	// if (tt.length != 6 && $(".simpleApplineData").html() == "") {
+  
+  
+	//   setModalhtml();
+  
+  
+	// } else if (tt.length == 6) {
+	//   let formId = storage.reportDetailData.formId;
+	//   let checkAppLine = [];
+  
+	//   for (let i = 0; i < $("." + formId + "_examine").length; i++) {
+	//     checkAppLine.push([0, $("." + formId + "_examine")[i].dataset.detail]);
+	//   }
+	//   for (let i = 0; i < $("." + formId + "_agree").length; i++) {
+	//     checkAppLine.push([1, $("." + formId + "_agree")[i].dataset.detail]);
+	//   }
+	//   for (let i = 0; i < $("." + formId + "_approval").length; i++) {
+	//     checkAppLine.push([2, $("." + formId + "_approval")[i].dataset.detail]);
+	//   }
+	//   for (let i = 0; i < $("." + formId + "_conduct").length; i++) {
+	//     checkAppLine.push([3, $("." + formId + "_conduct")[i].dataset.detail]);
+	//   }
+	//   // for (let i = 0; i < $("." + formId + "_refer").length; i++) {
+	//   //   appLine.push([4, $("." + formId + "_refer")[i].dataset.detail]);
+	//   // }
+	//   for (let i = 0; i < referArr.length; i++) {
+	//     checkAppLine.push([4, referArr[i]]);
+	//   }
+  
+	//   checkAppLine = JSON.stringify(checkAppLine);
+	//   let appLine = storage.reportDetailData.appLine;
+	//   appLine = JSON.stringify(appLine);
+	//   if (appLine == checkAppLine) {
+	//     getSavedLine();
+	//    // setModalhtml();
+	//     window.setTimeout(setTempLineData(), 2000);
+	//   }
+	// }
+  
+  
+  
+  }
+  
+  
+  setModalhtml() {
+	let setGwModalHtml =
+	  "<div class='gwModal'>" +
+	  "<div class='modalHead'><span class='modalHeadTitle'>결재선 생성</span><span class='xClose' onclick='closeX()'><i class='fa-solid fa-xmark'></i></span></div>" +
+	  "<div class='lineDetail'>" +
+	  "<div class='lineTop'>" +
+	  "<div class='innerDetail' id='lineLeft'></div>" +
+	  "<div class='innerDetail crudBtns' id='lineCenter'>" +
+	  "<button onclick='check(this.value)' value='examine'>검토 &gt;</button>" +
+	  // "<button onclick='check(this.value)' value='agree'>합의 &gt;</button>" +
+	  "<button onclick='check(this.value)' value='approval'>결재 &gt;</button>" +
+	  "<button onclick='check(this.value)' value='conduct'>수신 &gt;</button>" +
+	  "<button onclick='check(this.value)' value='refer'>참조 &gt;</button></div>" +
+	  "<div class='innerDetail' id='lineRight'>" +
+	  "<div ><div class='gwModalTitle'>자주 쓰는 결재선</div><div class='crudBtns'><div class='savedLineContainer'><select name='saveLineSelect'></select></div>" +
+	  "<button type='button' class='getSavedLineBtn' onclick='setSavedLine()'>불러오기</button><button type='button' class='delSavedLineBtn' onclick='delSavedLineData()' >삭제하기</button><input type='text' class='setSavedLineTitle' placeholder='결재선 이름을 입력하세요'><button type='button' class='setSavedLine' onclick='lineSaveFnc()'>저장하기</button></div></div>" +
+	  "<div><div class='defaultFormSpanDiv'>검토</div>" +
+	  "<div class='typeContainer' id='examine'></div>" +
+	  "</div>" +
+	  // "<div><div>합의</div>" +
+	  // "<div class='typeContainer' id='agree'></div></div>" +
+	  "<div><div class='defaultFormSpanDiv'>결재</div>" +
+	  "<div class='typeContainer' id='approval'></div></div>" +
+	  "<div><div class='defaultFormSpanDiv'>수신</div>" +
+	  "<div class='typeContainer' id='conduct'></div></div>" +
+	  "<div><div class='defaultFormSpanDiv'>참조</div>" +
+	  "<div class='typeContainer' id='refer'></div></div>" +
+	  "</div>" +
+	  "</div>" +
+	  "</div>" +
+	  "<div class='modalFoot'>" +
+	  "<button class='modalBtns close' id='close' onclick='closeGwModal(this)'>취소</button>" +
+	  "<button class='modalBtns confirm'id='create' onclick='closeGwModal(this)'>생성</button>" +
+	  "</div>" +
+	  "</div>" +
+	  "</div>";
+	$(".modal-wrap").html(setGwModalHtml);
+  
+  
+	let orgChartTarget = $("#lineLeft");
+  
+  
+	let gwTreeHtml = storage.dept.tree.getGwHtml();
+  
+	orgChartTarget.html(gwTreeHtml);
+	// 작성자 본인은 선택할 수 없음 
+	$("#cb" + storage.my).hide();
+  
+  
+  }
+  
+  
+  
+  closeX() {
+	$(".modal-wrap").hide();
+  }
+  
+  
+  // 결재선 모달 취소 생성
+  closeGwModal(obj) {
+	if (obj.id == "close") {
+	  $(".modal-wrap").hide();
+	} else {
+	  if ($("#approval").html() == "") {
+		alert("결재자를 설정하세요");
+	  } else {
+		createLine();
+		$(".inputsAuto").prop("disabled", "true");
+		$(".inputsAuto").css("text-align", "center");
+		$(".inputsAuto").eq(0).css("text-align", "left");
+		$(".inputsAuto").eq(1).css("text-align", "left");
+		$(".inputsAuto").eq(2).css("text-align", "left");
+		$(".modal-wrap").hide();
+		$(".insertedDetail").show();
+		$(".saveBtn").prop("disabled", false);
+		let tt = $(".stepLabel")[2];
+		$(tt).css("color", "black");
+		let data = storage.formList;
+		let selectedFormNo = $(".formSelector").val();
+		$(".formNumHidden").val(selectedFormNo);
+		if ($(".cke_editable").length == 0) {
+		  let formId = data[$(".formNumHidden").val()].id;
+		  storage.editorArray = [formId + "_content"];
+		  ckeditor.config.readOnly = false;
+		  window.setTimeout(setEditor, 100);
+		}
+  
+		// if (formId == 'doc_Form_Resolution') {
+		//   $(".btnDiv").append("<button onclick='getCardDetails()'>법인카드 내역</button>")
+		// }
+	  }
+	}
+  }
+  
+  ////조직도에서 결재 타입 선택 함수
+  check(name) {
+	$("select[name='saveLineSelect']")[0].value = "null";
+	let inputLength = $(".testClass");
+	let target = $("#" + name);
+  
+	let html = target.html();
+	let x;
+	let my = storage.my;
+  
+	let data = new Array();
+	// 본인
+	for (x in storage.user) {
+	  if (storage.user[x].resign == false) {
+		data.push(x);
+	  }
+	}
+	let count = 0;
+	for (let i = 0; i < data.length; i++) {
+	  if ($("#cb" + data[i]).prop("checked")) {
+		count++;
+	  }
+	}
+  
+	if ((name == "approval" && html != "") || (name == "approval" && count > 1)) {
+	  alert("결재자는 한 명만 선택할 수 있습니다");
+	} else {
+	  let selectHtml = "";
+  
+	  for (let i = 0; i < inputLength.length; i++) {
+		if ($("#cb" + data[i]).prop("checked")) {
+		  console.log(inputLength[i].id + "substring 전 확인하기 ")
+  
+		  id = data[i];
+		  console.log(id + "id 확인하기")
+		  if (document.getElementById("linedata_" + id) == null) {
+			selectHtml +=
+			  "<div class='lineDataContainer' id='lineContainer_" +
+			  id +
+			  "'><label id='linedata_" +
+			  id +
+			  "'>" +
+			  storage.user[id].userName +
+			  "</label><button value='" +
+			  id +
+			  "' onclick='upClick(this)'>▲</button><button  value='" +
+			  id +
+			  "' onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'><i class='fa-solid fa-xmark'></i></button></div>";
+		  }
+		}
+	  }
+	  html += selectHtml;
+	  target.html(html);
+  
+	  $(".testClass").prop("checked", false);
+	}
+  } //End of check(name)
+  
+  //// 조직도 결재 순서
+  upClick(obj) {
+  
+	let parent;
+	parent = obj.parentElement;
+	parent = parent.parentElement;
+	let target = $("#" + parent.id);
+	let list = parent.children;
+  
+	let numArr = new Array();
+	for (let i = 0; i < list.length; i++) {
+	  let id = list[i].id;
+	  let idArr = id.split("_");
+	  numArr.push(idArr[1]);
+	}
+  
+	/// 사번 배열을 만든다
+  
+	for (let i = 0; i < numArr.length; i++) {
+	  if (obj.value == numArr[i] && i != 0) {
+		let temp = numArr[i];
+		numArr[i] = numArr[i - 1];
+		numArr[i - 1] = temp;
+	  }
+	}
+  
+	// 순서 바꾸는 것
+  
+	let data = new Array();
+	let x;
+	let my = storage.my;
+	//나는 결재선에 노출 안 되게 함
+	for (x in storage.user) {
+	  if (x != my && storage.user[x].resign != true) {
+		data.push(x);
+	  }
+	}
+  
+	let selectHtml = "";
+	for (let i = 0; i < numArr.length; i++) {
+	  selectHtml +=
+		"<div class='lineDataContainer' id='lineContainer_" +
+		numArr[i] +
+		"'><label id='linedata" +
+		numArr[i] +
+		"'>" +
+		storage.user[numArr[i]].userName +
+		"</label><button value='" +
+		numArr[i] +
+		"' onclick='upClick(this)'>▲</button><button  value='" +
+		numArr[i] +
+		"'onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'><i class='fa-solid fa-xmark'></i></button></div>";
+	}
+  
+	target.html(selectHtml);
+  } // End of upClick(obj);
+  
+  downClick(obj) {
+	let parent;
+	parent = obj.parentNode;
+	parent = parent.parentNode;
+	let target = $("#" + parent.id);
+	let list = parent.children;
+  
+	let numArr = new Array();
+	for (let i = 0; i < list.length; i++) {
+	  let id = list[i].id;
+	  let idArr = id.split("_");
+	  numArr.push(idArr[1]);
+	}
+  
+	for (let i = numArr.length - 1; i >= 0; i--) {
+	  if (obj.value == numArr[i] && i != numArr.length - 1) {
+		let temp = numArr[i];
+		numArr[i] = numArr[i + 1];
+		numArr[i + 1] = temp;
+	  }
+	}
+  
+	let data = new Array();
+	let x;
+	let my = storage.my;
+	//나는 결재선에 노출 안 되게 함
+	for (x in storage.user) {
+	  if (x != my && storage.user[x].resign != true) {
+		data.push(x);
+	  }
+	}
+  
+	let selectHtml = "";
+	for (let i = 0; i < numArr.length; i++) {
+	  selectHtml +=
+		"<div class='lineDataContainer' id='lineContainer_" +
+		numArr[i] +
+		"'><label id='linedata" +
+		numArr[i] +
+		"'>" +
+		storage.user[numArr[i]].userName +
+		"</label><button value='" +
+		numArr[i] +
+		"' onclick='upClick(this)'>▲</button><button  value='" +
+		numArr[i] +
+		"'onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'><i class='fa-solid fa-xmark'></i></button></div>";
+	}
+  
+	target.html(selectHtml);
+  } // End of downClick(obj)
+  
+  deleteClick(obj) {
+	let parent;
+	parent = obj.parentElement;
+	parent.remove();
+  } // End of deleteClign(obj);
+  
+  // 결재선 그리기 + 작성자 추가
+  createLine() {
+	$("select[name='saveLineSelect']")[0].value = "";
+	let selectedFormNo = $(".formSelector").val();
+	let formId = storage.formList[selectedFormNo].id;
+	let lineTarget = $(".infoline")[0].children[1];
+	lineTarget = $("#" + lineTarget.id);
+	lineTarget.html("");
+	lineTarget.css("display", "block");
+	let my = storage.my;
+  
+  
+	let testHtml =
+	  "<div class='lineGridContainer'><div class='lineGrid'><div class='lineTitle'>작 성</div><div class='lineSet'><div class='twoBorder'><input type='text' class='inputsAuto' value='" +
+	  storage.userRank[storage.user[my].rank][0] +
+	  "'></div>" +
+	  "<div class='twoBorder'><input type='text' class='inputsAuto " +
+	  formId +
+	  "_writer' value='" +
+	  storage.user[my].userName +
+	  "'></div>" +
+	  "<div class='twoBorder'><input type='text' class='inputsAuto " +
+	  formId +
+	  "_writer_status' value=''></div>" +
+	  "<div class='dateBorder'><input type='text' class='inputsAuto " +
+	  formId +
+	  "_writer_approved''value='' style='background-color: transparent;'></div></div></div>";
+	let testHtml2 = "<div class='lineGridContainer'>";
+	// let referHtml = "<div>참 조</div>";
+	let target = $(".typeContainer"); // 결재선 생성 모달에서 결재 타입 각각의 container
+	let titleArr = ["검 토", "결 재", "수 신", "참 조"];
+	let titleId = ["examine", "approval", "conduct", "refer"];
+	let simpleHtml = "";
+	let data = new Array();
+	let x;
+	//나는 결재선에 노출 안 되게 함
+	for (x in storage.user) {
+	  if (x != my && storage.user[x].resign == false) {
+		data.push(x);
+	  }
+	}
+  
+	for (let i = 0; i < target.length; i++) {
+	  if (target[i].children.length != 0 && i < 2) {
+		// 해당 결재 타입에 설정된 사람이 없지 않으면서 결재 타입이 검토 합의 결재인 경우
+		testHtml +=
+		  "<div class='lineGrid'><div class='lineTitle'>" +
+		  titleArr[i] +
+		  "</div>";
+		simpleHtml += "[" + titleArr[i] + "]";
+	  } else if (target[i].children.length != 0 && i == 2) {
+		// 결재타입이 수신인 경우
+		testHtml2 +=
+		  "<div class='lineGrid'><div class='lineTitle'>" +
+		  titleArr[i] +
+		  "</div>";
+		simpleHtml += "[" + titleArr[i] + "]";
+	  } else if (target[i].children.length != 0 && i == 3) {
+		simpleHtml += "[" + titleArr[i] + "]";
+	  }
+  
+	  for (let j = 0; j < target[i].children.length; j++) {
+		let id = target[i].children[j].id;
+		id = id.split("_");
+		id = id[1];
+  
+		// 수신
+		if (i == 2) {
+		  if (j != 0) {
+			simpleHtml += "-" + storage.user[id].userName;
+		  } else {
+			simpleHtml += storage.user[id].userName;
+		  }
+		  testHtml2 +=
+			"<div class='lineSet'><div class='twoBorder'><input type='text' class='inputsAuto " +
+			formId +
+			"_" +
+			titleId[i] +
+			"_position" +
+			"' value='" +
+			storage.userRank[storage.user[id].rank][0] +
+			"' data-detail='" +
+			storage.user[id].rank +
+			"'/></div>" +
+			"<div class='twoBorder'><input type='text' class='inputsAuto " +
+			formId +
+			"_" +
+			titleId[i] +
+			"' value='" +
+			storage.user[id].userName +
+			"' data-detail='" +
+			storage.user[id].userNo +
+			"'/></div>" +
+			"<div class='twoBorder'><input type='text' class='inputsAuto " +
+			formId +
+			"_" +
+			titleId[i] +
+			"_status' value='' data-detail=''/></div>" +
+			"<div class='dateBorder'><input type='text' class='inputsAuto " +
+			formId +
+			"_" +
+			titleId[i] +
+			"_approved" +
+			"' value='' data-detail='' style='background-color: transparent;'/></div></div>";
+		}
+  
+		// 참조
+		else if (i == 3) {
+		  console.log("참조");
+		  referArr.push(id);
+  
+		  if (j != 0) {
+			simpleHtml += "-" + storage.user[id].userName;
+		  } else {
+			simpleHtml += storage.user[id].userName;
+		  }
+  
+		}
+  
+		// 검토 합의 결재
+		else {
+		  if (j != 0) {
+			simpleHtml += "-" + storage.user[id].userName;
+		  } else {
+			simpleHtml += storage.user[id].userName;
+		  }
+		  testHtml +=
+			"<div class='lineSet'><div class='twoBorder'><input type='text' class='inputsAuto " +
+			formId +
+			"_" +
+			titleId[i] +
+			"_position" +
+			"' value='" +
+			storage.userRank[storage.user[id].rank][0] +
+			"' data-detail='" +
+			storage.user[id].rank +
+			"'/></div>" +
+			"<div class='twoBorder'><input type='text' class='inputsAuto " +
+			formId +
+			"_" +
+			titleId[i] +
+			"' value='" +
+			storage.user[id].userName +
+			"' data-detail='" +
+			storage.user[id].userNo +
+			"'/></div>" +
+			"<div class='twoBorder'><input type='text' class='inputsAuto " +
+			formId +
+			"_" +
+			titleId[i] +
+			"_status' value='' data-detail=''/></div>" +
+			"<div class='dateBorder'><input type='text' class='inputsAuto " +
+			formId +
+			"_" +
+			titleId[i] +
+			"_approved" +
+			"' value='' data-detail='' style='background-color: transparent;'/></div></div>";
+		}
+	  }
+  
+	  if (target[i].children.length != 0 && i < 2) {
+		testHtml += "</div>";
+		simpleHtml += "  ";
+	  } else if (target[i].children.length != 0 && i == 2) {
+		testHtml2 += "</div>";
+		simpleHtml += "  ";
+	  } else if (target[i].children.length != 0 && i == 3) {
+		simpleHtml += "  ";
+	  }
+	}
+  
+	testHtml += "</div>";
+	testHtml2 += "</div>";
+  
+	testHtml += testHtml2;
+	lineTarget.html(testHtml);
+	console.log(testHtml);
+	$(".simpleAppLine").show();
+	// $(".referContainer").html(referHtml);
+	$(".simpleAppLineData").html(simpleHtml);
+  
+	let infoLength = document.getElementsByClassName("info")[0];
+	infoLength = infoLength.clientWidth;
+	let lgcTotal = 0;
+	let lineGrid = document.getElementsByClassName("lineGrid");
+  
+	if (lineGrid.length > 3) {
+	  for (let i = 0; i < 3; i++) {
+		lgcTotal += lineGrid[i].clientWidth;
+	  }
+	  if (lgcTotal < lineGrid[3].clientWidth) {
+		lgcTotal = lineGrid[3].clientWidth;
+	  }
+	} else {
+	  for (let i = 0; i < lineGrid.length; i++) {
+		lgcTotal += lineGrid[i].clientWidth;
+	  }
+	}
+	if (lgcTotal > infoLength) {
+	  for (let i = 0; i < lineGrid.length; i++) {
+		let tt = lineGrid[i];
+		let kk = lineGrid[0];
+		kk = $(kk).css("margin-right");
+		kk = kk.split("p")[0];
+		$(tt).css(
+		  "width",
+		  lineGrid[i].clientWidth * (infoLength / (lgcTotal + kk * 4))
+		);
+	  }
+	}
+  } // End of createLine();
+  
+  
+  
+  
+  //기안하기 버튼 함수 reportInsert() =================================================================================================
+  reportInsert() {
+	let title, content, readable, formId, appDoc, dept;
+	let appLine = [];
+	let selectedFormNo = $(".formSelector").val();
+	formId = storage.reportDetailData == undefined ? storage.formList[selectedFormNo].id : storage.reportDetailData.formId;
+	let detailType = $("input[name='" + formId + "_RD']:checked").attr("id");
+  
+  
+	let soppVal = $("#" + formId + "_sopp").val();
+	if (soppVal == "") {
+	  $("#" + formId + "_sopp").val("영업기회 미등록");
+	  $("#" + formId + "_sopp").attr("data-detail", "영업기회 미등록");
+	  soppVal = "영업기회 미등록";
+	}
+  
+	let soppResult = "";
+	for (let x in storage.soppList) {
+	  if (storage.soppList[x].title == soppVal) {
+		soppResult = storage.soppList[x].no + "";
+	  }
+	}
+  
+	let customerVal = $("#" + formId + "_infoCustomer").val();
+	let cusResult = "";
+	for (let x in storage.customer) {
+	  if (customerVal != "" && storage.customer[x].name == customerVal) {
+		cusResult = storage.customer[x].no + "";
+	  }
+	}
+  
+	title = $("#" + formId + "_title").val();
+  
+	content = CKEDITOR.instances[formId + "_content"] != undefined ? CKEDITOR.instances[formId + "_content"].getData() : "";
+	$("#" + formId + "_content").attr("data-detail", content);
+	// content = $("#" + formId + "_content").val();
+	readable = $("input[name=authority]:checked").val();
+	appDoc = $(".reportInsertForm").html();
+	appDoc = appDoc
+	  .replaceAll("\n", "")
+	  .replaceAll("\r", "")
+	  .replaceAll("\t", "")
+	  .replaceAll('"', '\\"');
+	let my = storage.my;
+	dept = storage.user[my].deptId[0];
+  
+	let temp;
+	if (storage.reportDetailData != undefined) {
+	  temp = storage.reportDetailData.docNo;
+	} else {
+	  temp = null;
+	}
+  
+	for (let i = 0; i < $("." + formId + "_examine").length; i++) {
+	  appLine.push([0, $("." + formId + "_examine")[i].dataset.detail]);
+	}
+	for (let i = 0; i < $("." + formId + "_agree").length; i++) {
+	  appLine.push([1, $("." + formId + "_agree")[i].dataset.detail]);
+	}
+	for (let i = 0; i < $("." + formId + "_approval").length; i++) {
+	  appLine.push([2, $("." + formId + "_approval")[i].dataset.detail]);
+	}
+	for (let i = 0; i < $("." + formId + "_conduct").length; i++) {
+	  appLine.push([3, $("." + formId + "_conduct")[i].dataset.detail]);
+	}
+	// for (let i = 0; i < $("." + formId + "_refer").length; i++) {
+	//   appLine.push([4, $("." + formId + "_refer")[i].dataset.detail]);
+	// }
+	for (let i = 0; i < referArr.length; i++) {
+	  appLine.push([4, referArr[i]]);
+	}
+  
+  
+	let related = {
+	  "next": "",
+	  "parent": "",
+	  "previous": "",
+  
+	};
+	let items = [];
+  
+  
+  
+  
+  
+	// 문서 양식이 수주판매인 경우 related;  
+	if (formId == "doc_Form_SalesReport") {
+  
+	  for (let i = 0; i < $(".outProduct").length; i++) {
+		let tt = {
+		  "outProduct": $(".outProduct")[i].value,
+		  "outPrice": $(".outPrice")[i].value,
+		  "outQuantity": $(".outQuantity")[i].value
+		};
+		items.push(tt);
+	  }
+  
+	  related = {
+		"next": "",
+		"parent": "",
+		"previous": "",
+		"outSumAllTotal": $(".outSumAllTotal").val(),
+		"profit": $("." + formId + "_profit").val(),
+		"items": items
+	  }
+  
+  
+	}
+  
+	related = JSON.stringify(related);
+  
+	let data = {
+	  title: title,
+	  sopp: soppResult,
+	  dept: dept,
+	  customer: cusResult,
+	  attached: storage.attachedList === undefined ? [] : storage.attachedList,
+	  content: content,
+	  appLine: appLine,
+	  appDoc: appDoc,
+	  formId: formId,
+	  readable: readable,
+	  temp: temp,
+	  related: related,
+	};
+	console.log(appLine);
+	console.log(data);
+	data = JSON.stringify(data);
+	data = cipher.encAes(data);
+  
+	if ($(".createLineBtn").css("display") == "none") {
+	  alert("결재 문서 양식을 선택하세요");
+	} else if (
+	  formId != "doc_Form_Pur" &&
+	  detailType == undefined &&
+	  formId != "doc_Form_Dip" &&
+	  detailType == undefined &&
+	  formId != "doc_Form_leave" &&
+	  detailType == undefined &&
+	  formId != "doc_Form_extension" &&
+	  detailType == undefined &&
+	  formId != "doc_Form_SalesReport" &&
+	  detailType == undefined
+	) {
+	  alert("결재문서 상세 타입을 선택하세요");
+	} else if (title == "") {
+	  alert("제목을 입력하세요");
+	} else if ($("#" + formId + "_line").html() == "결재선") {
+	  alert("결재선을 생성하세요");
+	} else if (
+	  (formId == "doc_Form_leave" || formId == "doc_Form_extension") &&
+	  $("#" + formId + "_type").val() == ""
+	) {
+	  alert("종류를 선택하세요");
+	} else if (
+	  (formId == "doc_Form_leave" || formId == "doc_Form_extension") &&
+	  ($("#" + formId + "_from").val() == "" ||
+		$("#" + formId + "_to").val() == "" ||
+		$("#" + formId + "_fromTime").val() == "" ||
+		$("#" + formId + "_toTime").val() == "")
+	) {
+	  alert("기간을 설정하세요");
+	} else if ((formId != "doc_Form_leave" && formId != "doc_Form_extension" && formId != "doc_Form_SalesReport" && $(".insertedTotal").val() == "" && $(".detailcontentDiv").length == 0)) {
+	  alert("상세 데이터를 입력하세요");
+	} else if (formId == "doc_Form_SalesReport" && ($(".detailcontentDiv").length == 0 || $("." + formId + "_profit").val() == "")) {
+	  alert("상세 데이터를 입력하세요");
+	} else {
+  
+	  $.ajax({
+		url: "/api/gw/app/doc",
+		method: "post",
+		data: data,
+		dataType: "json",
+		contentType: "text/plain",
+		success: (result) => {
+		  if (result.result === "ok") {
+			alert("기안 완료");
+			location.href = "/gw/write";
+		  } else {
+			alert(result.msg);
+		  }
+		},
+	  });
+	}
+  }
+  
+  // 파일 관련 함수 ===========================================================================================================================================================
+  docFileChange() {
+	let method, data, type, attached;
+	attached = $(document).find("[name='attached[]']")[0].files;
+  
+	if (storage.attachedList === undefined || storage.attachedList <= 0) {
+	  storage.attachedList = [];
+	}
+  
+	let fileDataArray = storage.attachedList;
+	for (let i = 0; i < attached.length; i++) {
+	  let reader = new FileReader();
+	  let fileName;
+  
+	  fileName = attached[i].name;
+	  // 파일 중복 등록 제거
+	  if (!fileDataArray.includes(fileName)) {
+		storage.attachedList.push(fileName);
+  
+		reader.onload = (e) => {
+		  let binary,
+			x,
+			fData = e.target.result;
+		  const bytes = new Uint8Array(fData);
+		  binary = "";
+		  for (x = 0; x < bytes.byteLength; x++)
+			binary += String.fromCharCode(bytes[x]);
+		  let fileData = cipher.encAes(btoa(binary));
+		  let fullData = fileName + "\r\n" + fileData;
+  
+		  let url = "/api/attached/docapp";
+		  url = url;
+		  method = "post";
+		  data = fullData;
+		  type = "insert";
+  
+		  crud.defaultAjax(
+			url,
+			method,
+			data,
+			type,
+			submitFileSuccess,
+			submitFileError
+		  );
+		};
+  
+		reader.readAsArrayBuffer(attached[i]);
+	  }
+	}
+  
+	let html = "";
+  
+	for (let i = 0; i < fileDataArray.length; i++) {
+	  html +=
+		"<div data-detail='" +
+		fileDataArray[i] +
+		"'>" +
+		fileDataArray[i] +
+		"<button type='button' onclick='deleteFile(this)'><i class='fa-solid fa-xmark'></i></button></div></div>";
+	  $(".filePreview").html(html);
+	}
+  
+	// 파일목록 수정의 경우 추가해야함
+  }
+  
+  //파일 삭제
+  deleteFile(obj) {
+	let value = obj.parentElement.dataset.detail;
+	storage.attachedList = storage.attachedList.filter(
+	  (element) => element != value
+	);
+	obj.parentElement.remove();
+  }
+  
+  // 입력된 총 합계 구하는 함수
+  getTotalCount() {
+	let id;
+	if ($(".formNumHidden").val() == "") {
+	  id = storage.reportDetailData.formId;
+	} else {
+	  id = storage.formList[$(".formNumHidden").val()].id;
+	}
+	let totalCount = Number(0);
+	for (let i = 0; i < $("." + id + "_total").length; i++) {
+	  totalCount += Number(
+		$("." + id + "_total")[i].dataset.detail.replace(",", "")
+	  );
+	}
+	$(".insertedTotal").html(totalCount);
+  }
+  
+  // 기안 시 금액이 입력되지 않은 공백 칸 제거해서 폼 올리기
+  deleteGap() {
+	for (let i = $(".doc_Form_Consult_total").length - 1; i >= 0; i--) {
+	  if (
+		$(".doc_Form_Consult_total")[i].dataset.detail == "" ||
+		$(".doc_Form_Consult_total")[i].dataset.detail == undefined ||
+		$(".doc_Form_Consult_total")[i].dataset.detail == "null"
+	  ) {
+		$(".doc_Form_Consult_total")[i].parentElement.parentElement.remove();
+	  }
+	}
+  }
+  
+  
+  
+  // 임시저장 함수 setTempReport() / tempSave()==================================================================================================================================================== 
+  setTempReport() {
+	if (storage.reportDetailData != undefined) {
+	  let formId = storage.reportDetailData.formId;
+	  $(".guide").remove();
+	  $(".lineDetail").show();
+	  $(".createLineBtn").show();
+	  $(".insertedDetail").show();
+	  $(".simpleAppLine").show();
+	  $(".reportInsertForm").html(storage.reportDetailData.doc);
+	  $("#" + formId + "_created").val(this.getYmdSlash());
+	  $("#" + formId + "_created").attr("data-detail", this.getYmdSlash());
+  
+  
+	  let defaultAppLine = [];
+  
+	  for (let i = 0; i < $("." + formId + "_examine").length; i++) {
+		defaultAppLine.push([0, $("." + formId + "_examine")[i].dataset.detail]);
+	  }
+	  for (let i = 0; i < $("." + formId + "_agree").length; i++) {
+		defaultAppLine.push([1, $("." + formId + "_agree")[i].dataset.detail]);
+	  }
+	  for (let i = 0; i < $("." + formId + "_approval").length; i++) {
+		defaultAppLine.push([2, $("." + formId + "_approval")[i].dataset.detail]);
+	  }
+	  for (let i = 0; i < $("." + formId + "_conduct").length; i++) {
+		defaultAppLine.push([3, $("." + formId + "_conduct")[i].dataset.detail]);
+	  }
+	  for (let i = 0; i < $("." + formId + "_refer").length; i++) {
+		defaultAppLine.push([4, $("." + formId + "_refer")[i].dataset.detail]);
+	  }
+  
+  
+	  // simplAppLine 채우기
+	  let appLine = storage.reportDetailData.appLine == null ? defaultAppLine : storage.reportDetailData.appLine;
+	  let simpleapp = "";
+	  console.log(appLine.length + "임시저장문서 appLine 확인");
+	  let title = ["[검 토] ", "[합 의] ", "[결 재] ", "[수 신] ", "[참 조] "];
+	  let newCombine = [[], [], [], [], []];
+	  for (let j = 0; j < 5; j++) {
+		for (let i = 0; i < appLine.length; i++) {
+		  if (appLine[i][0] == j) {
+			console.log(appLine[i][1]);
+			newCombine[j].push(appLine[i][1]);
+		  }
+		}
+	  }
+  
+	  console.log(newCombine);
+  
+	  for (let k = 0; k < newCombine.length; k++) {
+		if (newCombine[k].length != 0) {
+		  simpleapp += title[k];
+		}
+  
+		for (let i = 0; i < newCombine.length; i++) {
+		  if (k == i) {
+			for (let j = 0; j < newCombine[i].length; j++) {
+			  if (j != newCombine[i].length - 1) {
+				simpleapp += storage.user[newCombine[i][j]].userName + "-";
+			  } else {
+				simpleapp += storage.user[newCombine[i][j]].userName + " ";
+			  }
+			}
+		  }
+		}
+	  }
+  
+	  $(".simpleAppLineData").html(simpleapp);
+  
+	  //작성자 작성일 자동 입력
+	  $(".typeContainer").html("");
+	  $(".testClass").prop("checked", false);
+	  $(".inputsAuto").prop("disabled", "true");
+	  $(".saveBtn").prop("disabled", false);
+	  $(".previewBtn").prop("disabled", false);
+	  $(".inputsAuto").css("text-align", "center");
+	  $(".inputsAuto").eq(0).css("text-align", "left");
+	  $(".inputsAuto").eq(1).css("text-align", "left");
+	  $(".inputsAuto").eq(2).css("text-align", "left");
+	  $(".stepLabel").css("color", "black");
+	  $(".lineBtnContainer").css("border-left", "2px solid black");
+  
+	  let target = $(".reportInsertForm")[0];
+	  let inputsArr = target.getElementsByTagName("input");
+  
+	  for (let i = 0; i < inputsArr.length; i++) {
+		if (inputsArr[i].dataset.detail !== undefined) {
+		  inputsArr[i].value = inputsArr[i].dataset.detail;
+		}
+	  }
+  
+	  let textAreaArr = target.getElementsByTagName("textarea")[0];
+	  textAreaArr.value = textAreaArr.dataset.detail;
+  
+	  // 이름 , 직급 한글로 설정하기
+	  let subTitlesArr = ["_examine", "_approval", "_agree", "_conduct"];
+	  for (let i = 0; i < subTitlesArr.length; i++) {
+		if ($("." + formId + subTitlesArr[i]).val() != undefined) {
+		  for (let j = 0; j < $("." + formId + subTitlesArr[i]).length; j++) {
+			$("." + formId + subTitlesArr[i])[j].value =
+			  storage.user[$("." + formId + subTitlesArr[i])[j].value].userName;
+			$("." + formId + subTitlesArr[i] + "_position")[j].value =
+			  storage.userRank[
+			  $("." + formId + subTitlesArr[i] + "_position")[j].value
+			  ][0];
+		  }
+		}
+	  }
+  
+	  // 상세타입 체크하게 하기
+	  let rd = $("input[name='" + formId + "_RD']");
+	  for (let i = 0; i < rd.length; i++) {
+		if (rd[i].dataset.detail == "on") {
+		  $("#" + rd[i].id).prop("checked", true);
+		}
+	  }
+	  $("input[name='" + formId + "_RD']").prop("disabled", false);
+  
+	  if (target.getElementsByClassName("typeselect").length > 0) {
+		let selectArr = target.getElementsByClassName("typeselect")[0];
+		selectArr.value = selectArr.dataset.detail;
+	  }
+  
+  
+	  if (formId != "doc_Form_leave" && formId != "doc_Form_extension") {
+		$.ajax({
+		  url: "/api/sopp",
+		  type: "get",
+		  dataType: "json",
+		  success: (result) => {
+			if (result.result == "ok") {
+			  let jsondata;
+			  jsondata = cipher.decAes(result.data);
+			  jsondata = JSON.parse(jsondata);
+			  storage.soppList = jsondata;
+			  this.setSoppList(formId);
+			  this.setCusDataList();
+			} else {
+			  alert("에러");
+			}
+		  },
+		});
+  
+		// 거래처 데이터 리스트
+		let html = $(".infoContentlast")[0].innerHTML;
+		let x;
+		let dataListHtml = "";
+  
+		// 거래처 데이터 리스트 만들기
+		dataListHtml = "<datalist id='_infoCustomer'>";
+		for (x in storage.customer) {
+		  dataListHtml +=
+			"<option data-value='" +
+			x +
+			"' value='" +
+			storage.customer[x].name +
+			"'></option> ";
+		}
+		dataListHtml += "</datalist>";
+		html += dataListHtml;
+		$(".infoContentlast")[0].innerHTML = html;
+		$("#" + formId + "_infoCustomer").attr("list", "_infoCustomer");
+		// $("#" + formId + "_infoCustomer").attr("list", "_infoCustomer");
+  
+		if (formId == "doc_Form_SalesReport") {
+		  $("#" + formId + "_endCustName").attr("list", "_infoCustomer");
+		}
+	  }
+  
+	  setProductData();
+	  for (let x in storage.formList) {
+		if (storage.formList[x].id == storage.reportDetailData.formId) {
+		  $(".formSelector").val(storage.formList[x].no); $(".formSelector").prop("disabled", true);
+		  $(".formSelector").next().prop("disabled", true);
+		  $(".formSelector").parent().next().hide();
+		}
+	  }
+  
+	  $(".insertbtn").click(setCusDataList);
+	  $(".insertbtn").click(setProductData);
+  
+	  this.setDefaultLineData();
+	}
+  
+  }
+  
+  
+  tempSave() {
+	let dept,
+	  title,
+	  readable,
+	  formId,
+	  appDoc,
+	  appLine = [];
+	let my = storage.my;
+	dept = storage.user[my].deptId[0];
+	if ($(".formNumHidden").val() == "") {
+	  formId = storage.reportDetailData.formId;
+	} else {
+	  formId = storage.formList[$(".formNumHidden").val()].id;
+	}
+  
+	title = $("#" + formId + "_title").val();
+	appDoc = $(".reportInsertForm").html();
+	readable = $("input[name=authority]:checked").val();
+  
+	let soppVal = $("#" + formId + "_sopp").val() == undefined ? "" : $("#" + formId + "_sopp").val();
+	let customerVal = $("#" + formId + "_infoCustomer").val() == undefined ? "" : $("#" + formId + "_infoCustomer").val();
+	let soppResult;
+  
+  
+	for (let x in storage.soppList) {
+	  if (soppVal != "" || storage.soppList[x].title === soppVal) {
+		soppResult = storage.soppList[x].no + "";
+	  } else {
+		soppResult = "";
+	  }
+	}
+	let cusResult;
+	for (let x in storage.customer) {
+	  if (customerVal != "" || storage.customer[x].title === customerVal) {
+		cusResult = storage.customer[x].no + "";
+	  } else {
+		cusResult = "";
+	  }
+	}
+  
+  
+  
+	let temp;
+	if (storage.reportDetailData != undefined) {
+	  temp = storage.reportDetailData.docNo;
+	} else {
+	  temp = null;
+	}
+  
+	for (let i = 0; i < $("." + formId + "_examine").length; i++) {
+	  appLine.push([0, $("." + formId + "_examine")[i].dataset.detail]);
+	}
+	for (let i = 0; i < $("." + formId + "_agree").length; i++) {
+	  appLine.push([1, $("." + formId + "_agree")[i].dataset.detail]);
+	}
+	for (let i = 0; i < $("." + formId + "_approval").length; i++) {
+	  appLine.push([2, $("." + formId + "_approval")[i].dataset.detail]);
+	}
+	for (let i = 0; i < $("." + formId + "_conduct").length; i++) {
+	  appLine.push([3, $("." + formId + "_conduct")[i].dataset.detail]);
+	}
+	for (let i = 0; i < $("." + formId + "_refer").length; i++) {
+	  appLine.push([4, $("." + formId + "_refer")[i].dataset.detail]);
+	}
+  
+	if (appLine.length == 0) {
+	  appLine = null;
+	}
+  
+  
+	let related = {
+	  "next": "",
+	  "parent": "",
+	  "previous": "",
+  
+	};
+	let items = [];
+  
+  
+  
+	if (formId == "doc_Form_SalesReport") {
+	  for (let i = 0; i < $(".outProduct").length; i++) {
+		let tt = {
+		  "outProduct": $(".outProduct")[i].value,
+		  "outPrice": $(".outPrice")[i].value,
+		  "outQuantity": $(".outQuantity")[i].value
+		};
+		items.push(tt);
+	  }
+	  related = {
+		"next": "",
+		"parent": "",
+		"previous": "",
+		"outSumAllTotal": $(".outSumAllTotal").val(),
+		"profit": $("." + formId + "_profit").val(),
+		"items": items
+	  }
+  
+  
+	}
+  
+	related = JSON.stringify(related);
+  
+	let data = {
+	  dept: dept,
+	  title: title,
+	  sopp: soppResult,
+	  readable: readable,
+	  formId: formId,
+	  customer: cusResult,
+	  appDoc: appDoc,
+	  appLine: appLine,
+	  temp: temp,
+	  related: related
+	};
+	console.log(data);
+	if (title == "") {
+	  alert("제목을 입력하세요");
+	} else {
+	  data = JSON.stringify(data);
+	  data = cipher.encAes(data);
+  
+	  $.ajax({
+		url: "/api/gw/app/temp",
+		method: "post",
+		data: data,
+		dataType: "json",
+		contentType: "text/plain",
+		success: (result) => {
+		  if (result.result === "ok") {
+			alert("임시 저장 되었습니다");
+		  } else {
+			alert(result.msg);
+		  }
+		},
+	  });
+	}
+  }
+  
+  // 결재선 정보 저장하기
+  
+  // 자주쓰는 결재선 관련 함수 lineSaveFnc()/ getSavedLine() / setSavedLinedata() / delSavedLineData() ===========================================================================================
+  
+  setSavedLine() {
+	let val = $("select[name='saveLineSelect']")[0].value;
+  
+	if (val != "null") {
+	  $("#approval").html("");
+	  $("#agree").html("");
+	  $("#examine").html("");
+	  $("#conduct").html("");
+	  $("#refer").html("");
+  
+	  let appLine = storage.savedLine;
+	  let selectedAppLine = [];
+	  for (let i = 0; i < appLine.length; i++) {
+		if (appLine[i].no == val) {
+		  selectedAppLine = appLine[i].appLine;
+		}
+	  }
+  
+	  let target = $(".typeContainer");
+	  for (let k = 0; k < selectedAppLine.length; k++) {
+		let html = target[selectedAppLine[k][0]].innerHTML;
+		html +=
+		  "<div class='lineDataContainer' id='lineContainer_" +
+		  selectedAppLine[k][1] +
+		  "'><label id='linedata_" +
+		  selectedAppLine[k][1] +
+		  "'>" +
+		  storage.user[selectedAppLine[k][1]].userName +
+		  "</label><button value='" +
+		  selectedAppLine[k][1] +
+		  "' onclick='upClick(this)'>▲</button><button  value='" +
+		  selectedAppLine[k][1] +
+		  "'onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'><i class='fa-solid fa-xmark'></i></button></div>";
+		target[selectedAppLine[k][0]].innerHTML = html;
+	  }
+	}
+  }
+  
+  
+  
+  lineSaveFnc() {
+  
+	if ($("#approval").html() == "") {
+	  alert("결재자를 설정하세요");
+	} else if ($(".setSavedLineTitle").val() == "") {
+	  alert("결재선 이름을 입력하세요");
+	} else {
+	  let title = $(".setSavedLineTitle").val();
+	  let appLine = []; // 이차원 배열에 담기
+  
+	  let target = $(".typeContainer");
+  
+	  for (let i = 0; i < target.length; i++) {
+		for (let j = 0; j < target[i].children.length; j++) {
+		  appLine.push([i, target[i].children[j].id.split("_")[1]]);
+		}
+	  }
+  
+	  let data = {
+		title: title,
+		appLine: appLine,
+	  };
+  
+	  console.log(data);
+	  data = JSON.stringify(data);
+	  data = cipher.encAes(data);
+  
+	  $.ajax({
+		url: "/api/gw/app/savedLine",
+		method: "post",
+		data: data,
+		dataType: "json",
+		contentType: "text/plain",
+		success: (result) => {
+		  if (result.result === "ok") {
+			alert("저장 되었습니다.");
+			this.getSavedLine();
+			$(".setSavedLineTitle").val("");
+		  } else {
+			alert("실패");
+		  }
+		},
+	  });
+	}
+  }
+  
+  
+  
+  
+  getSavedLine() {
+	$.ajax({
+	  url: "/api/gw/app/savedLine/" + storage.my,
+	  method: "get",
+	  dataType: "json",
+	  cache: false,
+	  success: (result) => {
+		let savedLine;
+		if (result.result == "ok") {
+		  savedLine = cipher.decAes(result.data);
+		  savedLine = JSON.parse(savedLine);
+		  storage.savedLine = savedLine;
+		  this.setSavedLinedata();
+		} else {
+		  alert("자주쓰는 결재선을 가져오는데 실패함 ");
+		}
+	  },
+	});
+  }
+  
+  setSavedLinedata() {
+	let target = $(".savedLineContainer");
+	let savedLine = storage.savedLine;
+	let html =
+	  "<select name='saveLineSelect'><option value='null'>-선택-</option>";
+	for (let i = 0; i < savedLine.length; i++) {
+	  html +=
+		"<option value='" +
+		savedLine[i].no +
+		"'>" +
+		savedLine[i].title +
+		"</option>";
+	}
+	html += "</select>";
+	target.html(html);
+  }
+  
+  delSavedLineData() {
+	let val = $("select[name='saveLineSelect']")[0].value;
+	if (val != null) {
+	  $.ajax({
+		url: "/api/gw/app/savedLine/" + val,
+		method: "delete",
+		dataType: "json",
+		cache: false,
+		success: (result) => {
+		  if (result.result == "ok") {
+			alert("삭제 성공");
+			this.getSavedLine();
+		  } else {
+			alert("자주 쓰는 결재선에서 삭제하는 데 실패함  ");
+		  }
+		},
+	  });
+	}
+  }
+  
+  
+  // 지출결의서 작성 시 법인카드 관련 함수 getCardDetails / setCardData() ===================================================================================================================
+  
+  getCardDetails() {
+	let date = new Date();
+	let month = date.getMonth();
+	let year = date.getFullYear();
+  
+	if (month == 0) {
+	  month = 12;
+	  year = year - 1;
+	}
+  
+	$.ajax({
+	  url: "/api/accounting/corporatecard/my/" + (year * 100 + month),
+	  method: "get",
+	  dataType: "json",
+	  cache: false,
+	  success: (result) => {
+		let data;
+		if (result.result == "ok") {
+		  data = cipher.decAes(result.data);
+		  data = JSON.parse(data);
+		  storage.cardData = data;
+		  this.setCardData();
+		} else {
+		  alert("카드 내역 불러오기 실패");
+		}
+	  },
+	});
+  }
+  
+  
+  
+  setCardData() {
+	if (storage.cardData.length == 0) {
+	  alert("법인카드 내역이 없습니다");
+	} else {
+	  let id;
+	  if ($(".formNumHidden").val() == "") {
+		id = storage.reportDetailData.formId;
+	  } else {
+		id = storage.formList[$(".formNumHidden").val()].id;
+	  }
+  
+	  let cardData = storage.cardData;
+	  let dataHtml = "";
+  
+	  let dataTitles = [
+		"date",
+		"customer",
+		"product",
+		"price", // 단가
+		"quantity", // 수량
+		"subTotal", //공급가액
+		"tax",
+		"total",
+		"remark",
+	  ];
+	  let cardTitles = [
+		"date",
+		"customer", //none
+		"content",
+		"price",
+		"quantity", //1
+		"price",
+		"vat",
+		"total",
+		"remark",
+	  ];
+  
+	  for (let q = 0; q < cardData.length; q++) {
+		dataHtml += "<div class='detailcontentDiv'>";
+		for (let j = 0; j < dataTitles.length; j++) {
+		  if (j == dataTitles.length - 1) {
+			if (cardData[q][cardTitles[j]] == null) {
+			  cardData[q][cardTitles[j]] = "";
+			}
+			dataHtml +=
+			  "<input type='text' value='" +
+			  cardData[q][cardTitles[j]] +
+			  "' onkeyup='this.dataset.detail=this.value' style='padding:0.3em;border-bottom:1px solid black; border-right:1px solid black' class='inputs  " +
+			  id +
+			  "_" +
+			  dataTitles[j] +
+			  "'>";
+		  } else if (dataTitles[j] == "date") {
+			let date = cardData[q][cardTitles[j]];
+			dataHtml +=
+			  "<input class='inputs  " +
+			  id +
+			  "_" +
+			  dataTitles[j] +
+			  "' onchange='this.dataset.detail=this.value;' style='padding:0.3em;border-bottom:1px solid black; border-right:1px solid black' type='date' value='" +
+			  date +
+			  "' disabled >";
+		  } else if (
+			dataTitles[j] == "price" ||
+			dataTitles[j] == "subTotal" ||
+			dataTitles[j] == "tax" ||
+			dataTitles[j] == "total"
+		  ) {
+			if (cardData[q][cardTitles[j]] == null) {
+			  cardData[q][cardTitles[j]] = "";
+			  dataHtml +=
+				"<input class='inputs " +
+				id +
+				"_" +
+				dataTitles[j] +
+				"' type='text' oninput='setNum(this)' style='padding:0.3em;border-bottom:1px solid black; border-right:1px solid black' onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' value='" +
+				cardData[q][cardTitles[j]] +
+				"' disabled >";
+			} else {
+			  dataHtml +=
+				"<input class='inputs  " +
+				id +
+				"_" +
+				dataTitles[j] +
+				"' type='text' oninput='setNum(this)'  style='padding:0.3em;border-bottom:1px solid black; border-right:1px solid black' onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' value='" +
+				cardData[q][cardTitles[j]].toLocaleString() +
+				"' disabled>";
+			}
+		  } else if (dataTitles[j] == "quantity") {
+			console.log("수량 ");
+			dataHtml +=
+			  "<input class='inputs  " +
+			  id +
+			  "_" +
+			  dataTitles[j] +
+			  "' type='text' oninput='setNum(this)' style='padding:0.3em;border-bottom:1px solid black; border-right:1px solid black'  onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' value='1' disabled>";
+		  } else if (dataTitles[j] == "product") {
+			dataHtml +=
+			  "<input class='inputs  " +
+			  id +
+			  "_" +
+			  dataTitles[j] +
+			  "' type='text' oninput='setNum(this)'  style='padding:0.3em;border-bottom:1px solid black; border-right:1px solid black' onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' value='" +
+			  cardData[q][cardTitles[j]] +
+			  "' disabled>";
+		  } else {
+			if (cardData[q][cardTitles[j]] == null) {
+			  cardData[q][cardTitles[j]] = "";
+			}
+			dataHtml +=
+			  "<input class='inputs " +
+			  id +
+			  "_" +
+			  dataTitles[j] +
+			  "' type='text' style='padding:0.3em;border-bottom:1px solid black; border-right:1px solid black' onkeyup='this.dataset.detail=this.value' value='" +
+			  cardData[q][cardTitles[j]] +
+			  "'>";
+		  }
+		}
+		dataHtml +=
+		  "<div class='detailcontentbox'><input type='checkbox' class='detailBox'></div></div>";
+	  }
+  
+	  $(".insertedDataList").html(dataHtml);
+  
+	  let target = $(".insertedDataList")[0];
+  
+	  let inputsArr = target.getElementsByTagName("input");
+	  for (let i = 0; i < inputsArr.length; i++) {
+		inputsArr[i].dataset.detail = inputsArr[i].value;
+	  }
+	  this.getTotalCount();
+	}
+  }
+  
+  
+  
+  
+  setInfoCusDataList() {
+	let formId;
+	if ($(".formNumHidden").val() == "") {
+	  formId = storage.reportDetailData.formId;
+	} else {
+	  formId = storage.formList[$(".formNumHidden").val()].id;
+	}
+  
+	let html = $(".infoContentlast")[0].innerHTML;
+	let x;
+	let dataListHtml = "";
+  
+	// 거래처 데이터 리스트 만들기
+	dataListHtml = "<datalist id='_infoCustomer'>";
+	for (x in storage.customer) {
+	  dataListHtml +=
+		"<option data-value='" +
+		x +
+		"' value='" +
+		storage.customer[x].name +
+		"'></option> ";
+	}
+	dataListHtml += "</datalist>";
+	html += dataListHtml;
+	$(".infoContentlast")[0].innerHTML = html;
+	$("#" + formId + "_infoCustomer").attr("list", "_infoCustomer");
+  
+	if (formId == "doc_Form_SalesReport") {
+	  $("#" + formId + "_endCustName").attr("list", "_infoCustomer");
+	}
+  
+  
+  
+  }
+  
+  
+  // 거래처 데이터리스트 set하는 함수 setCusDataList() Start =====================================================================================================================
+  setCusDataList() {
+  
+	let id;
+	if ($(".formNumHidden").val() == "") {
+	  id = storage.reportDetailData.formId;
+	} else {
+	  id = storage.formList[$(".formNumHidden").val()].id;
+	}
+  
+	let target = $("." + id + "_customer");
+	for (let i = 0; i < target.length; i++) {
+	  let html = $("." + id + "_customer")[i].innerHTML;
+	  let x;
+	  let dataListHtml = "";
+  
+	  // 거래처 데이터 리스트 만들기
+	  dataListHtml = "<datalist id='_customer'>";
+	  for (x in storage.customer) {
+		dataListHtml +=
+		  "<option data-value='" +
+		  x +
+		  "' value='" +
+		  storage.customer[x].name +
+		  "'></option> ";
+	  }
+	  dataListHtml += "</datalist>";
+	  html += dataListHtml;
+	  $("." + id + "_customer")[i].innerHTML = html;
+	  $("." + id + "_customer").attr("list", "_customer");
+  
+	}
+  }
+  
+  
+  
+  // 날짜 변환 함수 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  getYmdHyphen() {
+	let d = new Date();
+	return (
+	  d.getFullYear() +
+	  "-" +
+	  (d.getMonth() + 1 > 9
+		? (d.getMonth() + 1).toString()
+		: "0" + (d.getMonth() + 1)) +
+	  "-" +
+	  (d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString())
+	);
+  }
+  
+  getYmdSlash() {
+	let d = new Date();
+	return (
+	  (d.getFullYear() % 100) +
+	  "/" +
+	  (d.getMonth() + 1 > 9
+		? (d.getMonth() + 1).toString()
+		: "0" + (d.getMonth() + 1)) +
+	  "/" +
+	  (d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString())
+	);
+  }
+  
+  
+  setTempLineData() {
+	// let appLine = storage.reportDetailData.appLine;
+	// let html;
+	// let idx;
+  
+	// for (let i = 0; i <= appLine.length - 1; i++) {
+	//   html = "";
+	//   if (appLine[i].length > 0) {
+	//     for (let j = 0; j < appLine[i][0].length; j++) {
+	//       let num = appLine[i][j];
+	//       html += "<div class='lineDataContainer' id='lineContainer_" + num + "'><label id='linedata_" + num + "'>" + storage.user[num].userName + "</label><button value='" + num + "'' onclick='upClick(this)'>▲</button><button value='" + num + "'' onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'><i class='fa-solid fa-xmark'></i></button></div>";
+	//     } if (i > 1) {
+	//       idx = i - 1;
+	//     } else if (i <= 1) {
+	//       idx = i;
+	//     }
+	//     $(".typeContainer")[idx].innerHTML = html;
+	//   }
+  
+	// }
+  
+	let html = ""; for (let i = 0; i < storage.reportDetailData.appLine.length; i++) {
+	  let idx = storage.reportDetailData.appLine[i][0];
+	  let num = storage.reportDetailData.appLine[i][1];
+	  html += "<div class='lineDataContainer' id='lineContainer_" + num + "'><label id='linedata_" + num + "'>" + storage.user[num].userName + "</label><button value='" + num + "'' onclick='upClick(this)'>▲</button><button value='" + num + "'' onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'><i class='fa-solid fa-xmark'></i></button></div>";
+	  if (idx > 1) {
+		idx = idx - 1;
+	  } else if (idx <= 1) {
+		idx = i;
+	  }
+	  html = ($(".typeContainer")[idx].innerHTML += html);
+  
+	  $(".typeContainer")[idx].innerHTML = html;
+	}
+  
+  }
+  
+  
+  
+  setDefaultLineData() {
+	let simplAppLine = [];
+	let formId = storage.reportDetailData.formId;
+  
+	for (let i = 0; i < $("." + formId + "_examine").length; i++) {
+	  simplAppLine.push([0, $("." + formId + "_examine")[i].dataset.detail]);
+	}
+	for (let i = 0; i < $("." + formId + "_agree").length; i++) {
+	  simplAppLine.push([1, $("." + formId + "_agree")[i].dataset.detail]);
+	}
+	for (let i = 0; i < $("." + formId + "_approval").length; i++) {
+	  simplAppLine.push([2, $("." + formId + "_approval")[i].dataset.detail]);
+	}
+	for (let i = 0; i < $("." + formId + "_conduct").length; i++) {
+	  simplAppLine.push([3, $("." + formId + "_conduct")[i].dataset.detail]);
+	}
+	// for (let i = 0; i < $("." + formId + "_refer").length; i++) {
+	//   appLine.push([4, $("." + formId + "_refer")[i].dataset.detail]);
+	// }
+	for (let i = 0; i < referArr.length; i++) {
+	  simplAppLine.push([4, referArr[i]]);
+	}
+	storage.reportDetailData.appLine = simplAppLine;
+  }
+}
+
+
+
+class GwWaitSet{
+	
+	constructor(){
+		CommonDatas.Temps.gwWaitSet = this;
+	}
+
+drawList() {
+
+	$(".modal-wrap").hide();
+  
+	let checkHref = location.href;
+	checkHref = checkHref.split("//");
+	checkHref = checkHref[1];
+	let splitArr = checkHref.split("/");
+
+	// 전자결재 홈 화면에서 들어오는 경우 , 상세조회  
+	if (splitArr.length > 3) {
+
+		if (response.data.result === "ok") {
+			let result;
+			result = cipher.decAes(response.data.data);
+			result = JSON.parse(result);
+			storage.userList = [];
+
+			for(let key in storage.user){	
+				let item = storage.user[key];
+				storage.userList.push(item);
+			}
+
+			this.drawUserList();
+			CommonDatas.searchListSet("userList");
+			$('.theme-loader').fadeOut("slow");
+		}
+	  $.ajax({
+		url: apiServer + "/api/gw/app/doc/" + splitArr[3],
+		method: "get",
+		dataType: "json",
+		cache: false,
+		success: (data) => {
+		  let detailData;
+		  if (data.result === "ok") {
+			// detailData = cipher.decAes(data.data);
+			detailData = JSON.parse(detailData);
+			// detailData.doc = cipher.decAes(detailData.doc);
+			detailData.doc = detailData.doc.replaceAll('\\"', '"');
+			storage.reportDetailData = detailData;
+			storage.container = 0;
+			storage.cardStart = 0;
+			getDetailView();
+			$('.theme-loader').fadeOut("slow");
+		  } else {
+			alert("문서 정보를 가져오는 데 실패했습니다");
+		  }
+		},
+	  });
+	} else {
+	  // 리스트 보기
+	  let url, method, data, type;
+	  url = "/api/gw/app/wait";
+	  method = "get";
+	  data = "";
+	  type = "list";
+	  crud.defaultAjax(url, method, data, type, this.waitSuccessList, this.waitErrorList);
+	  $(".listPageDiv").show();
+	  $(".batchBtn").show();
+	  console.log("test")
+	  storage.container = 0;
+	  storage.cardStart = 0;
+	  $('.theme-loader').fadeOut("slow");
+	  
+	}
+  }
+  
+
+
+  // 결재 대기 문서 리스트 그리기 
+  drawNoticeApproval() {
+  
+	let container,
+	  result,
+	  jsonData,
+	  job,
+	  header = [],
+	  data = [],
+	  ids = [],
+	  disDate,
+	  setDate,
+	  str,
+	  fnc;
+  
+	if (storage.waitList.wait == undefined || storage.waitList.wait.length == 0) {
+	  container = $(".listDiv");
+	  header = [
+		{
+		  title: "작성일",
+		  align: "center",
+		},
+		{
+		  title: "결재 타입",
+		  align: "center",
+		},
+		{
+		  title: "문서 종류",
+		  align: "center",
+		},
+		{
+		  title: "제목",
+		  align: "left",
+		},
+		{
+		  title: "작성자",
+		  align: "center",
+		},
+		{
+		  title: "<input type='checkbox' name='batchBtns' class='allCb'>",
+		  align: "center",
+		}
+  
+	  ];
+  
+	  createCheckGrid(container, header, data, ids, job, fnc);
+  
+	  // container.append(
+	  //   "<div class='noListDefault'>결재 대기 문서가 없습니다</div>"
+	  // );
+	  container.append(
+		"<div style='border:1px solid #e0e4e9;padding:8px;justify-content: center;background-color:white; text-align:center;grid-column :span 6'>결재 대기 문서가 없습니다</div>"
+	  );
+  
+	 
+	} else {
+  
+	  let tt = [];
+	  for (let i = storage.waitList.wait.length - 1; i >= 0; i--) { tt.push(storage.waitList.wait[i]) };
+	  jsonData = tt;
+  
+	  result = paging(jsonData.length, storage.currentPage, storage.articlePerPage);
+  
+	  pageContainer = document.getElementsByClassName("pageContainer");
+	  container = $(".listDiv");
+  
+	  header = [
+  
+		{
+		  title: "작성일",
+		  align: "center",
+		},
+		{
+		  title: "결재 타입",
+		  align: "center",
+		},
+		{
+		  title: "문서 종류",
+		  align: "center",
+		},
+		{
+		  title: "제목",
+		  align: "left",
+		},
+		{
+		  title: "작성자",
+		  align: "center",
+		},
+		{
+		  title: "<input type='checkbox'  onclick='allCbEvent(this)'>",
+		  align: "center",
+		}
+  
+	  ];
+	  for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
+		disDate = dateDis(jsonData[i].created, jsonData[i].modified);
+		setDate = dateFnc(disDate);
+		let userName = storage.user[jsonData[i].writer].userName;
+		let appType = jsonData[i].appType;
+		if (appType == "0") {
+		  appType = "검토";
+		} else if (appType == "1") {
+		  appType = "합의";
+		} else if (appType == "2") {
+		  appType = "결재";
+		} else if (appType == "3") {
+		  appType = "수신";
+		} else {
+		  appType = "참조";
+		}
+  
+  
+  
+  
+		let check = "<input type='checkbox'  name='batchBtns' data-detail='" + jsonData[i].docNo + "'>"
+		str = [
+  
+		  {
+			"setData": setDate,
+			"align": "center"
+		  },
+		  {
+			"setData": appType,
+			"align": "center"
+		  },
+		  {
+			"setData": jsonData[i].form,
+			"align": "center"
+		  },
+		  {
+			"setData": jsonData[i].title,
+			"align": "left",
+		  },
+		  {
+			"setData": userName,
+			"align": "center"
+		  },
+		  {
+			"setData": check,
+			"align": "center",
+		  }
+  
+		];
+  
+		fnc = "waitDetailView(this)";
+		ids.push(jsonData[i].docNo);
+		data.push(str);
+	  }
+  
+	  let pageNation = createPaging(
+		pageContainer[0],
+		result[3],
+		"pageMove",
+		"drawNoticeApproval",
+		result[0]
+	  );
+	  pageContainer[0].innerHTML = pageNation;
+	  createCheckGrid(container, header, data, ids, job, fnc);
+  
+	}
+  } // End of drawNoticeApproval()
+
+  waitSuccessList(result) {
+	storage.waitList = result;
+	window.setTimeout(this.drawNoticeApproval, 200);
+	}
+	
+	waitErrorList() {
+	alert("에러");
+	}
+  
+  
+  // 결재 대기 문서 상세 조회하기 
+  waitDetailView(obj) {
+  
+	let docNo = $(obj).parent().attr("data-id");
+  
+	$.ajax({
+	  url: apiServer + "/api/gw/app/doc/" + docNo,
+	  method: "get",
+	  dataType: "json",
+	  cache: false,
+	  success: (data) => {
+		let detailData;
+		if (data.result === "ok") {
+		  detailData = cipher.decAes(data.data);
+		  detailData = JSON.parse(detailData);
+		  detailData.doc = cipher.decAes(detailData.doc);
+		  detailData.doc = detailData.doc.replaceAll('\\"', '"');
+		  storage.reportDetailData = detailData;
+		  getDetailView();
+  
+		} else {
+		  alert("문서 정보를 가져오는 데 실패했습니다");
+		  location.href = "/gw/wait";
+		}
+	  },
+	});
+  } // End of noticeDetailView();
+  
+  
+  
+  // 문서 수정시 첨부파일목록 수정
+  getFileModArr() {
+	let target = $(".selectedFileDiv");
+	let html = "";
+	if (storage.newFileData == undefined || storage.newFileData.length == 0) {
+	  let fileList = storage.reportDetailData.fileList;
+  
+	  for (let i = 0; i < fileList.length; i++) {
+		html +=
+		  "<div><div class='files' data-detail='" +
+		  fileList[i].fileName +
+		  "'>" +
+		  fileList[i].fileName +
+		  "<button type='button' onclick='fileRemove(this)'>x</button></div></div>";
+	  }
+	  target.html(html);
+	} else {
+	  for (let i = 0; i < storage.newFileData.length; i++) {
+		html +=
+		  "<div><div class='files' data-detail='" +
+		  storage.newFileData[i] +
+		  "'>" +
+		  storage.newFileData[i] +
+		  "<button type='button' onclick='fileRemove(this)'>x</button></div></div>";
+	  }
+	  target.html(html);
+	}
+  }
+  
+  fileRemove(obj) {
+	let value = obj.parentElement.dataset.detail;
+	storage.newFileData = storage.newFileData.filter(
+	  (element) => element != value
+	);
+	obj.parentElement.remove();
+  }
+  
+  // 탭 누를때마다의 이벤트 주기
+  changeTab(obj) {
+  
+	if (obj.id == "lineInfo") {
+	  $("#changeInfo").css("background-color", "#dddddd");
+	  $("#changeInfo").css("color", "#5c5c5c");
+	  $("#changeInfo").css("border-bottom-left-radius", "20px");
+	  $("#tabDetail2").hide();
+	  $("#tabDetail").show();
+	  if (storage.newAppLine == undefined) {
+		this.drawCommentLine();
+	  } else {
+		this.drawNewCommentLine();
+	  }
+	} else if ((obj.id = "changeInfo")) {
+	  $("#lineInfo").css("background-color", "#dddddd");
+	  $("#lineInfo").css("color", "#5c5c5c");
+	  $("#lineInfo").css("border-bottom-right-radius", "20px");
+	  $("#tabDetail").hide();
+	  $("#tabDetail2").show();
+  
+	  this.drawChangeInfo();
+	}
+  }
+  
+  // 모달별 버튼
+  closeModal(obj) {
+	$(".modal-wrap").hide();
+	$("input:radio[name='type']").prop("checked", false);
+  }
+  
+  //결재하기 모달
+  showAppModal() {
+  
+	let setAppModalHtml =
+	  "<div class='setApprovalModal'>" +
+	  "<div class='modalHead'><span class='modalHeadTitle'>결재하기</span><span class='xClose' onclick='closeModal(this)'><i class='fa-solid fa-xmark'></i></span></div>" +
+	  "<div class='modal-body'><div class='labelContainer'>" +
+	  "<label><input type='radio' name='type'  value='approve' checked>승인</label>" +
+	  "<label><input type='radio' name='type' value='reject'>반려</label></div>" +
+	  "<div class='commentContainer'><label>의견 </label><textarea class='approvalComment'></textarea></div></div>" +
+	  "<div class='modalFoot'>" +
+	  "<button class='modalBtns close' id='quit' onclick='closeModal(this)'>취소</button>" +
+	  "<button class='modalBtns confirm' id='set' onclick='approveBtnEvent()'>결재</button></div></div>";
+	$(".modal-wrap").html(setAppModalHtml);
+	$(".modal-wrap").show();
+  
+  
+  }
+  
+  //결재하기 버튼
+  approveBtnEvent() {
+	let formId = storage.reportDetailData.formId;
+	let selectVal = $(":radio[name='type']:checked").val();
+	let comment = $(".approvalComment").val();
+	comment = comment.replaceAll("\n", "<br />");
+	$(".modal-wrap").hide();
+	let type;
+	let appLine = storage.reportDetailData.appLine;
+	let ordered;
+  
+	for (let i = 0; i < appLine.length; i++) {
+	  if (appLine[i].employee == storage.my) {
+		ordered = appLine[i].ordered;
+		if (storage.newAppLine != undefined) {
+		  storage.newAppLine = storage.newAppLine.slice(
+			i + 1,
+			storage.newAppLine.length
+		  );
+		} else {
+		  storage.newAppLine = null;
+		}
+	  }
+	}
+  
+	let soppVal = $("#" + formId + "_sopp").val();
+	let customerVal = $("#" + formId + "_infoCustomer").val();
+	let soppResult = "";
+  
+	for (let x in storage.soppList) {
+	  if (storage.soppList[x].title == soppVal) {
+		soppResult = storage.soppList[x].no;
+	  }
+	}
+	let cusResult = "";
+	for (let x in storage.customer) {
+	  if (customerVal != "" && storage.customer[storage.customer[x].no].name == customerVal) {
+		cusResult = storage.customer[x].no;
+	  }
+	}
+  
+  
+  
+	if (formId != "doc_Form_leave" && formId != "doc_Form_extension") {
+	  if (
+		((storage.reportDetailData.sopp == null && soppResult == "") ||
+		  storage.reportDetailData.sopp == soppResult) &&
+		((storage.reportDetailData.customer == null && cusResult == "") ||
+		  storage.reportDetailData.customer == cusResult) &&
+		storage.oriCbContainer == $("input[name='" + formId + "_RD']:checked").attr("id") &&
+		storage.oriTitle == $("#" + formId + "_title").val() &&
+		storage.oriContent == $("#" + formId + "_content").val() &&
+		storage.oriInsertedDataList == $(".insertedDataList").html()
+	  ) {
+		storage.newDoc = null;
+	  } else {
+		storage.newDoc = $(".seletedForm").html();
+	  }
+	} else {
+	  if (
+		storage.oriTitle == $("#" + formId + "_title").val() &&
+		storage.oriContent == $("#" + formId + "_content").val() &&
+		storage.oriInsertedData == $(".insertedData").html()
+	  ) {
+		storage.newDoc = null;
+	  } else {
+		storage.newDoc = $(".seletedForm").html();
+	  }
+	}
+  
+	selectVal === "approve" ? (type = 1) : (type = 0);
+	storage.newFileData == undefined || storage.newFileData.length == 0
+	  ? (storage.newFileData = null)
+	  : (storage.newFileData = storage.newFileData);
+  
+	let title = $("#" + formId + "_title").val();
+	if (storage.reportDetailData.title == title) {
+	  title = null;
+	}
+  
+	let appDoc;
+	if (
+	  storage.newAppLine != undefined ||
+	  (storage.newAppLine != null && storage.newAppLine.length > 0)
+	) {
+	  appDoc = $(".seletedForm").html();
+	} else {
+	  storage.newAppLine = null;
+	  appDoc = null;
+	}
+  
+  
+  
+	let maintenance = (storage.reportDetailData.related.maintenance == "" ||
+	  storage.reportDetailData.related.maintenance == undefined || storage.reportDetailData.related.maintenance == null) ? "" : storage.reportDetailData.related.maintenance;
+  
+	let related;
+	if (formId.toString().includes("SalesReport")) {
+	  related = {
+		"next": "",
+		"parent": "",
+		"previous": "sopp:" + storage.reportDetailData.sopp,
+		"maintenance": maintenance,
+	  }
+	} else {
+	  related = {
+		"next": "",
+		"parent": "",
+		"previous": "",
+	  }
+	}
+	related = JSON.stringify(related);
+  
+  
+	let data = {
+	  doc: storage.newDoc,
+	  comment: comment,
+	  files: storage.newFileData,
+	  appLine: storage.newAppLine,
+	  appDoc: appDoc,
+	  sopp: soppResult + "",
+	  customer: cusResult + "",
+	  title: title,
+	  related: related,
+	};
+  
+  
+	data = JSON.stringify(data);
+	window.data = data;
+	data = cipher.encAes(data);
+  
+	$.ajax({
+	  url:
+		apiServer +
+		"/api/gw/app/proceed/" +
+		storage.reportDetailData.docNo +
+		"/" +
+		ordered +
+		"/" +
+		type,
+	  method: "post",
+	  dataType: "json",
+	  data: data,
+	  contentType: "text/plain",
+	  cache: false,
+	  success: (data) => {
+		if (data.result === "ok") {
+		  alert("결재 완료");
+		  location.href = "/gw/wait";
+		} else {
+		  alert("결재 실패");
+		}
+	  },
+	});
+  }
+  
+  
+  //결재선 수정 모달
+  showGwModal() {
+	let setGwModalHtml =
+	  "<div class='gwModal'>" +
+	  "<div class='modalHead'><span class='modalHeadTitle'>결재선 수정( * 현재 결재 단계 이후만 추가/삭제 가능)</span><span id='close' onclick='closeGwModal(this)' class='xClose'><i class='fa-solid fa-xmark'></i></span></div>" +
+	  "<div class='lineDetail'>" +
+	  "<div class='lineTop'>" +
+	  "<div class='innerDetail' id='lineLeft'></div>" +
+	  "<div class='innerDetail crudBtns' id='lineCenter'>" +
+	  "<button class='appTypeBtn'  onclick='check(this.value)' value='examine'>검토 &gt;</button>" +
+	  "<button class='appTypeBtn'  onclick='check(this.value);setExamine();' value='approval'>결재 &gt;</button>" +
+	  "<button class='appTypeBtn'  onclick='check(this.value)' value='conduct'>수신 &gt;</button>" +
+	  "<button class='appTypeBtn'  onclick='check(this.value)' value='refer'>참조 &gt;</button></div>" +
+	  "<div class='innerDetail' id='lineRight'>" +
+	  "<div></div>" +
+	  "<div><div class='defaultFormSpanDiv'>검토</div>" +
+	  "<div class='typeContainer' id='examine'></div></div>" +
+	  "<div><div class='defaultFormSpanDiv'>결재</div>" +
+	  "<div class='typeContainer' id='approval'></div></div>" +
+	  "<div><div class='defaultFormSpanDiv'>수신</div>" +
+	  "<div class='typeContainer' id='conduct'></div></div>" +
+	  "<div><div class='defaultFormSpanDiv'>참조</div>" +
+	  "<div class='typeContainer' id='refer'></div></div>" +
+	  "</div>" +
+	  "</div>" +
+	  "</div>" +
+	  "<div class='modalFoot'>" +
+	  " <button class='modalBtns close' id='this.' onclick='closeGwModal(this)'>초기화</button>" +
+	  // " <button  class='modalBtns close' id='close' onclick='closeGwModal(this)'>취소</button>" +
+	  " <button  class='modalBtns confirm' id='modify' onclick='closeGwModal(this)'>수정</button>" +
+	  "</div>" +
+	  "</div>" +
+	  "</div>";
+	$(".modal-wrap").html(setGwModalHtml);
+  
+	let orgChartTarget = $("#lineLeft");
+	let userData = new Array();
+	let x;
+	let my = storage.my;
+	let appLine = storage.reportDetailData.appLine;
+	// 내 앞의 결재선에 해당되는 사람은 출력하지 않음 !
+  
+	let disabledUser = [];
+  
+	for (let i = 0; i < storage.reportDetailData.appLine.length; i++) {
+	  disabledUser.push(storage.reportDetailData.appLine[i].employee);
+	  if (my == storage.reportDetailData.appLine[i].employee) {
+		break;
+	  }
+	}
+  
+	let gwTreeHtml = storage.dept.tree.getGwHtml();
+	orgChartTarget.html(gwTreeHtml);
+	$(".modal-wrap").show();
+	this.setDefaultModalData();
+  
+  
+  }
+  
+  
+  
+  setExamine() {
+	let appLine = storage.reportDetailData.appLine;
+	let my = storage.my;
+	let myTurn, myappType, cutNum;
+	for (let i = 0; i < appLine.length; i++) {
+	  if (appLine[i].employee == my) {
+		myappType = appLine[i].appType;
+		cutNum = i;
+	  }
+	}
+  
+	if (myappType == 2) {
+	  $(".appTypeBtn")[0].disabled = false;
+	}
+  
+  
+  }
+  
+  setDefaultModalData() {
+	let appLine = storage.reportDetailData.appLine;
+	let my = storage.my;
+	let myTurn, myappType, cutNum;
+	for (let i = 0; i < appLine.length; i++) {
+	  if (appLine[i].employee == my) {
+		myTurn = appLine[i].ordered;
+		myappType = appLine[i].appType;
+		cutNum = i;
+	  }
+	}
+  
+  
+	for (let j = 0; j <= cutNum; j++) {
+	  $("#cb" + appLine[j].employee).hide();
+	}
+  
+  
+	let examineHtml = "";
+	let approvalHtml = "";
+	let conductHtml = "";
+	let referHtml = "";
+  
+	// 내 이후의 결재선만 출력함
+	for (let i = 1; i < appLine.length; i++) {
+  
+	  if (appLine[i].appType == 0) {
+		if (appLine[i].ordered <= myTurn) {
+		  examineHtml +=
+			"<div class='lineDataContainer' id='lineContainer_" +
+			appLine[i].employee +
+			"'><label id='linedata_" +
+			appLine[i].employee +
+			"'>" +
+			storage.user[appLine[i].employee].userName +
+			"</label></div>";
+		} else {
+		  examineHtml +=
+			"<div class='lineDataContainer' id='lineContainer_" +
+			appLine[i].employee +
+			"'><label id='linedata_" +
+			appLine[i].employee +
+			"'>" +
+			storage.user[appLine[i].employee].userName +
+			"</label><button value='" +
+			i +
+			"' onclick='upClick(this)'>▲</button><button  value='" +
+			appLine[i].employee +
+			"' onclick='downClick(this) '>▼</button><button onclick='deleteClick(this)'>✕</button></div>";
+		}
+	  } else if (appLine[i].appType == 2) {
+		if (appLine[i].ordered <= myTurn) {
+		  approvalHtml +=
+			"<div class='lineDataContainer' id='lineContainer_" +
+			appLine[i].employee +
+			"'><label id='linedata_" +
+			appLine[i].employee +
+			"'>" +
+			storage.user[appLine[i].employee].userName +
+			"</label></div>";
+		} else {
+		  approvalHtml +=
+			"<div class='lineDataContainer' id='lineContainer_" +
+			appLine[i].employee +
+			"'><label id='linedata_" +
+			appLine[i].employee +
+			"'>" +
+			storage.user[appLine[i].employee].userName +
+			"</label><button value='" +
+			i +
+			"' onclick='upClick(this)'>▲</button><button  value='" +
+			appLine[i].employee +
+			"' onclick='downClick(this) '>▼</button><button onclick='deleteClick(this)'>✕</button></div>";
+		}
+  
+	  } else if (appLine[i].appType == 3) {
+		conductHtml +=
+		  "<div class='lineDataContainer' id='lineContainer_" +
+		  appLine[i].employee +
+		  "'><label id='linedata_" +
+		  appLine[i].employee +
+		  "'>" +
+		  storage.user[appLine[i].employee].userName +
+		  "</label><button value='" +
+		  i +
+		  "' onclick='upClick(this)'>▲</button><button  value='" +
+		  appLine[i].employee +
+		  "' onclick='downClick(this) '>▼</button><button onclick='deleteClick(this)'>✕</button></div>";
+	  } else if (appLine[i].appType == 4) {
+		referHtml +=
+		  "<div class='lineDataContainer' id='lineContainer_" +
+		  appLine[i].employee +
+		  "'><label id='linedata_" +
+		  appLine[i].employee +
+		  "'>" +
+		  storage.user[appLine[i].employee].userName +
+		  "</label><button value='" +
+		  i +
+		  "' onclick='upClick(this)'>▲</button><button  value='" +
+		  appLine[i].employee +
+		  "' onclick='downClick(this) '>▼</button><button onclick='deleteClick(this)'>✕</button></div>";
+	  }
+  
+	  // if (myappType == 0) {
+	  $("#examine").html(examineHtml);
+	  $("#approval").html(approvalHtml);
+	  $("#conduct").html(conductHtml);
+	  $("#refer").html(referHtml);
+	  // } else if (myappType == 2) {
+	  //   $("#conduct").html(conductHtml);
+	  //   $("#refer").html(referHtml);
+	  // } 
+  
+  
+	  if (myappType == 2) {
+		let button = $(".appTypeBtn")[0];
+		$(button).prop("disabled", "disabled");
+  
+	  }
+	}
+  }
+  
+  closeGwModal(obj) {
+	let id = obj.id;
+	if (id == "close") {
+	  $(".modal-wrap").hide();
+  
+	  // ====================================================초기화
+	} else if (id == "this.") {
+	  this.reset();
+	  this.setAppLineData();
+	} else if (id == "modify") {
+	  // 내가 결재자이고 수정할때 아무것도 입력되지 않은 경우에 그냥 원래 결재정보로 그리는 것
+	  let appLine = storage.reportDetailData.appLine;
+	  let myType;
+	  let my = storage.my;
+	  for (let i = 0; i < appLine.length; i++) {
+		if (appLine[i].employee == my + "") {
+		  myType = appLine[i].appType;
+		}
+  
+	  }
+  
+	  //내 결재 타입이 검토인 경우 ========================================================================
+	  if (myType == 0) {
+		if ($(".typeContainer")[1].children.length == 0) {
+		  alert("결재자를 선택하세요");
+		} else {
+		  let appLine = storage.reportDetailData.appLine;
+		  let my = storage.my;
+		  let myOrdered;
+		  if (storage.newAppLine != undefined) {
+			storage.newAppLine = undefined;
+		  }
+  
+		  for (let i = 0; i < appLine.length; i++) {
+  
+			let combineData = [];
+  
+			combineData.push([appLine[0].appType, appLine[0].employee + ""]);
+			let target = $(".typeContainer");
+  
+			for (let i = 0; i < target.length; i++) {
+			  for (let j = 0; j < target[i].children.length; j++) {
+				let id = target[i].children[j].id.split("_")[1];
+				let targetId = target[i].id;
+  
+				if (targetId == "examine") {
+				  targetId = 0;
+				} else if (targetId == "agree") {
+				  targetId = 1;
+				} else if (targetId == "approval") {
+				  targetId = 2;
+				} else if (targetId == "conduct") {
+				  targetId = 3;
+				} else if (targetId == "refer") {
+				  targetId = 4;
+				}
+  
+				combineData.push([targetId, id]);
+			  }
+			}
+  
+			storage.newAppLine = combineData;
+  
+  
+  
+  
+			$(".modal-wrap").hide();
+			$(".inputsAuto").css("background-color", "white");
+			this.createNewLine(); // 문서 안에서 결재선 그리는 것
+			// 문서 정보에서 결재선 정보 그리는 것
+			// }
+		  }
+  
+		}
+	  } else { // 내 결재 타입이 결재인 경우 ============================================================== 
+  
+		// let num = 0;
+		// for (let i = 0; i < $(".typeContainer").length; i++) {
+		//   if ($(".typeContainer")[i].innerHTML == "") {
+		//     num++;
+		//   }
+		// }
+  
+		// if (num == 3) {
+		//   $(".modal-wrap").hide();
+		//   this.();
+		//   setAppLineData();
+		// } else {
+		if ($(".typeContainer")[1].children.length == 0) {
+		  alert("결재자를 선택하세요");
+		} else {
+		  let appLine = storage.reportDetailData.appLine;
+		  let my = storage.my;
+		  let myOrdered;
+		  if (storage.newAppLine != undefined) {
+			storage.newAppLine = undefined;
+		  }
+  
+		  for (let i = 0; i < appLine.length; i++) {
+  
+			let combineData = [];
+			combineData.push([appLine[0].appType, appLine[0].employee + ""]);
+			// 기존 데이터 넣기
+			for (let i = 0; i < appLine.length; i++) {
+			  if (appLine[i].ordered <= Number(myOrdered)) {
+				combineData.push([appLine[i].appType, appLine[i].employee + ""]);
+			  }
+			}
+  
+			let target = $(".typeContainer");
+  
+			for (let i = 0; i < target.length; i++) {
+			  for (let j = 0; j < target[i].children.length; j++) {
+				let id = target[i].children[j].id.split("_")[1];
+				let targetId = target[i].id;
+  
+				if (targetId == "examine") {
+				  targetId = 0;
+				} else if (targetId == "agree") {
+				  targetId = 1;
+				} else if (targetId == "approval") {
+				  targetId = 2;
+				} else if (targetId == "conduct") {
+				  targetId = 3;
+				} else if (targetId == "refer") {
+				  targetId = 4;
+				}
+  
+				combineData.push([targetId, id]);
+			  }
+			}
+  
+			storage.newAppLine = combineData;
+			console.log(storage.newAppLine + "확인 ++++++++++ㅇㅇㅇㅇㅇㅇ++++++++ㅇ+ㅇ+ㅇ+ㅇ+ㅇ++ㅇ+ㅇ+ ")
+			$(".modal-wrap").hide();
+			$(".inputsAuto").css("background-color", "white");
+			this.createNewLine(); // 문서 안에서 결재선 그리는 것
+			// 문서 정보에서 결재선 정보 그리는 것
+		  }
+		}
+	  }
+	  // }
+	}
+  
+	// }
+  }
+  
+  
+  //새 결재선 그리기 
+  createNewLine() {
+	let formId = storage.reportDetailData.formId;
+	let lineTarget = $(".infoline")[0].children[1];
+	lineTarget = $("#" + lineTarget.id);
+	lineTarget.html("");
+	lineTarget.css("display", "block");
+	let newAppLine = storage.newAppLine;
+  
+  
+	let newCombine = [[], [], [], [], []];
+  
+	//내 순서 확인하고 title 잘라버리기
+  
+	for (let i = 0; i < newAppLine.length; i++) {
+	  if (newAppLine[i][1] == storage.my) {
+		myType = newAppLine[i][0];
+	  }
+	}
+	console.log(newAppLine + "확인하기 2 ");
+  
+  
+  
+	for (let i = 0; i < newCombine.length; i++) {
+	  for (let j = 0; j < newAppLine.length; j++) {
+		if (j > 0 && i == newAppLine[j][0]) {
+		  newCombine[i].push(newAppLine[j][1]);
+		}
+	  }
+	}
+  
+	console.log(newCombine);
+  
+  
+  
+  
+  
+	console.log(newCombine + "새 결재선 조합 확인 ");
+  
+  
+	let testHtml =
+	  "<div class='lineGridContainer'><div class='lineGrid'><div class='lineTitle'>작성</div><div class='lineSet'><div class='twoBorder'><input type='text' class='inputsAuto' disabled value='" +
+	  storage.userRank[storage.user[storage.newAppLine[0][1]].rank][0] +
+	  "'></div>" +
+	  "<div class='twoBorder'><input type='text' class='inputsAuto' disabled value='" +
+	  storage.user[storage.newAppLine[0][1]].userName +
+	  "'></div>" +
+	  "<div class='twoBorder'><input type='text' class='inputsAuto' disabled value='승인'></div>" +
+	  "<div class='dateBorder'><input type='text' class='inputsAuto' disabled value='" +
+	  getYmdSlashShort(storage.reportDetailData.appLine[0].read) +
+	  "'></div></div></div>";
+	let testHtml2 = "<div class='lineGridContainer'>";
+	// let referHtml = "";
+	let titleArr = ["검토", "합의", "결재", "수신", "참조"];
+	let titleId = ["examine", "agree", "approval", "conduct", "refer"];
+  
+	for (let i = 0; i < newCombine.length; i++) {
+	  if (newCombine[i].length != 0 && i < 3) {
+		// 해당 결재 타입에 설정된 사람이 없지 않으면서 결재 타입이 검토 합의 결재인 경우
+		testHtml +=
+		  "<div class='lineGrid'><div class='lineTitle'>" +
+		  titleArr[i] +
+		  "</div>";
+	  } else if ((newCombine[i].length != 0) != 0 && i == 3) {
+		// 결재타입이 수신인 경우
+		testHtml2 +=
+		  "<div class='lineGrid'><div class='lineTitle'>" +
+		  titleArr[i] +
+		  "</div>";
+	  }
+  
+	  for (let j = 0; j < newCombine[i].length; j++) {
+		// 수신
+		if (i == 3) {
+		  testHtml2 +=
+			"<div class='lineSet'><div class='twoBorder'><input type='text' disabled class='inputsAuto " +
+			formId +
+			"_" +
+			titleId[i] +
+			"_position" +
+			"' value='" +
+			storage.userRank[storage.user[newCombine[i][j]].rank][0] +
+			"' data-detail='" +
+			storage.user[newCombine[i][j]].rank +
+			"'/></div>" +
+			"<div class='twoBorder'><input type='text' disabled class='inputsAuto " +
+			formId +
+			"_" +
+			titleId[i] +
+			"' value='" +
+			storage.user[newCombine[i][j]].userName +
+			"' data-detail='" +
+			storage.user[newCombine[i][j]].userNo +
+			"'/></div>" +
+			"<div class='twoBorder'><input type='text'  disabled class='inputsAuto " +
+			formId +
+			"_" +
+			titleId[i] +
+			"_status' value='' data-detail=''/></div>" +
+			"<div class='dateBorder'><input type='text' disabled class='inputsAuto " +
+			formId +
+			"_" +
+			titleId[i] +
+			"_approved" +
+			"' value='' data-detail=''/></div></div>";
+		}
+		else if (i == 4) {
+		  console.log("참조구나");
+		}
+  
+		// 검토 합의 결재
+		else {
+		  testHtml +=
+			"<div class='lineSet'><div class='twoBorder'><input type='text' disabled class='inputsAuto " +
+			formId +
+			"_" +
+			titleId[i] +
+			"_position" +
+			"' value='" +
+			storage.userRank[storage.user[newCombine[i][j]].rank][0] +
+			"' data-detail='" +
+			storage.user[newCombine[i][j]].rank +
+			"'/></div>" +
+			"<div class='twoBorder'><input type='text' disabled class='inputsAuto " +
+			formId +
+			"_" +
+			titleId[i] +
+			"' value='" +
+			storage.user[newCombine[i][j]].userName +
+			"' data-detail='" +
+			storage.user[newCombine[i][j]].userNo +
+			"'/></div>" +
+			"<div class='twoBorder'><input type='text'disabled class='inputsAuto " +
+			formId +
+			"_" +
+			titleId[i] +
+			"_status' value='' data-detail=''/></div>" +
+			"<div class='dateBorder'><input type='text' disabled  class='inputsAuto " +
+			formId +
+			"_" +
+			titleId[i] +
+			"_approved" +
+			"' value='' data-detail=''/></div></div>";
+		}
+	  }
+  
+	  if (newCombine[i].length != 0 && i < 3) {
+		testHtml += "</div>";
+	  } else if (newCombine[i].length != 0 && i == 3) {
+		testHtml2 += "</div>";
+	  }
+	}
+  
+	testHtml += "</div>";
+	testHtml2 += "</div>";
+  
+	testHtml += testHtml2;
+	lineTarget.html(testHtml);
+  
+  
+	this.drawNewCommentLine();
+	for (let i = 0; i < newCombine.length; i++) {
+	  let titleId = ["examine", "agree", "approval", "conduct", "refer"];
+	  let formId = storage.reportDetailData.formId;
+	  for (let j = 0; j < newCombine[i].length; j++) {
+		for (let k = 1; k < storage.reportDetailData.appLine.length; k++) {
+		  if (
+			newCombine[i][j] ==
+			storage.reportDetailData.appLine[k].employee + ""
+		  ) {
+			let approved = "",
+			  status = "";
+			if (storage.reportDetailData.appLine[k].approved != null) {
+			  approved = getYmdShortSlash(
+				storage.reportDetailData.appLine[k].approved
+			  );
+			  status = "승인";
+			} else if (storage.reportDetailData.appLine[k].rejected != null) {
+			  approved = getYmdShortSlash(
+				storage.reportDetailData.appLine[k].rejected
+			  );
+			  status = "반려";
+			}
+  
+			$("." + formId + "_" + titleId[i] + "_status")[j].value = status;
+			$("." + formId + "_" + titleId[i] + "_approved")[j].value = approved;
+		  }
+		}
+	  }
+	}
+  
+  
+  }
+  
+  check(name) {
+	let inputLength = $(".testClass");
+	let target = $("#" + name);
+	let html = target.html();
+  
+  
+	let x;
+	let my = storage.my;
+  
+	let data = new Array();
+	// 본인
+	for (x in storage.user) {
+	  if (x != my && storage.user[x].resign == false) {
+		data.push(x);
+	  }
+	}
+	let count = 0;
+	for (let i = 0; i < data.length; i++) {
+	  if ($("#cb" + data[i]).prop("checked")) {
+		count++;
+	  }
+	}
+  
+	console.log(count + "체크박수 개수 확인 =============");
+  
+	let selectHtml = "";
+	if ((name == "approval" && count == 1)) {
+	  $("#examine").append($("#" + name).html());
+	}
+  
+  
+	if (name == "approval" && count > 1) {
+	  alert("결재자는 한명만 설정할 수 있습니다");
+	} else {
+	  for (let i = 0; i < inputLength.length; i++) {
+  
+		let id = inputLength[i].id.substring(2, inputLength[i].id.length);
+		if ($("#cb" + id).prop("checked")) {
+		  if (document.getElementById("linedata_" + id) == null) {
+			selectHtml +=
+			  "<div class='lineDataContainer' id='lineContainer_" +
+			  id +
+			  "'><label id='linedata_" +
+			  id +
+			  "'>" +
+			  storage.user[id].userName +
+			  "</label><button value='" +
+			  id +
+			  "' onclick='upClick(this)'>▲</button><button  value='" +
+			  id +
+			  "' onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>";
+		  }
+		}
+	  }
+	  if (name == "approval") {
+		html = "";
+	  }
+	  html += selectHtml;
+	  target.html(html);
+  
+	  $(".testClass").prop("checked", false);
+	}
+  
+  
+  }
+  //End of check(name)
+  
+  
+  // 상단 버튼 관련 함수 ----------------------------------------------------------------------------------------------------------------------------------------------
+  // 문서 수정시 변경이력에 반영
+  reportModify() {
+	let formId = storage.reportDetailData.formId;
+	let content = CKEDITOR.instances[formId + "_content"].getData();
+	$(".modal-wrap").hide();
+	$("button[name='modConfirm']:last-child").remove();
+	$("button[name='modConfirm']:last-child").remove();
+	$(".cke_editable").remove();
+  
+	$("button[name='approvalBtn']")[0].disabled = false;
+	$("input[name='" + formId + "_RD']").prop("disabled", true);
+	$("#" + formId + "_content").attr("data-detail", content);
+	$("#" + formId + "_content").val(content);
+	$("#" + formId + "_content").hide();
+	$("." + formId + "_content").html(content);
+	$("." + formId + "_content").show();
+	$(":file").css("display", "none");
+	this.getFileArr();
+	this.toReadMode();
+  
+  }
+  
+  //문서 수정 버튼 누르면 수정 완료 버튼 생성
+  createConfirmBtn() {
+	let div = document.getElementsByClassName("mainBtnDiv");
+	if (div[0].childElementCount < 6) {
+	  $(".mainBtnDiv").append(
+		"<button type='button'name='modConfirm' onclick='reportModify()' >수정완료 </button>" +
+		"<button type='button'name='modConfirm' onclick='getDetailView()'>문서 수정 초기화</button>"
+	  );
+	}
+	$(":file").css("display", "inline");
+	this.getFileModArr();
+  
+	storage.newFileData = [];
+	for (let i = 0; i < $(".files").length; i++) {
+	  storage.newFileData.push($(".files")[i].dataset.detail);
+	}
+  
+	///결재하기 버튼 disabled
+  
+	$("button[name='approvalBtn']")[0].disabled = true;
+	let formId = storage.reportDetailData.formId;
+	$("." + formId + "_content").hide();
+	$("#" + formId + "_content").val($("." + formId + "_content").html());
+	$("#" + formId + "_content").attr("data-detail", $("." + formId + "_content").html());
+	storage.editorArray = [formId + "_content"];
+	ckeditor.config.readOnly = false;
+	window.setTimeout(setEditor, 100);
+  
+	$("input[name='" + formId + "_RD']").prop("disabled", false);
+	if (formId != "doc_Form_leave" && formId != "doc_Form_extension") {
+	  setSoppList();
+  
+	  let html = $(".infoContentlast")[0].innerHTML;
+	  let x;
+	  let dataListHtml = "";
+  
+	  // 거래처 데이터 리스트 만들기
+	  dataListHtml = "<datalist id='_infoCustomer'>";
+	  for (x in storage.customer) {
+		dataListHtml +=
+		  "<option data-value='" +
+		  x +
+		  "' value='" +
+		  storage.customer[x].name +
+		  "'></option> ";
+	  }
+	  dataListHtml += "</datalist>";
+	  html += dataListHtml;
+	  $(".infoContentlast")[0].innerHTML = html;
+	  $("#" + formId + "_infoCustomer").attr("list", "_infoCustomer");
+  
+	  if (formId == "doc_Form_SalesReport") {
+		$("#" + formId + "_endCustName").attr("list", "_infoCustomer");
+	  }
+	  this.setCusDataList();
+	  this.setProductData();
+	}
+  
+  }
+  
+  
+  reset() {
+	let formId = storage.reportDetailData.formId;
+	let appLine = storage.reportDetailData.appLine;
+	let testHtml =
+	  "<div class='lineGridContainer'><div class='lineGrid'><div class='lineTitle'>작성</div><div class='lineSet'><div class='twoBorder'><input type='text' class='inputsAuto' disabled value='" +
+	  storage.userRank[storage.user[appLine[0].employee].rank][0] +
+	  "'></div>" +
+	  "<div class='twoBorder'><input type='text' class='inputsAuto' disabled value='" +
+	  storage.user[appLine[0].employee].userName +
+	  "'></div>" +
+	  "<div class='twoBorder'><input type='text' class='inputsAuto' disabled value='승인'></div>" +
+	  "<div class='dateBorder'><input type='text' class='inputsAuto' disabled value='" +
+	  getYmdSlashShort(appLine[0].read) +
+	  "'></div></div></div>";
+	let testHtml2 = "<div class='lineGridContainer'>";
+	//let referHtml = "";
+	let titleArr = ["검토", "합의", "결재", "수신", "참조"];
+  
+	let titleId = ["examine", "agree", "approval", "conduct", "refer"];
+	let newCombine = [[], [], [], []];
+  
+	for (let i = 1; i < appLine.length; i++) {
+	  for (let j = 0; j < newCombine.length; j++) {
+		if (appLine[i].appType == j) {
+		  newCombine[j].push(appLine[i].employee);
+		}
+	  }
+	}
+  
+	for (let i = 0; i < newCombine.length; i++) {
+	  if (newCombine[i].length != 0 && i < 3) {
+		// 해당 결재 타입에 설정된 사람이 없지 않으면서 결재 타입이 검토 합의 결재인 경우
+		testHtml +=
+		  "<div class='lineGrid'><div class='lineTitle'>" +
+		  titleArr[i] +
+		  "</div>";
+	  } else if ((newCombine[i].length != 0) != 0 && i == 3) {
+		// 결재타입이 수신인 경우
+		testHtml2 +=
+		  "<div class='lineGrid'><div class='lineTitle'>" +
+		  titleArr[i] +
+		  "</div>";
+	  }
+  
+	  for (let j = 0; j < newCombine[i].length; j++) {
+		// 수신
+		if (i == 3) {
+		  testHtml2 +=
+			"<div class='lineSet'><div class='twoBorder'><input type='text' disabled class='inputsAuto " +
+			formId +
+			"_" +
+			titleId[i] +
+			"_position" +
+			"' value='" +
+			storage.userRank[storage.user[newCombine[i][j]].rank][0] +
+			"' data-detail='" +
+			storage.user[newCombine[i][j]].rank +
+			"'/></div>" +
+			"<div class='twoBorder'><input type='text' disabled class='inputsAuto " +
+			formId +
+			"_" +
+			titleId[i] +
+			"' value='" +
+			storage.user[newCombine[i][j]].userName +
+			"' data-detail='" +
+			storage.user[newCombine[i][j]].userNo +
+			"'/></div>" +
+			"<div class='twoBorder'><input type='text'  disabled class='inputsAuto " +
+			formId +
+			"_" +
+			titleId[i] +
+			"_status' value='' data-detail=''/></div>" +
+			"<div class='dateBorder'><input type='text' disabled class='inputsAuto " +
+			formId +
+			"_" +
+			titleId[i] +
+			"_approved" +
+			"' value='' data-detail=''/></div></div>";
+		}
+  
+  
+		else if (i == 4) {
+		  console.log("참조");
+		}
+  
+		// 검토 합의 결재
+		else {
+		  testHtml +=
+			"<div class='lineSet'><div class='twoBorder'><input type='text' disabled class='inputsAuto " +
+			formId +
+			"_" +
+			titleId[i] +
+			"_position" +
+			"' value='" +
+			storage.userRank[storage.user[newCombine[i][j]].rank][0] +
+			"' data-detail='" +
+			storage.user[newCombine[i][j]].rank +
+			"'/></div>" +
+			"<div class='twoBorder'><input type='text' disabled class='inputsAuto " +
+			formId +
+			"_" +
+			titleId[i] +
+			"' value='" +
+			storage.user[newCombine[i][j]].userName +
+			"' data-detail='" +
+			storage.user[newCombine[i][j]].userNo +
+			"'/></div>" +
+			"<div class='twoBorder'><input type='text'disabled class='inputsAuto " +
+			formId +
+			"_" +
+			titleId[i] +
+			"_status' value='' data-detail=''/></div>" +
+			"<div class='dateBorder'><input type='text' disabled  class='inputsAuto " +
+			formId +
+			"_" +
+			titleId[i] +
+			"_approved" +
+			"' value='' data-detail=''/></div></div>";
+		}
+	  }
+  
+	  if (newCombine[i].length != 0 && i < 3) {
+		testHtml += "</div>";
+	  } else if (newCombine[i].length != 0 && i == 3) {
+		testHtml2 += "</div>";
+	  }
+	}
+  
+	testHtml += "</div>";
+	testHtml2 += "</div>";
+  
+	let lineTarget = $(".infoline")[0].children[1];
+	lineTarget = $("#" + lineTarget.id);
+	lineTarget.html("");
+	lineTarget.css("display", "block");
+	testHtml += testHtml2;
+	lineTarget.html(testHtml);
+  
+	// $(".selectedRefer").html(referHtml);
+  
+	$(".modal-wrap").hide();
+  
+	this.drawCommentLine();
+  
+  
+  }
+  
+  
+  
+  // 결재선 저장 관련 함수 ---------------------------------------------------------------------------------------------------------------------------------------------------
+  setSavedLine(obj) {
+	let val = obj.value;
+	if (val == "middle") {
+	  $("#examine").html(
+		"<div class='lineDataContainer' id='lineContainer_4'><label id='linedata4'>구민주</label><button value='4' onclick='upClick(this)'>▲</button><button  value='4'onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>"
+	  );
+	  $("#approval").html(
+		"<div class='lineDataContainer' id='lineContainer_0'><label id='linedata0'>이승우</label><button value='0' onclick='upClick(this)'>▲</button><button  value='0'onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>"
+	  );
+	  $("#agree").html("");
+	  $("#conduct").html("");
+	  $("#refer").html("");
+	} else if (val == "basic") {
+	  $("#approval").html(
+		"<div class='lineDataContainer' id='lineContainer_0'><label id='linedata0'>이승우</label><button value='0' onclick='upClick(this)'>▲</button><button  value='0'onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>"
+	  );
+	  $("#agree").html("");
+	  $("#examine").html("");
+	  $("#conduct").html("");
+	  $("#refer").html("");
+	}
+  }
+  
+  
+  // 파일 관련 함수 ----------------------------------------------------------------------------------------------------------------------------------------------------------
+  setSelectedFiles() {
+	let method, data, type, attached;
+	attached = $(document).find("[name='attached[]']")[0].files;
+  
+	if (storage.newFileData === undefined || storage.newFileData <= 0) {
+	  storage.newFileData = [];
+	}
+  
+	let fileDataArray = storage.newFileData;
+	for (let i = 0; i < attached.length; i++) {
+	  let reader = new FileReader();
+	  let fileName;
+  
+	  fileName = attached[i].name;
+  
+	  // 파일 중복 등록 제거
+	  if (!storage.newFileData.includes(fileName)) {
+		storage.newFileData.push(fileName);
+  
+		reader.onload = (e) => {
+		  let binary,
+			x,
+			fData = e.target.result;
+		  const bytes = new Uint8Array(fData);
+		  binary = "";
+		  for (x = 0; x < bytes.byteLength; x++)
+			binary += String.fromCharCode(bytes[x]);
+		  let fileData = cipher.encAes(btoa(binary));
+		  let fullData = fileName + "\r\n" + fileData;
+  
+		  let url = "/api/attached/docapp";
+		  url = url;
+		  method = "post";
+		  data = fullData;
+		  type = "insert";
+  
+		  crud.defaultAjax(
+			url,
+			method,
+			data,
+			type,
+			submitFileSuccess,
+			submitFileError
+		  );
+		};
+  
+		reader.readAsArrayBuffer(attached[i]);
+	  }
+	}
+  
+	let html = "";
+  
+	for (let i = 0; i < fileDataArray.length; i++) {
+	  html +=
+		"<div><div class='files' data-detail='" +
+		fileDataArray[i] +
+		"'>" +
+		fileDataArray[i] +
+		"<button type='button' onclick='fileRemove(this)'>x</button></div></div>";
+	}
+	$(".selectedFileDiv").html(html);
+  }
+  
+  
+  
+  
+  // 데이터 리스트 관련 함수 ---------------------------------------------------------------------------------------------------------------------------------------------------
+  
+  getSopp() {
+	let formId = storage.reportDetailData.formId;
+	let slistid = "infoSopp";
+	let soppVal = $("#" + formId + "_sopp").val();
+	let soppResult = dataListFormat(slistid, soppVal);
+	storage.sopp = soppResult;
+	let clistid = "infoCustomer";
+	let customerVal = $("#" + formId + "_infoCustomer").val();
+	let customerResult = dataListFormat(clistid, customerVal);
+	storage.customer = customerResult;
+  }
+  
+  
+  // 추가할때.
+  setCusDataList() {
+  
+	let id = storage.reportDetailData.formId;
+  
+	let target = $("." + id + "_customer");
+	for (let i = 0; i < target.length; i++) {
+	  let html = $("." + id + "_customer")[i].innerHTML;
+	  let x;
+	  let dataListHtml = "";
+  
+	  // 거래처 데이터 리스트 만들기
+	  dataListHtml = "<datalist id='_customer'>";
+	  for (x in storage.customer) {
+		dataListHtml +=
+		  "<option data-value='" +
+		  x +
+		  "' value='" +
+		  storage.customer[x].name +
+		  "'></option> ";
+	  }
+	  dataListHtml += "</datalist>";
+	  html += dataListHtml;
+	  $("." + id + "_customer")[i].innerHTML = html;
+	  $("." + id + "_customer").attr("list", "_customer");
+  
+	}
+  }
+  
+  
+  
+  setSoppList() {
+	let formId = storage.reportDetailData.formId;
+	let soppTarget = $(".infoContent")[3];
+	let soppHtml = soppTarget.innerHTML;
+	let soppListHtml = "";
+  
+	soppListHtml = "<datalist id='_infoSopp'>";
+  
+	for (let i = 0; i < storage.soppList.length; i++) {
+	  soppListHtml +=
+		"<option data-value='" +
+		storage.soppList[i].no +
+		"' value='" +
+		storage.soppList[i].title +
+		"'></option> ";
+	}
+  
+	soppListHtml += "</datalist>";
+	soppHtml += soppListHtml;
+	soppTarget.innerHTML = soppHtml;
+	$("#" + formId + "_sopp").attr("list", "_infoSopp");
+  
+	// //선택 후 수정하는 경우에
+	if (formId == "doc_Form_Resolution") {
+	  $(".deletebtn").next().hide();
+	}
+  }
+  
+  
+  
+  setProductData() {
+	let data = storage.formList;
+  
+	let formId = storage.reportDetailData != undefined ? storage.reportDetailData.formId : data[$(".formNumHidden").val()].id;
+	let targetHtml = $("." + formId + "_product")[0].innerHTML;
+	let y;
+	let productListhtml = "";
+	productListhtml = "<datalist id='_product'>";
+	for (let y = 0; y < storage.product.length; y++) {
+	  productListhtml +=
+		"<option data-value='" +
+		storage.product[y].no +
+		"' value='" +
+		storage.product[y].name +
+		"'></option> ";
+	}
+  
+	targetHtml += productListhtml;
+	$("." + formId + "_product")[0].innerHTML = targetHtml;
+	$("." + formId + "_product").attr("list", "_product");
+  }
+  
+  
+  
+  
+  
+  
+  
+  
+  // getProductList() {
+  //   let url;
+  //   url = apiServer + "/api/estimate/item"
+  
+  //   $.ajax({
+  //     "url": url,
+  //     "method": "get",
+  //     "dataType": "json",
+  //     "cache": false,
+  //     success: (data) => {
+  //       let list, x;
+  //       if (data.result === "ok") {
+  //         list = data.data;
+  //         list = cipher.decAes(list);
+  //         list = JSON.parse(list);
+  //         storage.productList = list;
+  
+  //       } else {
+  //         console.log(data.msg);
+  //       }
+  //     }
+  //   });
+  // }
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  // 일괄 승인 관련 함수 Start -------------------------------------------------------------------------------------------------------------------------------------------------
+  
+  
+  
+  allCbEvent(obj) {
+  
+	if ($(obj).prop("checked")) {
+	  $("input[name='batchBtns']").prop("checked", "checked");
+	} else {
+	  $("input[name='batchBtns']").prop("checked", "");
+	}
+  
+  }
+  
+  
+  doBatchApproval() {
+
+	if ($(".loading-overlay").css("display") == 'none') {
+	  $("#loadingDiv").loading("toggle");
+	}
+	let batchData = [];
+	let insertData;
+	let batchBtns = $("input[name='batchBtns']:checked");
+  
+	if (batchBtns.length == 0) {
+	  alert("승인/반려할 문서를 선택하세요");
+	} else {
+	  for (let i = 0; i < batchBtns.length; i++) {
+		batchData.push(batchBtns[i].dataset.detail);
+	  }
+  
+	  insertData = batchData[batchCount];
+  
+	  $.ajax({
+		url: apiServer + "/api/gw/app/doc/" + insertData,
+		method: "get",
+		dataType: "json",
+		cache: false,
+		success: (data) => {
+		  let detailData;
+		  if (data.result === "ok") {
+			detailData = cipher.decAes(data.data);
+			detailData = JSON.parse(detailData);
+			detailData.doc = cipher.decAes(detailData.doc);
+			detailData.doc = detailData.doc.replaceAll('\\"', '"');
+			storage.reportDetailData = detailData;
+  
+			let approveData, sopp, customer, related, appLine, ordered;
+			sopp = (storage.reportDetailData.sopp == "" || storage.reportDetailData.sopp == null || storage.reportDetailData.sopp == undefined) ? "" : storage.reportDetailData.sopp;
+			customer = (storage.reportDetailData.custmer == "" || storage.reportDetailData.custmer == null || storage.reportDetailData.custmer == undefined) ? "" : storage.reportDetailData.customer;
+			related = storage.reportDetailData.related;
+			related = JSON.stringify(related);
+			appLine = storage.reportDetailData.appLine;
+			for (let i = 0; i < appLine.length; i++) {
+			  if (appLine[i].employee == storage.my)
+				ordered = appLine[i].ordered;
+			}
+  
+  
+			approveData = {
+			  doc: null,
+			  comment: null,
+			  files: null,
+			  appLine: null,
+			  appDoc: null,
+			  sopp: sopp,
+			  customer: customer,
+			  title: null,
+			  related: related,
+			};
+  
+			approveData = JSON.stringify(approveData);
+			console.log(approveData);
+			approveData = cipher.encAes(approveData);
+			$.ajax({
+			  url:
+				apiServer +
+				"/api/gw/app/proceed/" +
+				storage.reportDetailData.docNo +
+				"/" +
+				ordered +
+				"/1",
+			  method: "post",
+			  dataType: "json",
+			  data: approveData,
+			  contentType: "text/plain",
+			  cache: false,
+			  success: (data) => {
+				if (data.result === "ok") {
+  
+				  batchCount++;
+				  if (batchCount < batchData.length) {
+					this.doBatchApproval();
+				  } else {
+					$(".loading-overlay").hide();
+					msg.set("일괄 결재 완료");
+					location.href = "/gw/wait";
+  
+				  }
+  
+  
+				} else {
+				  console.log("결재 실패" + batchCount)
+				  batchCount++;
+				  if (batchCount < batchData.length) {
+					this.doBatchApproval();
+				  }
+  
+				}
+			  },
+			});
+  
+  
+		  } else {
+			console.log("상세조회에 실패함" + batchCount)
+			batchCount++;
+			if (batchCount < batchData.length) {
+			  this.doBatchApproval();
+			}
+  
+		  }
+		},
+	  });
+	}
+  }
+  
+  
+  
+  
+  
+  doBatchReject() {
+	if ($(".loading-overlay").css("display") == 'none') {
+	  $("#loadingDiv").loading("toggle");
+	}
+	let batchData = [];
+	let insertData;
+	let batchBtns = $("input[name='batchBtns']:checked");
+  
+	if (batchBtns.length == 0) {
+	  alert("승인/반려할 문서를 선택하세요");
+	} else {
+	  for (let i = 0; i < batchBtns.length; i++) {
+		batchData.push(batchBtns[i].dataset.detail);
+	  }
+  
+	  insertData = batchData[batchCount];
+  
+	  $.ajax({
+		url: apiServer + "/api/gw/app/doc/" + insertData,
+		method: "get",
+		dataType: "json",
+		cache: false,
+		success: (data) => {
+		  let detailData;
+		  if (data.result === "ok") {
+			detailData = cipher.decAes(data.data);
+			detailData = JSON.parse(detailData);
+			detailData.doc = cipher.decAes(detailData.doc);
+			detailData.doc = detailData.doc.replaceAll('\\"', '"');
+			storage.reportDetailData = detailData;
+  
+			let approveData, customer, related, appLine, ordered;
+			customer = (storage.reportDetailData.custmer == "" || storage.reportDetailData.custmer == null || storage.reportDetailData.custmer == undefined) ? "" : storage.reportDetailData.customer;
+			related = storage.reportDetailData.related;
+			related = JSON.stringify(related);
+			appLine = storage.reportDetailData.appLine;
+			for (let i = 0; i < appLine.length; i++) {
+			  if (appLine[i].employee == storage.my)
+				ordered = appLine[i].ordered;
+			}
+  
+  
+			approveData = {
+			  doc: null,
+			  comment: null,
+			  files: null,
+			  appLine: null,
+			  appDoc: null,
+			  sopp: storage.reportDetailData.sopp + "",
+			  customer: storage.reportDetailData.customer + "",
+			  title: null,
+			  related: related,
+			};
+  
+			approveData = JSON.stringify(approveData);
+			approveData = cipher.encAes(approveData);
+			$.ajax({
+			  url:
+				apiServer +
+				"/api/gw/app/proceed/" +
+				storage.reportDetailData.docNo +
+				"/" +
+				ordered +
+				"/0",
+			  method: "post",
+			  dataType: "json",
+			  data: approveData,
+			  contentType: "text/plain",
+			  cache: false,
+			  success: (data) => {
+				if (data.result === "ok") {
+  
+				  batchCount++;
+				  if (batchCount < batchData.length) {
+					this.doBatchReject();
+				  } else {
+					$(".loading-overlay").hide();
+					msg.set("일괄 결재 완료");
+					location.href = "/gw/wait";
+				  }
+  
+  
+				} else {
+				  console.log("결재 실패" + batchCount)
+				  batchCount++;
+				  if (batchCount < batchData.length) {
+					this.doBatchReject();
+				  }
+  
+				}
+			  },
+			});
+  
+  
+		  } else {
+			console.log("상세조회에 실패함" + batchCount)
+			batchCount++;
+			if (batchCount < batchData.length) {
+			  this.doBatchReject();
+			}
+  
+		  }
+		},
+	  });
+	}
+  }
+  
+  
+  getTotalCount() {
+	let id = stroage.reportDetailData.formId;
+	let totalCount = Number(0);
+	for (let i = 0; i < $("." + id + "_total").length; i++) {
+	  if ($("." + id + "_total")[i].dataset.detail != undefined) {
+		totalCount += Number(
+		  $("." + id + "_total")
+		  [i].dataset.detail.replace(",", "")
+			.replace(",", "")
+			.replace(",", "")
+			.replace(",", "")
+			.replace(",", "")
+			.replace(",", "")
+			.replace(",", "")
+			.replace(",", "")
+		);
+	  } else {
+		totalCount += 0;
+	  }
+	}
+	$(".insertedTotal").val(Number(totalCount).toLocaleString() + "원");
+	$(".insertedTotal")[0].dataset.detail = Number(totalCount).toLocaleString();
+  }
+  
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  
+}
+
+class GwDueSet{
+	constructor(){
+		CommonDatas.Temps.gwDueSet = this;
+	}
+
+	
+drawList() {
+	$(".modal-wrap").hide();
+	let containerTitle = $("#containerTitle");
+	containerTitle.html("결재 예정 문서");
+	let checkHref = location.href;
+	checkHref = checkHref.split("//");
+	checkHref = checkHref[1];
+	let splitArr = checkHref.split("/");
+  
+	// 전자결재 홈 화면에서 들어오는 경우 , 상세조회
+	if (splitArr.length > 3) {
+	  $.ajax({
+		url: apiServer + "/api/gw/app/doc/" + splitArr[3],
+		method: "get",
+		dataType: "json",
+		cache: false,
+		success: (data) => {
+		  let detailData;
+		  if (data.result === "ok") {
+			detailData = cipher.decAes(data.data);
+			detailData = JSON.parse(detailData);
+			detailData.doc = cipher.decAes(detailData.doc);
+			detailData.doc = detailData.doc.replaceAll('\\"', '"');
+			storage.reportDetailData = detailData;
+			getDetailView();
+			storage.container = 0;
+			storage.cardStart = 0;
+			$('.theme-loader').fadeOut("slow");
+		  } else {
+			alert("문서 정보를 가져오는 데 실패했습니다");
+		  }
+		},
+	  });
+	} else {
+		let url, method, data, type;
+		url = "/api/gw/app/wait";
+		method = "get";
+		data = "";
+		type = "list";
+		crud.defaultAjax(url, method, data, type, this.successList, this.errorList);
+  		storage.container = 0;
+		storage.cardStart = 0;
+		$('.theme-loader').fadeOut("slow");
+	  	$(".listPageDiv").show();
+	}
+  }
+  
+  successList(result) {
+	storage.dueList = result;
+	window.setTimeout(this.drawApproval, 200);
+  }
+  
+  errorList() {
+	alert("에러");
+  }
+  
+  drawApproval() {
+	let container,
+	  result,
+	  jsonData,
+	  job,
+	  header = [],
+	  data = [],
+	  ids = [],
+	  disDate,
+	  setDate,
+	  str,
+	  fnc;
+  
+	if (storage.dueList === undefined || storage.dueList.due.length == 0) {
+	  container = $(".listDiv");
+  
+	  header = [
+  
+		{
+		  title: "작성일",
+		  align: "center",
+		},
+		{
+		  title: "결재 타입",
+		  align: "center",
+		},
+		{
+		  title: "문서종류",
+		  align: "center",
+		},
+		{
+		  title: "제목",
+		  align: "left",
+		},
+		{
+		  title: "작성자",
+		  align: "center",
+		},
+  
+	  ];
+	  createGrid(container, header, data, ids, job, fnc);
+  
+	  container.append(
+		"<div style='border:1px solid #e0e4e9;padding:8px;justify-content: center;background-color:white; text-align:center;grid-column :span 6'>결재 예정 문서가 없습니다</div>"
+	  );
+  
+	} else {
+  
+	  let tt = [];
+	  for (let i = storage.dueList.due.length - 1; i >= 0; i--) { tt.push(storage.dueList.due[i]) };
+	  jsonData = tt;
+	  result = paging(jsonData.length, storage.currentPage, storage.articlePerPage);
+  
+	  pageContainer = document.getElementsByClassName("pageContainer");
+	  container = $(".listDiv");
+  
+	  header = [
+  
+		{
+		  title: "작성일",
+		  align: "center",
+		},
+		{
+		  title: "결재 타입",
+		  align: "center",
+		},
+		{
+		  title: "문서종류",
+		  align: "center",
+		},
+		{
+		  title: "제목",
+		  align: "left",
+		},
+		{
+		  title: "작성자",
+		  align: "center",
+		},
+  
+	  ];
+  
+	  for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
+		disDate = dateDis(jsonData[i].created, jsonData[i].modified);
+		setDate = dateFnc(disDate);
+		let userName = storage.user[jsonData[i].writer].userName;
+		let appType = jsonData[i].appType;
+		if (appType == "0") {
+		  appType = "검토";
+		} else if (appType == "1") {
+		  appType = "합의";
+		} else if (appType == "2") {
+		  appType = "결재";
+		} else if (appType == "3") {
+		  appType = "수신";
+		} else {
+		  appType = "참조";
+		}
+		str = [
+  
+		  {
+			"setData": setDate,
+			"align": "center"
+		  },
+		  {
+			"setData": appType,
+			"align": "center"
+		  },
+		  {
+			"setData": jsonData[i].form,
+			"align": "center"
+		  },
+		  {
+			"setData": jsonData[i].title,
+			"align": "left",
+		  },
+		  {
+			"setData": userName,
+			"align": "center"
+		  },
+  
+		];
+		fnc = "detailView(this)";
+		ids.push(jsonData[i].docNo);
+		data.push(str);
+	  }
+  
+	  let pageNation = createPaging(
+		pageContainer[0],
+		result[3],
+		"pageMove",
+		"drawApproval",
+		result[0]
+	  );
+	  pageContainer[0].innerHTML = pageNation;
+	  createGrid(container, header, data, ids, job, fnc);
+	}
+  } // End of drawNoticeApproval()
+  
+  detailView(obj) {
+	// 선택한 그리드의 글 번호 받아오기
+  
+	let no = obj.dataset.id;
+  
+	$.ajax({
+	  url: apiServer + "/api/gw/app/doc/" + no,
+	  method: "get",
+	  dataType: "json",
+	  cache: false,
+	  success: (data) => {
+		let detailData;
+		if (data.result === "ok") {
+		  detailData = cipher.decAes(data.data);
+		  detailData = JSON.parse(detailData);
+		  detailData.doc = cipher.decAes(detailData.doc);
+		  detailData.doc = detailData.doc.replaceAll('\\"', '"');
+		  storage.reportDetailData = detailData;
+		  getDetailView();
+		} else {
+		  alert("문서 정보를 가져오는 데 실패했습니다");
+		}
+	  },
+	});
+  } // End of noticeDetailView();
+  
+  ///글 제목 눌렀을때 상세 조회하는 페이지 그리기
+  
+  
+  showList() {
+	location.href = "/gw/due";
+  }
+  
+  
+}
+
+let related = {
+	fnc: "hr",
+	type: "leave", // "overtime", "holidayWork"
+	start: 169999999,
+	end: 169999999,
+	parent: null, // contract:1999999
+	prev: null, // schedule:199999
+	next: [],
+	children: [],
+  };
+
+class GwReceiveSet {
+	constructor(){
+		CommonDatas.Temps.gwReceiveSet = this;
+	}
+
+	// 참조 문서는 상세 조회가 가능하고 열람은 결재가 끝난 후에 참조/열람 문서함에서 열람 가능함
+drawList() {
+	$(".modal-wrap").hide();
+	let containerTitle = $("#containerTitle");
+	containerTitle.html("결재 수신 문서");
+  
+	let checkHref = location.href;
+	checkHref = checkHref.split("//");
+	checkHref = checkHref[1];
+	let splitArr = checkHref.split("/");
+  
+	// 전자결재 홈 화면에서 들어오는 경우 , 상세조회
+	if (splitArr.length > 3) {
+	  $.ajax({
+		url: apiServer + "/api/gw/app/doc/" + splitArr[3],
+		method: "get",
+		dataType: "json",
+		cache: false,
+		success: (data) => {
+		  let detailData;
+		  if (data.result === "ok") {
+			detailData = cipher.decAes(data.data);
+			detailData = JSON.parse(detailData);
+			detailData.doc = cipher.decAes(detailData.doc);
+			detailData.doc = detailData.doc.replaceAll('\\"', '"');
+			storage.reportDetailData = detailData;
+			getDetailView();
+			storage.container = 0;
+			storage.cardStart = 0;
+			$('.theme-loader').fadeOut("slow");
+		  } else {
+			alert("문서 정보를 가져오는 데 실패했습니다");
+		  }
+		},
+	  });
+	} else {
+  
+	  let url, method, data, type;
+	  url = "/api/gw/app/wait";
+	  method = "get";
+	  data = "";
+	  type = "list";
+	  crud.defaultAjax(url, method, data, type, this.successList, this.errorList);
+  
+	  $(".searchContainer").show();
+	  $(".listPageDiv").show();
+
+	  storage.container = 0;
+	  storage.cardStart = 0;
+	  $('.theme-loader').fadeOut("slow");
+	}
+  
+  
+  }
+  
+  successList(result) {
+	storage.receiveList = result;
+	window.setTimeout(drawApproval, 200);
+  }
+  
+  errorList() {
+	alert("에러");
+  }
+  
+  drawApproval() {
+	let container,
+	  result,
+	  jsonData,
+	  job,
+	  header = [],
+	  data = [],
+	  ids = [],
+	  disDate,
+	  setDate,
+	  str,
+	  fnc;
+  
+	if (
+	  storage.receiveList.receive === undefined ||
+	  storage.receiveList.receive.length == 0
+	) {
+	  container = $(".listDiv");
+  
+	  header = [
+	   
+		{
+		  title: "작성일",
+		  align: "center",
+		},
+		{
+		  title: "결재 타입",
+		  align: "center",
+		},
+		{
+		  title: "문서종류",
+		  align: "center",
+		},
+		{
+		  title: "제목",
+		  align: "left",
+		},
+		{
+		  title: "작성자",
+		  align: "center",
+		},
+  
+	  ];
+	  createGrid(container, header, data, ids, job, fnc);
+  
+	  container.append(
+		"<div style='border:1px solid #e0e4e9;padding:8px;justify-content: center;background-color:white; text-align:center;grid-column :span 6'>결재 수신 문서가 없습니다</div>"
+	  );
+  
+	} else {
+	  // jsonData = storage.receiveList.receive;
+	  let tt = [];
+	  for (let i = storage.receiveList.receive.length - 1; i >= 0; i--) { tt.push(storage.receiveList.receive[i]) };
+	  jsonData = tt;
+	  result = paging(jsonData.length, storage.currentPage, storage.articlePerPage);
+  
+	  pageContainer = document.getElementsByClassName("pageContainer");
+	  container = $(".listDiv");
+	  header = [
+		
+		{
+		  title: "작성일",
+		  align: "center",
+		},
+		{
+		  title: "결재 타입",
+		  align: "center",
+		},
+		{
+		  title: "문서 종류",
+		  align: "center",
+		},
+		{
+		  title: "제목",
+		  align: "left",
+		},
+		{
+		  title: "작성자",
+		  align: "center",
+		},
+  
+	  ];
+	  for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
+		disDate = dateDis(jsonData[i].created, jsonData[i].modified);
+		setDate = dateFnc(disDate);
+		let userName = storage.user[jsonData[i].writer].userName;
+		let appType = jsonData[i].appType;
+		if (appType == "0") {
+		  appType = "검토";
+		} else if (appType == "1") {
+		  appType = "합의";
+		} else if (appType == "2") {
+		  appType = "결재";
+		} else if (appType == "3") {
+		  appType = "수신";
+		} else {
+		  appType = "참조";
+		}
+		str = [
+		  
+		  {
+			"setData": setDate,
+			"align": "center"
+		  },
+		  {
+			"setData": appType,
+			"align": "center"
+		  },
+		  {
+			"setData": jsonData[i].form,
+			"align": "center"
+		  },
+		  {
+			"setData": jsonData[i].title,
+			"align": "left",
+		  },
+		  {
+			"setData": userName,
+			"align": "center"
+		  },
+  
+		];
+  
+		fnc = "detailView(this)";
+		ids.push(jsonData[i].docNo);
+		data.push(str);
+	  }
+  
+	  let pageNation = createPaging(
+		pageContainer[0],
+		result[3],
+		"pageMove",
+		"drawApproval",
+		result[0]
+	  );
+	  pageContainer[0].innerHTML = pageNation;
+	  createGrid(container, header, data, ids, job, fnc);
+	}
+  } // End of drawNoticeApproval()
+  
+  detailView(obj) {
+	// 선택한 그리드의 글 번호 받아오기
+	let no;
+	if (storage.reportDetailData == undefined) {
+	  no = obj.dataset.id;
+	} else {
+	  no = storage.reportDetailData.docNo;
+	}
+  
+	$.ajax({
+	  url: apiServer + "/api/gw/app/doc/" + no,
+	  method: "get",
+	  dataType: "json",
+	  cache: false,
+	  success: (data) => {
+		let detailData;
+		if (data.result === "ok") {
+		  detailData = cipher.decAes(data.data);
+		  detailData = JSON.parse(detailData);
+		  detailData.doc = cipher.decAes(detailData.doc);
+		  detailData.doc = detailData.doc.replaceAll('\\"', '"');
+		  storage.reportDetailData = detailData;
+		  getDetailView();
+		} else {
+		  alert("문서 정보를 가져오는 데 실패했습니다");
+		}
+	  },
+	});
+  } // End of noticeDetailView();
+  
+  
+  
+  
+  showList() {
+	location.href = "/gw/receive";
+  }
+  
+  
+  showAppModal() {
+	let setAppModalHtml =
+	"<div class='setApprovalModal'>" +
+	"<div class='modalHead'><span class='modalHeadTitle'>결재하기</span><span class='xClose' onclick='closeModal(this)'><i class='fa-solid fa-xmark'></i></span></div>" +
+	"<div class='modal-body'><div class='labelContainer'>" +
+	"<label><input type='radio' name='type'  value='approve' checked>승인</label>" +
+	"<label><input type='radio' name='type' value='reject'>반려</label></div>" +
+	"<div class='commentContainer'><label>의견 </label><textarea class='approvalComment'></textarea></div></div>" +
+	"<div class='modalFoot'>" +
+	"<button class='modalBtns close' id='quit' onclick='closeModal(this)'>취소</button>" +
+	"<button class='modalBtns confirm' id='set' onclick='approveBtnEvent()'>결재</button></div></div>";
+  $(".modal-wrap").html(setAppModalHtml);
+  $(".modal-wrap").show();
+  
+  }
+  
+  //결재하기 버튼
+  approveBtnEvent() {
+	let formId = storage.reportDetailData.formId;
+	let selectVal = $(":radio[name='type']:checked").val();
+	let comment = $(".approvalComment").val();
+	comment = comment.replaceAll("\n", "<br />");
+	$(".modal-wrap").hide();
+	let type;
+	let appLine = storage.reportDetailData.appLine;
+	let ordered;
+  
+	for (let i = 0; i < appLine.length; i++) {
+	  if (appLine[i].employee == storage.my) {
+		ordered = appLine[i].ordered;
+		if (storage.newAppLine != undefined) {
+		  storage.newAppLine = storage.newAppLine.slice(
+			i + 1,
+			storage.newAppLine.length
+		  );
+		} else {
+		  storage.newAppLine = null;
+		}
+	  }
+	}
+  
+	let soppVal = $("#" + formId + "_sopp").val();
+	let customerVal = $("#" + formId + "_infoCustomer").val();
+	let soppResult = "";
+  
+	for (let x in storage.soppList) {
+	  if (storage.soppList[x].title == soppVal) {
+		soppResult = storage.soppList[x].no;
+	  }
+	}
+	let cusResult = "";
+	for (let x in storage.customer) {
+	  if (customerVal != "" && storage.customer[storage.customer[x].no].name == customerVal) {
+		cusResult = storage.customer[x].no;
+	  }
+	}
+  
+   
+  
+	if (formId != "doc_Form_leave" && formId != "doc_Form_extension") {
+	  if (
+		((storage.reportDetailData.sopp == null && soppResult == "") ||
+		  storage.reportDetailData.sopp == soppResult) &&
+		((storage.reportDetailData.customer == null && cusResult == "") ||
+		  storage.reportDetailData.customer == cusResult) &&
+		storage.oriCbContainer ==
+		$("input[name='" + formId + "_RD']:checked").attr("id") &&
+		storage.oriInsertedContent == $(".insertedContent").html() &&
+		storage.oriInsertedDataList == $(".insertedDataList").html()
+	  ) {
+		storage.newDoc = null;
+	  } else {
+		storage.newDoc = $(".seletedForm").html();
+	  }
+	} else {
+	  if (
+		storage.oriInsertedContent == $(".insertedContent").html() &&
+		storage.oriInsertedData == $(".insertedData").html()
+	  ) {
+		storage.newDoc = null;
+	  } else {
+		storage.newDoc = $(".seletedForm").html();
+	  }
+	}
+  
+	selectVal === "approve" ? (type = 1) : (type = 0);
+	storage.newFileData == undefined || storage.newFileData.length == 0
+	  ? (storage.newFileData = null)
+	  : (storage.newFileData = storage.newFileData);
+  
+	let title = $("#" + formId + "_title").val();
+	if (storage.reportDetailData.title == title) {
+	  title = null;
+	}
+  
+	let appDoc;
+	if (
+	  storage.newAppLine != undefined ||
+	  (storage.newAppLine != null && storage.newAppLine.length > 0)
+	) {
+	  appDoc = $(".seletedForm").html();
+	} else {
+	  storage.newAppLine = null;
+	  appDoc = null;
+	}
+  
+	let data = {
+	  doc: null,
+	  comment: comment,
+	  files: null,
+	  appLine: null,
+	  appDoc: null,
+	  sopp: soppResult + "",
+	  customer: cusResult + "",
+	  title: null,
+	};
+  
+	console.log(data);
+	data = JSON.stringify(data);
+	data = cipher.encAes(data);
+  
+	$.ajax({
+	  url:
+		apiServer +
+		"/api/gw/app/proceed/" +
+		storage.reportDetailData.docNo +
+		"/" +
+		ordered +
+		"/" +
+		type,
+	  method: "post",
+	  dataType: "json",
+	  data: data,
+	  contentType: "text/plain",
+	  cache: false,
+	  success: (data) => {
+		if (data.result === "ok") {
+		  alert("결재 완료");
+		  location.href = "/gw/receive";
+		} else {
+		  alert("결재 실패");
+		}
+	  },
+	});
+  }
+
+  
+  // 모달별 버튼
+  closeModal(obj) {
+	$(".modal-wrap").hide();
+	$("input:radio[name='type']").prop("checked", false);
+  }
+  
+  setAppLineData() {
+	let appLine = storage.reportDetailData.appLine;
+	let formId = storage.reportDetailData.formId;
+	let appLineContainer = new Array();
+	appLineContainer = [[], [], [], [], []];
+  
+	if (appLine[0].approved != null) {
+	  $("." + formId + "_writer_status").val("승인");
+	  $("." + formId + "_writer_approved").val(
+		getYmdShortSlash(appLine[0].approved)
+	  );
+	} else if (appLine[0].rejected != null) {
+	  $("." + formId + "_writer_status").val("회수");
+	  $("." + formId + "_writer_approved").val(
+		getYmdShortSlash(appLine[0].rejected)
+	  );
+	}
+  
+	for (let i = 1; i < appLine.length; i++) {
+	  for (let j = 0; j < appLineContainer.length; j++) {
+		if (appLine[i].appType == j) {
+		  appLineContainer[j].push(appLine[i]);
+		}
+	  }
+	}
+  
+	let appTypeTitles = ["_examine", "_agree", "_approval", "_conduct", "_refer"];
+  
+	for (let i = 0; i < appLineContainer.length; i++) {
+	  for (let j = 0; j < appLineContainer[i].length; j++) {
+		if (appLineContainer[i][j].approved != null) {
+		  $("." + formId + appTypeTitles[i] + "_status")[j].value = "승인";
+		  $("." + formId + appTypeTitles[i] + "_approved")[j].value =
+			getYmdShortSlash(appLineContainer[i][j].approved);
+		} else if (appLineContainer[i][j].rejected != null) {
+		  $("." + formId + appTypeTitles[i] + "_status")[j].value = "반려";
+		  $("." + formId + appTypeTitles[i] + "_approved")[j].value =
+			getYmdShortSlash(appLineContainer[i][j].rejected);
+		}
+	  }
+	}
+  }
+
+}
+
+class GwReferSet {
+	constructor(){
+		CommonDatas.Temps.gwReferSet = this;
+	}
+
+	// 참조 문서는 상세 조회가 가능하고 열람은 결재가 끝난 후에 참조/열람 문서함에서 열람 가능함
+drawList() {
+	$(".modal-wrap").hide();
+	let containerTitle = $("#containerTitle");
+	containerTitle.html("참조 대기 문서");
+  
+	let checkHref = location.href;
+	checkHref = checkHref.split("//");
+	checkHref = checkHref[1];
+	let splitArr = checkHref.split("/");
+  
+	if (splitArr.length > 3) {
+	  $.ajax({
+		url: apiServer + "/api/gw/app/doc/" + splitArr[3],
+		method: "get",
+		dataType: "json",
+		cache: false,
+		success: (data) => {
+		  let detailData;
+		  if (data.result === "ok") {
+			detailData = cipher.decAes(data.data);
+			detailData = JSON.parse(detailData);
+			detailData.doc = cipher.decAes(detailData.doc);
+			detailData.doc = detailData.doc.replaceAll('\\"', '"');
+			storage.reportDetailData = detailData;
+			getDetailView();
+			storage.container = 0;
+			storage.cardStart = 0;
+			$('.theme-loader').fadeOut("slow");
+		  } else {
+			alert("문서 정보를 가져오는 데 실패했습니다");
+		  }
+		},
+	  });
+	} else {
+	  let url, method, data, type;
+	  url = "/api/gw/app/wait";
+	  method = "get";
+	  data = "";
+	  type = "list";
+	  crud.defaultAjax(url, method, data, type, this.successList, this.errorList);
+	  $(".listPageDiv").show();
+	  storage.container = 0;
+	  storage.cardStart = 0;
+	  $('.theme-loader').fadeOut("slow");
+	}
+  }
+  
+  successList(result) {
+	storage.referList = result;
+	window.setTimeout(drawApproval, 200);
+  }
+  
+  errorList() {
+	alert("에러");
+  }
+  
+  drawApproval() {
+	let container,
+	  result,
+	  jsonData,
+	  job,
+	  header = [],
+	  data = [],
+	  ids = [],
+	  disDate,
+	  setDate,
+	  str,
+	  fnc;
+  
+	if (
+	  storage.referList.refer === undefined ||
+	  storage.referList.refer.length == 0
+	) {
+	  container = $(".listDiv");
+  
+	  header = [
+  
+		{
+		  title: "작성일",
+		  align: "center",
+		},
+		{
+		  title: "결재 타입",
+		  align: "center",
+		},
+		{
+		  title: "문서종류",
+		  align: "center",
+		},
+		{
+		  title: "제목",
+		  align: "left",
+		},
+		{
+		  title: "작성자",
+		  align: "center",
+		},
+  
+	  ];
+	  createGrid(container, header, data, ids, job, fnc);
+  
+	  container.append(
+		"<div style='border:1px solid #e0e4e9;padding:8px;justify-content: center;background-color:white; text-align:center;grid-column :span 6'>참조 대기 문서가 없습니다</div>"
+	  );
+  
+	} else {
+  
+	  let tt = [];
+	  for (let i = storage.referList.refer.length - 1; i >= 0; i--) { tt.push(storage.referList.refer[i]) };
+	  jsonData = tt;
+	  result = paging(jsonData.length, storage.currentPage, storage.articlePerPage);
+  
+	  pageContainer = document.getElementsByClassName("pageContainer");
+	  container = $(".listDiv");
+	  header = [
+  
+		{
+		  title: "작성일",
+		  align: "center",
+		},
+		{
+		  title: "결재 타입",
+		  align: "center",
+		},
+		{
+		  title: "문서 종류",
+		  align: "center",
+		},
+		{
+		  title: "제목",
+		  align: "left",
+		},
+		{
+		  title: "작성자",
+		  align: "center",
+		},
+  
+	  ];
+	  for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
+		disDate = dateDis(jsonData[i].created, jsonData[i].modified);
+		setDate = dateFnc(disDate);
+		let userName = storage.user[jsonData[i].writer].userName;
+		let appType = jsonData[i].appType;
+		if (appType == "0") {
+		  appType = "검토";
+		} else if (appType == "1") {
+		  appType = "합의";
+		} else if (appType == "2") {
+		  appType = "결재";
+		} else if (appType == "3") {
+		  appType = "수신";
+		} else {
+		  appType = "참조";
+		}
+		str = [
+  
+		  {
+			"setData": setDate,
+			"align": "center"
+		  },
+		  {
+			"setData": appType,
+			"align": "center"
+		  },
+		  {
+			"setData": jsonData[i].form,
+			"align": "center"
+		  },
+		  {
+			"setData": jsonData[i].title,
+			"align": "left",
+		  },
+		  {
+			"setData": userName,
+			"align": "center"
+		  },
+  
+		];
+  
+		fnc = "detailView(this)";
+		ids.push(jsonData[i].docNo);
+		data.push(str);
+	  }
+  
+	  let pageNation = createPaging(
+		pageContainer[0],
+		result[3],
+		"pageMove",
+		"drawApproval",
+		result[0]
+	  );
+	  pageContainer[0].innerHTML = pageNation;
+	  createGrid(container, header, data, ids, job, fnc);
+	}
+  } // End of drawNoticeApproval()
+  
+  detailView(obj) {
+	// 선택한 그리드의 글 번호 받아오기
+	$(".pageContainer").hide();
+	$(".listRange").hide();
+	$(".batchBtn").hide();
+  
+	let no = obj.dataset.id;
+  
+	$.ajax({
+	  url: apiServer + "/api/gw/app/doc/" + no,
+	  method: "get",
+	  dataType: "json",
+	  cache: false,
+	  success: (data) => {
+		let detailData;
+		if (data.result === "ok") {
+		  detailData = cipher.decAes(data.data);
+		  detailData = JSON.parse(detailData);
+		  detailData.doc = cipher.decAes(detailData.doc);
+		  detailData.doc = detailData.doc.replaceAll('\\"', '"');
+		  storage.reportDetailData = detailData;
+		  getDetailView();
+		} else {
+		  alert("문서 정보를 가져오는 데 실패했습니다");
+		}
+	  },
+	});
+  } // End of noticeDetailView();
+  
+  ///글 제목 눌렀을때 상세 조회하는 페이지 그리기
+  
+  showList() {
+	location.href = "/gw/refer";
+  }
+  
+  
+  // 탭 누를때마다의 이벤트 주기
+  changeTab(obj) {
+	$(obj).css("background-color", "#62a6ad");
+	$(obj).css("color", "#fff");
+	$(obj).css("border-top-left", "14px");
+	//$(obj).css("border-bottom", "2px solid #5298d5");
+  
+	if (obj.id == "lineInfo") {
+	  $("#changeInfo").css("background-color", "#dddddd");
+	  $("#changeInfo").css("color", "#5c5c5c");
+	  $("#changeInfo").css("border-bottom-left-radius", "20px");
+	  $("#tabDetail2").hide();
+	  $("#tabDetail").show();
+	  if (storage.newAppLine == undefined) {
+		drawCommentLine();
+	  } else {
+		drawNewCommentLine();
+	  }
+	} else if ((obj.id = "changeInfo")) {
+	  $("#lineInfo").css("background-color", "#dddddd");
+	  $("#lineInfo").css("color", "#5c5c5c");
+	  $("#lineInfo").css("border-bottom-right-radius", "20px");
+	  $("#tabDetail").hide();
+	  $("#tabDetail2").show();
+  
+	  drawChangeInfo();
+	}
+  }
+  
+  
+
+}
+
+class GwMydraftSet{
+	constructor(){
+		CommonDatas.Temps.gwMydraftSet = this;
+	}
+
+	
+drawList() {
+	let url, method, data, type;
+	url = "/api/gw/app/mydraft";
+	method = "get";
+	data = "";
+	type = "list";
+	crud.defaultAjax(url, method, data, type, this.successList, this.errorList);
+	$(".listPageDiv").show();
+	storage.container = 0;
+	storage.cardStart = 0;
+	$('.theme-loader').fadeOut("slow");
+  }
+  
+  successList(result) {
+	storage.myDraftList = result;
+	window.setTimeout(drawMyDraft, 200);
+  }
+  
+  errorList() {
+	msg.set("에러");
+  }
+  
+  drawMyDraft() {
+	let container,
+	  result,
+	  jsonData,
+	  job,
+	  header = [],
+	  data = [],
+	  ids = [],
+	  disDate,
+	  setDate,
+	  str,
+	  fnc;
+  
+	if (storage.myDraftList === undefined || storage.myDraftList.length == 0) {
+	  container = $(".listDiv");
+  
+	  header = [
+  
+		{
+		  title: "기안일",
+		  align: "center",
+		},
+		{
+		  title: "문서양식",
+		  align: "center",
+		},
+		{
+		  title: "제목",
+		  align: "left",
+		},
+  
+		{
+		  title: "결재 타입",
+		  align: "center",
+		},
+		{
+		  title: "결재권자",
+		  align: "center",
+		},
+		{
+		  title: "조회",
+		  align: "center",
+		},
+		{
+		  title: "상태",
+		  align: "center",
+		},
+	  ];
+	  createGrid(container, header, data, ids, job, fnc);
+  
+	  container.append(
+		"<div style='border:1px solid #e0e4e9;padding:8px;justify-content: center;background-color:white; text-align:center;grid-column :span 6'>기안 문서가 없습니다</div>"
+	  );
+  
+	} else {
+  
+	  let tt = [];
+	  for (let i = storage.myDraftList.length - 1; i >= 0; i--) { tt.push(storage.myDraftList[i]) };
+	  jsonData = tt;
+	  result = paging(jsonData.length, storage.currentPage, 18);
+  
+	  pageContainer = document.getElementsByClassName("pageContainer");
+	  container = $(".listDiv");
+	  header = [
+  
+		{
+		  title: "기안일",
+		  align: "center",
+		},
+		{
+		  title: "문서양식",
+		  align: "center",
+		},
+		{
+		  title: "제목",
+		  align: "left",
+		},
+  
+		{
+		  title: "결재 타입",
+		  align: "center",
+		},
+		{
+		  title: "결재권자",
+		  align: "center",
+		},
+		{
+		  title: "조회",
+		  align: "center",
+		},
+		{
+		  title: "상태",
+		  align: "center",
+		},
+	  ];
+  
+	  for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
+		if (jsonData[i].status != -1) {
+		  disDate = dateDis(jsonData[i].created, jsonData[i].modified);
+		  setDate = dateFnc(disDate);
+		  let read = jsonData[i].read;
+		  let status;
+		  if (read == null) {
+			read = "N";
+		  } else {
+			read = this.getYmdSlash(read);
+		  }
+  
+		  let appType = jsonData[i].appType;
+		  if (appType == "0") {
+			appType = "검토";
+		  } else if (appType == "1") {
+			appType = "합의";
+		  } else if (appType == "2") {
+			appType = "결재";
+		  } else if (appType == "3") {
+			appType = "수신";
+		  } else {
+			appType = "참조";
+		  }
+  
+		  if (jsonData[i].status == 1) {
+			status = "진행 중";
+		  } else if (jsonData[i].status == 2) {
+			status = "수신 대기 ";
+		  } else if (jsonData[i].status == 3) {
+			status = "승인 완료";
+		  } else if (jsonData[i].status == -3) {
+			status = "반려";
+		  } else if (jsonData[i].status == -1) {
+			status = "회수";
+		  }
+  
+		  let authority = storage.user[jsonData[i].authority].userName;
+		  str = [
+  
+			{
+			  "setData": setDate,
+			  "align": "center"
+			},
+			{
+			  "setData": jsonData[i].form,
+			  "align": "center"
+			},
+			{
+			  "setData": jsonData[i].title,
+			  "align": "left",
+			},
+  
+			{
+			  "setData": appType,
+			  "align": "center"
+			},
+			{
+			  "setData": authority,
+			  "align": "center"
+			},
+			{
+			  "setData": read,
+			  "align": "center"
+			},
+			{
+			  "setData": status,
+			  "align": "center"
+			},
+		  ];
+  
+		  fnc = "detailView(this)";
+		  ids.push(jsonData[i].docNo);
+		  data.push(str);
+		}
+  
+	  }
+  
+	  let pageNation = createPaging(
+		pageContainer[0],
+		result[3],
+		"pageMove",
+		"drawMyDraft",
+		result[0]
+	  );
+	  pageContainer[0].innerHTML = pageNation;
+	  createGrid(container, header, data, ids, job, fnc);
+	}
+  }
+  
+  detailView(obj) {
+	// 선택한 그리드의 글 번호 받아오기
+  
+	let no = obj.dataset.id;
+  
+	$.ajax({
+	  url: apiServer + "/api/gw/app/doc/" + no,
+	  method: "get",
+	  dataType: "json",
+	  cache: false,
+	  success: (data) => {
+		let detailData;
+		if (data.result === "ok") {
+		  detailData = cipher.decAes(data.data);
+		  console.log(detailData);
+		  detailData = JSON.parse(detailData);
+		  detailData.doc = cipher.decAes(detailData.doc);
+		  detailData.doc = detailData.doc.replaceAll('\\"', '"');
+		  storage.reportDetailData = detailData;
+		  getDetailView();
+		} else {
+		  msg.set("알림", "문서 정보를 가져오는데 실패했습니다");
+		}
+	  },
+	});
+  } // End of noticeDetailView();
+  
+  
+  // 목록보기
+  // showList() {
+  //   location.href = "/gw/mydraft";
+  // }
+  
+  returnReport() {
+	if (
+	  storage.reportDetailData.appLine[1].approved == null &&
+	  storage.reportDetailData.appLine[1].rejected == null
+	) {
+	  let docNo = storage.reportDetailData.docNo;
+	  $.ajax({
+		url: "/api/gw/app/doc/" + docNo,
+		type: "delete",
+		dataType: "json",
+		success: (result) => {
+		  if (result.result == "ok") {
+			alert("회수 성공");
+			location.href = "/gw/mydraft";
+		  } else {
+			console.log(result.msg);
+	
+		  }
+		},
+	  });
+	} else {
+	  alert("결재된 문서는 회수할 수 없습니다");
+	}
+  }
+  
+  
+  
+  moveCntForm() {
+	let docNo = storage.reportDetailData.docNo;
+	location.href = "/business/contract/" + docNo;
+  
+  }
+
+}
+
+class GwMyreturnSet{
+	constructor(){
+		CommonDatas.Temps.gwMyreturnSet = this;
+	}
+
+	
+drawList() {
+	let containerTitle = $("#containerTitle");
+	containerTitle.html("회수 문서함");
+	let url, method, data, type;
+	url = "/api/gw/app/mydraft";
+	method = "get";
+	data = "";
+	type = "list";
+	crud.defaultAjax(url, method, data, type, this.successList, this.errorList);
+	$(".listPageDiv").show();
+	storage.container = 0;
+	storage.cardStart = 0;
+	$('.theme-loader').fadeOut("slow");
+  }
+  
+  successList(result) {
+	storage.myDraftList = result;
+	window.setTimeout(drawMyDraft, 200);
+  }
+  
+  errorList() {
+	msg.set("에러");
+  }
+  
+  drawMyDraft() {
+	let container,
+	  result,
+	  jsonData,
+	  job,
+	  header = [],
+	  data = [],
+	  ids = [],
+	  disDate,
+	  setDate,
+	  str,
+	  fnc;
+  
+	let myDraftList = storage.myDraftList;
+	for (let i = 0; i < myDraftList.length; i++) {
+	  if (myDraftList[i].status != -1) {
+		myDraftList.splice(i, 1);
+		i--;
+	  }
+	}
+  
+  
+	if (storage.myDraftList === undefined || storage.myDraftList.length == 0 || myDraftList.length == 0) {
+	  container = $(".listDiv");
+	  header = [
+  
+		{
+		  title: "기안일",
+		  align: "center",
+		},
+		{
+		  title: "문서양식",
+		  align: "center",
+		},
+		{
+		  title: "제목",
+		  align: "left",
+		},
+		{
+		  title: "상태",
+		  align: "center",
+		},
+	  ];
+	  createGrid(container, header, data, ids, job, fnc);
+  
+	  container.append(
+		"<div style='border:1px solid #e0e4e9;padding:8px;justify-content: center;background-color:white; text-align:center;grid-column :span 6'>회수 문서가 없습니다</div>"
+	  );
+  
+	} else {
+  
+	  let tt = [];
+	  for (let i = storage.myDraftList.length - 1; i >= 0; i--) { tt.push(storage.myDraftList[i]) };
+	  jsonData = tt;
+	  result = paging(jsonData.length, storage.currentPage, storage.articlePerPage);
+  
+	  pageContainer = document.getElementsByClassName("pageContainer");
+	  container = $(".listDiv");
+	  header = [
+  
+		{
+		  title: "기안일",
+		  align: "center",
+		},
+		{
+		  title: "문서양식",
+		  align: "center",
+		},
+		{
+		  title: "제목",
+		  align: "left",
+		},
+		{
+		  title: "상태",
+		  align: "center",
+		},
+	  ];
+  
+	  for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
+		if (jsonData[i].status == -1) {
+		  disDate = dateDis(jsonData[i].created, jsonData[i].modified);
+		  setDate = dateFnc(disDate);
+		  let read = jsonData[i].read;
+		  let status;
+		  if (read == null) {
+			read = "N";
+		  } else {
+			read = this.getYmdSlash(read);
+		  }
+  
+		  let appType = jsonData[i].appType;
+		  if (appType == "0") {
+			appType = "검토";
+		  } else if (appType == "1") {
+			appType = "합의";
+		  } else if (appType == "2") {
+			appType = "결재";
+		  } else if (appType == "3") {
+			appType = "수신";
+		  } else {
+			appType = "참조";
+		  }
+  
+		  if (jsonData[i].status == 1) {
+			status = "진행 중";
+		  } else if (jsonData[i].status == 2) {
+			status = "수신 대기 ";
+		  } else if (jsonData[i].status == 3) {
+			status = "승인 완료";
+		  } else if (jsonData[i].status == -3) {
+			status = "반려";
+		  } else if (jsonData[i].status == -1) {
+			status = "회수";
+		  }
+  
+		  str = [
+  
+			{
+			  "setData": setDate,
+			  "align": "center"
+			},
+			{
+			  "setData": jsonData[i].form,
+			  "align": "center"
+			},
+			{
+			  "setData": jsonData[i].title,
+			  "align": "left",
+			},
+			{
+			  "setData": status,
+			  "align": "center"
+			},
+		  ];
+  
+		  fnc = "detailView(this)";
+		  ids.push(jsonData[i].docNo);
+		  data.push(str);
+  
+		}
+  
+	  }
+  
+	  let pageNation = createPaging(
+		pageContainer[0],
+		result[3],
+		"pageMove",
+		"drawMyDraft",
+		result[0]
+	  );
+	  pageContainer[0].innerHTML = pageNation;
+	  createGrid(container, header, data, ids, job, fnc);
+	}
+  }
+  
+  detailView(obj) {
+	// 선택한 그리드의 글 번호 받아오기
+  
+	let no = obj.dataset.id;
+  
+	$.ajax({
+	  url: apiServer + "/api/gw/app/doc/" + no,
+	  method: "get",
+	  dataType: "json",
+	  cache: false,
+	  success: (data) => {
+		let detailData;
+		if (data.result === "ok") {
+		  detailData = cipher.decAes(data.data);
+		  detailData = JSON.parse(detailData);
+		  detailData.doc = cipher.decAes(detailData.doc);
+		  detailData.doc = detailData.doc.replaceAll('\\"', '"');
+		  storage.reportDetailData = detailData;
+		  getDetailView();
+		} else {
+		  msg.set("알림", "문서 정보를 가져오는데 실패했습니다");
+		}
+	  },
+	});
+  } // End of noticeDetailView();
+  
+  ///글 제목 눌렀을때 상세 조회하는 페이지 그리기
+  getDetailView() {
+	$(".pageContainer").hide();
+	$(".listRange").hide();
+	let my = storage.my;
+	let formId = storage.reportDetailData.formId;
+	let testForm = storage.reportDetailData.doc;
+  
+  
+	let detailHtml =
+	  "<div class='listPageDiv'><div class='mainBtnDiv crudBtns'><button type='button' onclick='showList()'>목록보기</button><button type='button' name='repostBtn' onclick='repostReport()'>기안하기</button></div>" +
+	  "<div class='detailReport'><div class='selectedReportview'><div class='seletedForm'></div><div class='selectedFile'></div></div><div class='comment'></div></div></div>";
+  
+	$(".listDiv").html(detailHtml);
+	$(".seletedForm").html(testForm);
+	$(":file").css("display", "none"); // 첨부파일 버튼 숨기기
+  
+	let tabHtml =
+	  "<div class='reportInfoTab tabs'>" +
+	  "<input type='radio' id='tablineInfo' name='tabItem' data-content-id='tabDetail' onclick='tabItemClick(this)' checked>" +
+	  "<label  class='tabItem' for='tablineInfo'  style='z-index:5; width:50% ; padding-left : 0%;'>문서정보</label>" +
+	  "<input type='radio' id='tabChangeInfo' name='tabItem' data-content-id='tabDetail2' onclick='tabItemClick(this)' >" +
+	  "<label  class='tabItem' for='tabChangeInfo' style='z-index:0; width:50% ; padding-left : 50%;' >변경이력</label></div>" +
+	  "<div class='tabDetail'id='tabDetail'></div><div class='tabDetail2' id='tabDetail2'></div>";
+	$(".comment").html(tabHtml);
+  
+	toReadMode();
+	drawCommentLine();
+	drawChangeInfo();
+	$(".tabDetail2").hide();
+	getFileArr();
+  
+  
+	let target = $(".seletedForm")[0];
+	let inputsArr = target.getElementsByTagName("input");
+  
+	for (let i = 0; i < inputsArr.length; i++) {
+	  if (inputsArr[i].dataset.detail !== undefined) {
+		inputsArr[i].value = inputsArr[i].dataset.detail;
+	  }
+	}
+  
+	let selectArr = target.getElementsByTagName("select");
+	if (selectArr.length != 0) {
+	  for (let i = 0; i < selectArr.length; i++) {
+		if (selectArr[i].dataset.detail !== undefined) {
+		  selectArr[i].value = selectArr[i].dataset.detail;
+		}
+	  }
+	}
+	let textAreaArr = target.getElementsByTagName("textarea")[0];
+	textAreaArr.value = textAreaArr.dataset.detail;
+  
+	if (target.getElementsByTagName("select").length > 0) {
+	  let selectArr = target.getElementsByTagName("select")[0];
+	  selectArr.value = selectArr.dataset.detail;
+	}
+	if (formId == "doc_Form_Consult" && $(".list_comment").attr("data-detail") == "old" || formId == "doc_Form_Resolution" && $(".list_comment").attr("data-detail") == "old") {
+	  for (let i = 0; i < 4; i++) {
+		let tt = $("input[name=" + formId + "_RD]")[i];
+		if ($("#" + tt.id).attr("checked") == "checked") {
+		  $("#" + tt.id).attr("data-detail", "on");
+		  $("#" + tt.id).val("on");
+		} else {
+		  $("#" + tt.id).attr("data-detail", "off");
+		  $("#" + tt.id).val("off");
+		}
+	  }
+	}
+	// 기존 전자 결재 문서 가져온 경우
+	if ($(".list_comment")[0].dataset.detail == "old") {
+	  let rd = $("input[name='" + formId + "_RD']");
+	  for (let i = 0; i < rd.length; i++) {
+		if (rd[i].checked == true) {
+		  $("#" + rd[i].id).prop("checked", true);
+		}
+	  }
+	  for (let i = 0; i < 3; i++) { let tt = $(".inputsAuto")[i]; $(tt).css("text-align", "left"); }
+  
+	} else {
+	  // 새문서 작성한 것 가져온 경우 구분
+	  let rd2 = $("input[name='" + formId + "_RD']");
+	  for (let i = 0; i < rd2.length; i++) {
+		if (rd2[i].dataset.detail == "on") {
+		  $("#" + rd2[i].id).prop("checked", true);
+		}
+	  }
+	}
+  
+	$("input[name='" + formId + "_RD']").prop("disabled", true);
+  
+	// 이름 , 직급 한글로 설정하기
+	let subTitlesArr = ["_examine", "_approval", "_agree", "_conduct"];
+	for (let i = 0; i < subTitlesArr.length; i++) {
+	  if ($("." + formId + subTitlesArr[i]).val() != undefined) {
+		for (let j = 0; j < $("." + formId + subTitlesArr[i]).length; j++) {
+		  $("." + formId + subTitlesArr[i])[j].value =
+			storage.user[$("." + formId + subTitlesArr[i])[j].value].userName;
+		  $("." + formId + subTitlesArr[i] + "_position")[j].value =
+			storage.userRank[
+			$("." + formId + subTitlesArr[i] + "_position")[j].value
+			][0];
+		}
+	  }
+	}
+  
+	storage.oriCbContainer = $("input[name='" + formId + "_RD']:checked").attr(
+	  "id"
+	);
+	storage.oriInsertedContent = $(".insertedContent").html();
+	storage.oriInsertedDataList = $(".insertedDataList").html();
+  
+	for (let i = 0; i < $(".dateBorder").length; i++) {
+	  let tt = $(".dateBorder")[i].children;
+	  $(tt).css("background-color", "transparent");
+	}
+  
+	//영업기회 리스트 가져오기
+	$.ajax({
+	  url: "/api/sopp",
+	  type: "get",
+	  dataType: "json",
+	  success: (result) => {
+		if (result.result == "ok") {
+		  let jsondata;
+		  jsondata = cipher.decAes(result.data);
+		  jsondata = JSON.parse(jsondata);
+		  storage.soppList = jsondata;
+		} else {
+		  alert("에러");
+		}
+	  },
+	});
+	setAppLineData();
+  
+	$(".cke_editable").remove();
+	$("." + formId + "_content").html($("#" + formId + "_content").attr("data-detail"));
+	$("#" + formId + "_content").hide();
+	$("." + formId + "_content").css("font-size", $("#" + formId + "_content").css("font-size"));
+	$("." + formId + "_content").css("padding", "0.3em");
+  
+	if (storage.reportDetailData.confirmNo != 'null') {
+	  $("#" + formId + "_no").val(storage.reportDetailData.confirmNo);
+	  $("#" + formId + "_no").attr("data-detail", storage.reportDetailData.confirmNo);
+	  $("#" + formId + "_no").css("text-align", "left");
+	}
+  }
+  
+  // 목록보기
+  showList() {
+	location.href = "/gw/myreturn";
+  }
+  
+  
+  
+  // 탭 누를때마다의 이벤트 주기
+  changeTab(obj) {
+	$(obj).css("background-color", "#62a6ad");
+	$(obj).css("color", "#fff");
+	$(obj).css("border-top-left", "14px");
+	if (obj.id == "lineInfo") {
+	  $("#changeInfo").css("background-color", "#dddddd");
+	  $("#changeInfo").css("color", "#5c5c5c");
+	  $("#changeInfo").css("border-bottom-left-radius", "20px");
+	  $("#tabDetail2").hide();
+	  $("#tabDetail").show();
+	  drawCommentLine();
+	} else if ((obj.id = "changeInfo")) {
+	  $("#lineInfo").css("background-color", "#dddddd");
+	  $("#lineInfo").css("color", "#5c5c5c");
+	  $("#lineInfo").css("border-bottom-right-radius", "20px");
+	  $("#tabDetail").hide();
+	  $("#tabDetail2").show();
+	  drawChangeInfo();
+	}
+  }
+  
+  
+  
+  
+  repostReport() {
+	let docNo = storage.reportDetailData.docNo;
+  
+	location.href = "/gw/write/" + docNo;
+  }
+  
+  
+  
+  moveCntForm() {
+  
+	let docNo = storage.reportDetailData.docNo;
+	location.href = "/business/contract/" + docNo;
+  
+  }
+}
+
+class GwMytempSet{
+	constructor(){
+		CommonDatas.Temps.gwMytempSet = this;
+	}
+
+	
+drawList() {
+
+	let containerTitle = $("#containerTitle");
+	containerTitle.html("임시 저장함");
+	let checkHref = location.href;
+	checkHref = checkHref.split("//");
+	checkHref = checkHref[1];
+	let splitArr = checkHref.split("/");
+  
+	// 전자결재 홈 화면에서 들어오는 경우 , 상세조회
+	if (splitArr.length > 3) {
+	  $.ajax({
+		url: apiServer + "/api/gw/app/temp/" + splitArr[3],
+		method: "get",
+		dataType: "json",
+		cache: false,
+		success: (data) => {
+		  let detailData;
+		  if (data.result === "ok") {
+			detailData = cipher.decAes(data.data);
+			detailData = JSON.parse(detailData);
+			detailData.doc = cipher.decAes(detailData.doc);
+			detailData.doc = detailData.doc.replaceAll('\\"', '"');
+			storage.reportDetailData = detailData;
+			getDetailView();
+			$(".listPageDiv").show();
+			storage.container = 0;
+			storage.cardStart = 0;
+			$('.theme-loader').fadeOut("slow");
+		  } else {
+			alert("문서 정보를 가져오는 데 실패했습니다");
+		  }
+		},
+	  });
+  
+	} else {
+  
+	  let url, method, data, type;
+	  url = "/api/gw/app/temp";
+	  method = "get";
+	  data = "";
+	  type = "list";
+	  crud.defaultAjax(url, method, data, type, this.successList, this.errorList);
+	  $(".listPageDiv").show();
+	  storage.container = 0;
+	  storage.cardStart = 0;
+	  $('.theme-loader').fadeOut("slow");
+	}
+  }
+  
+  successList(result) {
+	storage.myTempList = result;
+	window.setTimeout(drawMyDraft, 200);
+  }
+  
+  errorList() {
+	alert("에러");
+  }
+  
+  drawMyDraft() {
+	$(".listRange").show();
+	let container,
+	  result,
+	  jsonData,
+	  job,
+	  header = [],
+	  data = [],
+	  ids = [],
+	  disDate,
+	  setDate,
+	  str,
+	  fnc;
+  
+	if (storage.myTempList === undefined || storage.myTempList.length == 0) {
+	  container = $(".listDiv");
+  
+	  header = [
+		{
+		  title: "임시 저장 일자",
+		  align: "center",
+		},
+		{
+		  title: "문서양식",
+		  align: "center",
+		},
+		{
+		  title: "제목",
+		  align: "left",
+		},
+		{
+		  title: "작성자",
+		  align: "center",
+		},
+  
+	  ];
+	  createGrid(container, header, data, ids, job, fnc);
+	  container.append(
+		"<div style='border:1px solid #e0e4e9;padding:8px;justify-content: center;background-color:white; text-align:center;grid-column :span 6'>임시 저장 문서가 없습니다</div>"
+	  );
+  
+  
+  
+  
+  
+	} else {
+	  // jsonData = storage.myTempList;
+  
+	  let tt = [];
+	  for (let i = storage.myTempList.length - 1; i >= 0; i--) { tt.push(storage.myTempList[i]) };
+	  jsonData = tt;
+	  result = paging(jsonData.length, storage.currentPage, storage.articlePerPage);
+  
+	  pageContainer = document.getElementsByClassName("pageContainer");
+	  container = $(".listDiv");
+  
+	  header = [
+  
+		{
+		  title: "임시 저장 일자",
+		  align: "center",
+		},
+		{
+		  title: "문서양식",
+		  align: "center",
+		},
+		{
+		  title: "제목",
+		  align: "left",
+		},
+		{
+		  title: "작성자",
+		  align: "center",
+		},
+  
+	  ];
+  
+	  for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
+		disDate = dateDis(jsonData[i].created, jsonData[i].modified);
+  
+		setDate = this.getYmdSlash(disDate);
+		//  let userName = storage.user[jsonData[i].writer].userName;
+		str = [
+  
+		  {
+			"setData": setDate,
+			"align": "center"
+		  },
+		  {
+			"setData": jsonData[i].form,
+			"align": "center"
+		  },
+		  {
+			"setData": jsonData[i].title,
+			"align": "left",
+		  },
+		  {
+			"setData": storage.user[storage.my].userName,
+			"align": "center"
+		  },
+  
+		];
+  
+		fnc = "detailView(this)";
+		ids.push(jsonData[i].docNo);
+		data.push(str);
+	  }
+  
+	  let pageNation = createPaging(
+		pageContainer[0],
+		result[3],
+		"pageMove",
+		"drawMyDraft",
+		result[0]
+	  );
+	  pageContainer[0].innerHTML = pageNation;
+	  createGrid(container, header, data, ids, job, fnc);
+  
+	}
+  }
+  
+  detailView(obj) {
+	// 선택한 그리드의 글 번호 받아오기
+  
+	let no = obj.dataset.id;
+  
+	$.ajax({
+	  url: apiServer + "/api/gw/app/temp/" + no,
+	  method: "get",
+	  dataType: "json",
+	  cache: false,
+	  success: (data) => {
+		let detailData;
+		if (data.result === "ok") {
+		  detailData = cipher.decAes(data.data);
+		  detailData = JSON.parse(detailData);
+		  detailData.doc = cipher.decAes(detailData.doc);
+		  detailData.doc = detailData.doc.replaceAll('\\"', '"');
+		  storage.reportDetailData = detailData;
+		  getDetailView();
+		} else {
+		  alert("문서 정보를 가져오는 데 실패했습니다");
+		}
+	  },
+	});
+  } // End of noticeDetailView();
+  
+  ///글 제목 눌렀을때 상세 조회하는 페이지 그리기
+  
+  
+  // 탭 누를때마다의 이벤트 주기
+  
+  showList() {
+	location.href = "/gw/mytemp";
+  }
+  
+  deleteTemp() {
+	let docNo = storage.reportDetailData.docNo;
+  
+	$.ajax({
+	  url: "/api/gw/app/temp/" + docNo,
+	  type: "delete",
+	  dataType: "json",
+	  success: (result) => {
+		if (result.result == "ok") {
+		  alert("삭제 성공");
+		  location.href = "/gw/mytemp";
+		} else {
+		  alert("에러");
+		}
+	  },
+	});
+  }
+  
+  reWriteTemp() {
+	let docNo = storage.reportDetailData.docNo;
+  
+	location.href = "/gw/write/" + docNo;
+  }
+  
+}
+
+class GwMyappSet{
+	constructor(){
+		CommonDatas.Temps.gwMyappSet = this;
+	}
+
+	
+
+drawList() {
+	let containerTitle = $("#containerTitle");
+	containerTitle.html("결재 문서함");
+  
+	// 리스트 보기
+	let url, method, data, type;
+	url = "/api/gw/app/approved";
+	method = "get";
+	data = "";
+	type = "list";
+	crud.defaultAjax(url, method, data, type, this.waitSuccessList, this.waitErrorList);
+  
+	$(".listPageDiv").show();
+	storage.container = 0;
+	storage.cardStart = 0;
+	$('.theme-loader').fadeOut("slow");
+  }
+  
+  waitSuccessList(result) {
+	storage.approvedList = result;
+	window.setTimeout(drawNoticeApproval, 200);
+  }
+  
+  waitErrorList() {
+	alert("에러");
+  }
+  
+  drawNoticeApproval() {
+	let container,
+	  result,
+	  jsonData,
+	  job,
+	  header = [],
+	  data = [],
+	  ids = [],
+	  disDate,
+	  setDate,
+	  str,
+	  fnc;
+  
+	if (storage.approvedList === undefined || storage.approvedList.length == 0) {
+	  container = $(".listDiv");
+  
+	  header = [
+		// {
+		//   title: "번호",
+		//   align: "center",
+		// },
+		{
+		  title: "작성일",
+		  align: "center",
+		},
+		{
+		  title: "문서 종류",
+		  align: "center",
+		},
+		{
+		  title: "제목",
+		  align: "left",
+		},
+		{
+		  title: "작성자",
+		  align: "center",
+		},
+		{
+		  title: "상태",
+		  align: "center",
+		},
+	  ];
+	  createGrid(container, header, data, ids, job, fnc);
+  
+	   container.append(
+		"<div style='border:1px solid #e0e4e9;padding:8px;justify-content: center;background-color:white; text-align:center;grid-column :span 6'>결재 문서가 없습니다</div>"
+	  );
+  
+	} else {
+	  // jsonData = storage.approvedList;
+	  let tt = [];
+	  for (let i = storage.approvedList.length - 1; i >= 0; i--) { tt.push(storage.approvedList[i]) };
+	  jsonData = tt;
+	  result = paging(jsonData.length, storage.currentPage, storage.articlePerPage);
+  
+	  pageContainer = document.getElementsByClassName("pageContainer");
+	  container = $(".listDiv");
+  
+	  header = [
+  
+		{
+		  title: "작성일",
+		  align: "center",
+		},
+		{
+		  title: "문서 종류",
+		  align: "center",
+		},
+		{
+		  title: "제목",
+		  align: "left",
+		},
+		{
+		  title: "작성자",
+		  align: "center",
+		},
+  
+		{
+		  title: "상태",
+		  align: "center",
+		},
+	  ];
+	  for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
+		disDate = dateDis(jsonData[i].created, jsonData[i].modified);
+		setDate = dateFnc(disDate);
+		let userName = storage.user[jsonData[i].writer].userName;
+		let status;
+		if (jsonData[i].status == 1) {
+		  status = "진행 중";
+		} else if (jsonData[i].status == 2) {
+		  status = "수신 대기 ";
+		} else if (jsonData[i].status == 3) {
+		  status = "승인 완료";
+		} else if (jsonData[i].status == -3) {
+		  status = "반려";
+		}
+  
+		str = [
+  
+		  {
+			"setData": setDate,
+			"align": "center"
+		  },
+		  {
+			"setData": jsonData[i].form,
+			"align": "center"
+		  },
+		  {
+			"setData": jsonData[i].title,
+			"align": "left",
+		  },
+		  {
+			"setData": userName,
+			"align": "center"
+		  },
+  
+		  {
+			"setData": status,
+			"align": "center"
+		  },
+		];
+  
+		fnc = "waitDetailView(this)";
+		ids.push(jsonData[i].docNo);
+		data.push(str);
+	  }
+  
+	  let pageNation = createPaging(
+		pageContainer[0],
+		result[3],
+		"pageMove",
+		"drawNoticeApproval",
+		result[0]
+	  );
+	  pageContainer[0].innerHTML = pageNation;
+	  createGrid(container, header, data, ids, job, fnc);
+	}
+  } // End of drawNoticeApproval()
+  
+  waitDetailView(obj) {
+	// 선택한 그리드의 글 번호 받아오기
+  
+	let no = obj.dataset.id;
+  
+	$.ajax({
+	  url: apiServer + "/api/gw/app/doc/" + no,
+	  method: "get",
+	  dataType: "json",
+	  cache: false,
+	  success: (data) => {
+		let detailData;
+		if (data.result === "ok") {
+		  detailData = cipher.decAes(data.data);
+		  detailData = JSON.parse(detailData);
+		  detailData.doc = cipher.decAes(detailData.doc);
+		  detailData.doc = detailData.doc.replaceAll('\\"', '"');
+		  storage.reportDetailData = detailData;
+	   getDetailView();
+		} else {
+		  alert("문서 정보를 가져오는 데 실패했습니다");
+		}
+	  },
+	});
+  } // End of noticeDetailView();
+  
+  /* 상세 화면 그리기 */
+  
+  showList() {
+	location.href = "/gw/myapp";
+  }
+  
+  
+  
+  cancelApproval() {
+	let appLine = storage.reportDetailData.appLine;
+	let myIndex, ordered;
+  
+  
+	for (let i = 0; i < appLine.length; i++) {
+	  if (appLine[i].employee == storage.my) {
+		myIndex = i;
+		ordered = appLine[i].ordered;
+	  }
+	}
+  
+	if ((myIndex != appLine.length - 1) && (appLine[myIndex + 1].approved != null || appLine[myIndex + 1].rejected != null)) {
+	  alert("다음 결재자가 결재한 경우 결재 취소할 수 없습니다.")
+	} else {
+  
+	  $.ajax({
+  
+		url: "/api/gw/app/cancle/" + storage.reportDetailData.docNo + "/" + ordered,
+		type: "get",
+		dataType: "json",
+		success: (result) => {
+		  if (result.result == "ok") {
+			alert("확인");
+			location.href = "/gw/myapp";
+		  } else {
+			alert("에러");
+		  }
+		},
+  
+	  });
+	}
+  }
+}
+
+class GwMyreceiveSet{
+	constructor(){
+		CommonDatas.Temps.gwMyreceiveSet = this;
+	}
+	
+drawList() {
+	let containerTitle = $("#containerTitle");
+	containerTitle.html("수신 문서함");
+	let url, method, data, type;
+	url = "/api/gw/app/received";
+	method = "get";
+	data = "";
+	type = "list";
+	crud.defaultAjax(url, method, data, type, this.successList, this.errorList);
+	$(".listPageDiv").show();
+	storage.container = 0;
+	storage.cardStart = 0;
+	$('.theme-loader').fadeOut("slow");
+  }
+  
+  successList(result) {
+	storage.myReceiveList = result;
+	window.setTimeout(drawMyDraft, 200);
+  }
+  
+  errorList() {
+	alert("에러");
+  }
+  
+  drawMyDraft() {
+	let container,
+	  result,
+	  jsonData,
+	  job,
+	  data = [],
+	  ids = [],
+	  disDate,
+	  setDate,
+	  str,
+	  fnc;
+	header = [
+	  // {
+	  //   title: "번호",
+	  //   align: "center",
+	  // },
+	  {
+		title: "기안일",
+		align: "center",
+	  },
+	  {
+		title: "문서양식",
+		align: "center",
+	  },
+	  {
+		title: "제목",
+		align: "left",
+	  },
+	  {
+		title: "작성자",
+		align: "center",
+	  },
+  
+	  {
+		title: "상태",
+		align: "center",
+	  },
+	];
+	if (
+	  storage.myReceiveList === undefined ||
+	  storage.myReceiveList.length == 0
+	) {
+	  container = $(".listDiv");
+  
+	  createGrid(container, header, data, ids, job, fnc);
+  
+	  container.append(
+		"<div style='border:1px solid #e0e4e9;padding:8px;justify-content: center;background-color:white; text-align:center;grid-column :span 6'>수신 문서가 없습니다</div>"
+	  );
+
+  
+	} else {
+	  // jsonData = storage.myReceiveList;
+	  let tt = [];
+	  for (let i = storage.myReceiveList.length - 1; i >= 0; i--) { tt.push(storage.myReceiveList[i]) };
+	  jsonData = tt;
+	  result = paging(jsonData.length, storage.currentPage, storage.articlePerPage);
+  
+	  pageContainer = document.getElementsByClassName("pageContainer");
+	  container = $(".listDiv");
+  
+	  for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
+		disDate = dateDis(jsonData[i].created, jsonData[i].modified);
+		setDate = dateFnc(disDate);
+		let read = jsonData[i].read;
+		let status;
+		if (read == null) {
+		  read = "N";
+		} else {
+		  read = this.getYmdSlash(read);
+		}
+  
+		let appType = jsonData[i].appType;
+		if (appType == "0") {
+		  appType = "검토";
+		} else if (appType == "1") {
+		  appType = "합의";
+		} else if (appType == "2") {
+		  appType = "결재";
+		} else if (appType == "3") {
+		  appType = "수신";
+		} else {
+		  appType = "참조";
+		}
+  
+		if (jsonData[i].status == 1) {
+		  status = "진행 중";
+		} else if (jsonData[i].status == 2) {
+		  status = "수신 대기 ";
+		} else if (jsonData[i].status == 3) {
+		  status = "승인 완료";
+		} else if (jsonData[i].status == -3) {
+		  status = "반려";
+		}
+  
+		str = [
+  
+		  {
+			"setData": setDate,
+			"align": "center"
+		  },
+		  {
+			"setData": jsonData[i].form,
+			"align": "center"
+  
+		  },
+		  {
+			"setData": jsonData[i].title,
+			"align": "left"
+		  },
+		  {
+			"setData": storage.user[jsonData[i].writer].userName,
+			"align": "center"
+		  },
+		  {
+			"setData": status,
+			"align": "center"
+		  },
+		];
+  
+		fnc = "detailView(this)";
+		ids.push(jsonData[i].docNo);
+		data.push(str);
+	  }
+  
+	  let pageNation = createPaging(
+		pageContainer[0],
+		result[3],
+		"pageMove",
+		"drawMyDraft",
+		result[0]
+	  );
+	  pageContainer[0].innerHTML = pageNation;
+	  createGrid(container, header, data, ids, job, fnc);
+	}
+  }
+  
+  detailView(obj) {
+	// 선택한 그리드의 글 번호 받아오기
+  
+	let no = obj.dataset.id;
+  
+	$.ajax({
+	  url: apiServer + "/api/gw/app/doc/" + no,
+	  method: "get",
+	  dataType: "json",
+	  cache: false,
+	  success: (data) => {
+		let detailData;
+		if (data.result === "ok") {
+		  detailData = cipher.decAes(data.data);
+		  detailData = JSON.parse(detailData);
+		  detailData.doc = cipher.decAes(detailData.doc);
+		  detailData.doc = detailData.doc.replaceAll('\\"', '"');
+		  storage.reportDetailData = detailData;
+		  getDetailView();
+		} else {
+		  alert("문서 정보를 가져오는 데 실패했습니다");
+		}
+	  },
+	});
+  } // End of noticeDetailView();
+  
+  ///글 제목 눌렀을때 상세 조회하는 페이지 그리기
+  
+  
+  showList() {
+	location.href = "/gw/myreceive";
+  }
+  
+  
+  // 탭 누를때마다의 이벤트 주기
+  changeTab(obj) {
+	$(obj).css("background-color", "#62a6ad");
+	$(obj).css("color", "#fff");
+	$(obj).css("border-top-left", "14px");
+	if (obj.id == "lineInfo") {
+	  $("#changeInfo").css("background-color", "#dddddd");
+	  $("#changeInfo").css("color", "#5c5c5c");
+	  $("#changeInfo").css("border-bottom-left-radius", "20px");
+	  $("#tabDetail2").hide();
+	  $("#tabDetail").show();
+	  drawCommentLine();
+	} else if ((obj.id = "changeInfo")) {
+	  $("#lineInfo").css("background-color", "#dddddd");
+	  $("#lineInfo").css("color", "#5c5c5c");
+	  $("#lineInfo").css("border-bottom-right-radius", "20px");
+	  $("#tabDetail").hide();
+	  $("#tabDetail2").show();
+	  drawChangeInfo();
+	}
+  }  
+}
+
+class GwMyReferSet {
+	constructor(){
+		CommonDatas.Temps.gwMyRefer = this;
+	}
+	
+drawList() {
+	let containerTitle = $("#containerTitle");
+	containerTitle.html("참조/열람 문서함");
+	let url, method, data, type;
+	url = "/api/gw/app/references";
+	method = "get";
+	data = "";
+	type = "list";
+	crud.defaultAjax(url, method, data, type, this.successList, this.errorList);
+	$(".listPageDiv").show();
+	storage.container = 0;
+	storage.cardStart = 0;
+	$('.theme-loader').fadeOut("slow");
+  }
+  
+  successList(result) {
+	storage.myReferList = result;
+	window.setTimeout(drawMyRefer, 200);
+  }
+  
+  errorList() {
+	alert("에러");
+  }
+  
+  drawMyRefer() {
+	let container,
+	  result,
+	  jsonData,
+	  job,
+	  data = [],
+	  ids = [],
+	  disDate,
+	  setDate,
+	  str,
+	  fnc;
+  
+	let header = [
+	  // {
+	  //   title: "번호",
+	  //   align: "center",
+	  // },
+	  {
+		title: "기안일",
+		align: "center",
+	  }, {
+		title: "조회 구분",
+		align: "center",
+	  },
+  
+	  {
+		title: "문서양식",
+		align: "center",
+	  },
+	  {
+		title: "제목",
+		align: "left",
+	  },
+	  {
+		title: "작성자",
+		align: "center",
+	  },
+	  {
+		title: "상태",
+		align: "center",
+	  },
+	];
+	if (storage.myReferList === undefined || storage.myReferList.length == 0) {
+	  container = $(".listDiv");
+  
+	  createGrid(container, header, data, ids, job, fnc);
+  
+	  container.append(
+		"<div style='border:1px solid #e0e4e9;padding:8px;justify-content: center;background-color:white; text-align:center;grid-column :span 6'>참조/열람 문서가 없습니다</div>"
+	  );
+  
+	} else {
+	  jsonData = storage.myReferList;
+	  let exceptMy = [];
+	  for (let i = 0; i < jsonData.length; i++) {
+		if (jsonData[i].writer != storage.my) {
+		  exceptMy.push(jsonData[i]);
+		}
+	  }
+	  jsonData = exceptMy;
+  
+	  result = paging(jsonData.length, storage.currentPage, storage.articlePerPage);
+  
+	  pageContainer = document.getElementsByClassName("pageContainer");
+	  container = $(".listDiv");
+  
+	  for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
+		disDate = dateDis(jsonData[i].created, jsonData[i].modified);
+		setDate = dateFnc(disDate);
+		let read = jsonData[i].read;
+		let status;
+		let readType = "열람";
+  
+		if (read == null) {
+		  read = "N";
+		} else {
+		  read = this.getYmdSlash(read);
+		}
+  
+		let appType = jsonData[i].appType;
+		if (appType == "0") {
+		  appType = "검토";
+		} else if (appType == "1") {
+		  appType = "합의";
+		} else if (appType == "2") {
+		  appType = "결재";
+		} else if (appType == "3") {
+		  appType = "수신";
+		} else if (appType == "4") {
+		  appType = "참조";
+		} else {
+		  appType = "열람";
+		}
+  
+		if (jsonData[i].status == 1) {
+		  status = "진행 중";
+		} else if (jsonData[i].status == 2) {
+		  status = "수신 대기 ";
+		} else if (jsonData[i].status == 3) {
+		  status = "승인 완료";
+		} else if (jsonData[i].status == -3) {
+		  status = "반려";
+		}
+  
+		str = [
+  
+		  {
+			"setData": setDate,
+			"align": "center"
+		  }, {
+			"setData": readType,
+			"align": "center"
+		  },
+		  {
+			"setData": jsonData[i].form,
+			"align": "center"
+		  },
+		  {
+			"setData": jsonData[i].title,
+			"align": "left",
+		  },
+		  {
+			"setData": storage.user[jsonData[i].writer].userName,
+			"align": "center"
+		  },
+		  {
+			"setData": status,
+			"align": "center"
+		  },
+		];
+  
+		fnc = "detailView(this)";
+		ids.push(jsonData[i].docNo);
+		data.push(str);
+	  }
+  
+	  let pageNation = createPaging(
+		pageContainer[0],
+		result[3],
+		"pageMove",
+		"drawMyRefer",
+		result[0]
+	  );
+	  pageContainer[0].innerHTML = pageNation;
+	  createGrid(container, header, data, ids, job, fnc);
+	}
+  }
+  
+  detailView(obj) {
+	// 선택한 그리드의 글 번호 받아오기
+  
+	let no = obj.dataset.id;
+  
+	$.ajax({
+	  url: apiServer + "/api/gw/app/doc/" + no,
+	  method: "get",
+	  dataType: "json",
+	  cache: false,
+	  success: (data) => {
+		let detailData;
+		if (data.result === "ok") {
+		  detailData = cipher.decAes(data.data);
+		  detailData = JSON.parse(detailData);
+		  detailData.doc = cipher.decAes(detailData.doc);
+		  detailData.doc = detailData.doc.replaceAll('\\"', '"');
+		  storage.reportDetailData = detailData;
+		  getDetailView();
+		} else {
+		  alert("문서 정보를 가져오는 데 실패했습니다");
+		}
+	  },
+	});
+  } // End of noticeDetailView();
+  
+  ///글 제목 눌렀을때 상세 조회하는 페이지 그리기
+  
+  showList() {
+	location.href = "/gw/myrefer";
+  }
+  
+  // 탭 누를때마다의 이벤트 주기
+  changeTab(obj) {
+	$(obj).css("background-color", "#62a6ad");
+	$(obj).css("color", "#fff");
+	$(obj).css("border-top-left", "14px");
+	if (obj.id == "lineInfo") {
+	  $("#changeInfo").css("background-color", "#dddddd");
+	  $("#changeInfo").css("color", "#5c5c5c");
+	  $("#changeInfo").css("border-bottom-left-radius", "20px");
+	  $("#tabDetail2").hide();
+	  $("#tabDetail").show();
+	  drawCommentLine();
+	} else if ((obj.id = "changeInfo")) {
+	  $("#lineInfo").css("background-color", "#dddddd");
+	  $("#lineInfo").css("color", "#5c5c5c");
+	  $("#lineInfo").css("border-bottom-right-radius", "20px");
+	  $("#tabDetail").hide();
+	  $("#tabDetail2").show();
+	  drawChangeInfo();
+	}
+  }  
+}
+
+class AccountingSlipSet{
+	constructor(){
+		CommonDatas.Temps.accountingSlipSet = this;
+	}
+	drawList(){
+		$('.theme-loader').fadeOut("slow");
+	}
+
+}
+
+class AccountingTradeSet{
+	constructor(){
+		CommonDatas.Temps.accountingTradeSet = this;
+	}
+	drawList(){
+		$('.theme-loader').fadeOut("slow");
+	}
+
+}
+
+class AccountingUnpaidSet{
+	constructor(){
+		CommonDatas.Temps.accountingUnpaidSet = this;
+	}
+	drawList(){
+		$('.theme-loader').fadeOut("slow");
+	}
+
+}
+
+class AccountingReceivableSet{
+	constructor(){
+		CommonDatas.Temps.accountingReceivableSet = this;
+	}
+	drawList(){
+		$('.theme-loader').fadeOut("slow");
+	}
+
+}
+
+class AccountingSalesSet{
+	constructor(){
+		CommonDatas.Temps.accountingSalesSet = this;
+	}
+	drawList(){
+		$('.theme-loader').fadeOut("slow");
+	}
+
+}
+
+class AccountingPurchaseSet{
+	constructor(){
+		CommonDatas.Temps.accountingPurchaseSet = this;
+	}
+	drawList(){
+		$('.theme-loader').fadeOut("slow");
+	}
+
+}
+
+
+
+class AccountingBankaccountSet{
+	constructor(){
+		CommonDatas.Temps.accountingBankaccountSet = this;
+	}
+	
+
+// 서버에서 은행계좌 정보를 가져오는 함수
+getBankAccountList(){
+	let url;
+	url = apiServer + "/api/accounting/bankaccount";
+	$.ajax({
+		"url": url,
+		"method": "get",
+		"dataType": "json",
+		"cache": false,
+		success: (data) => {
+			let x, list;
+			if (data.result === "ok") {
+				list = cipher.decAes(data.data);
+				list = JSON.parse(list);
+				for(x = 0 ; x < list.length ; x++){
+					if(list[x].created === undefined)	list[x].created = null;
+					if(list[x].branch === undefined)	list[x].branch = null;
+					if(list[x].remark === undefined)	list[x].remark = null;
+					if(list[x].limit === undefined)		list[x].limit = null;
+					if(list[x].created === undefined)	list[x].created = null;
+					if(list[x].updated === undefined)	list[x].updated = null;
+					if(list[x].deleted === undefined)	list[x].deleted = null;
+				}
+				storage.bankAccount = list;
+				console.log("[getBankAccountList] Success getting bank account information.");
+				this.drawAccountList();
+				storage.container = 0;
+				storage.cardStart = 0;
+				$('.theme-loader').fadeOut("slow");
+			} else {
+				msg.set("[getBankAccountList] Fail to get bank account information.");
+			}
+		}
+	});
+} // End of getBankAccountList()
+
+// 서버에서 은행계좌 거래정보를 가져오는 함수
+getBankAccountHistory(bank, account){
+	let url;
+	url = apiServer + "/api/accounting/bankdetail/" + bank + "/" + account;
+	$.ajax({
+		"url": url,
+		"method": "get",
+		"dataType": "json",
+		"cache": false,
+		success: (data) => {
+			let x, list, row;
+			if (data.result === "ok") {
+				list = cipher.decAes(data.data);
+				list = list.replaceAll("\r","").replaceAll("\n","").replaceAll("\t","");
+				list = JSON.parse(list);
+				storage.bankHistory = list;
+				row = Math.floor((document.getElementsByClassName("accountingContent")[0].clientHeight - 60) / 31 / 5);
+				row = row < 4 ? 4 : row > 10 ? 10 : row;
+				storage.page.line = row;
+				document.getElementsByClassName("bodyFunc1")[0].children[0].value = row;
+				storage.page.max = Math.ceil(list.length / (row * 5));
+				storage.page.current = 1;
+				console.log("[getBankAccountList] Success getting bank account information.");
+				drawAccountHistory();
+			} else {
+				msg.set("[getBankAccountList] Fail to get bank account information.");
+			}
+		}
+	});
+} // End of getBankAccountDetail()
+
+drawAccountList(){
+	let cnt, html, x, t;
+
+	cnt = document.getElementsByClassName("accountingContent")[0].children[0];
+
+	// 헤더정보 입력 / 은행 계좌번호 최종확인일 잔고 종류 메모
+	html = "<div><div>은행</div><div>계좌번호</div><div>최종확인일</div><div>잔고</div><div>종류</div><div>메모</div></div>";
+
+	// 리스트 생성
+	for(x = 0 ; x < storage.bankAccount.length ; x++){
+		t = "<div onclick=\"clickedAccount(this)\" data-order=\"" + x + "\">";
+		t+= ("<div>" + this.codeToBank(storage.bankAccount[x].bankCode) + "</div>");
+		t+= ("<div>" + storage.bankAccount[x].account + "</div>");
+		t+= ("<div>" + this.dateFormat(storage.bankAccount[x].updated) + "</div>");
+		t+= ("<div>" + storage.bankAccount[x].updated.toLocaleString() + "</div>");
+		t+= ("<div>" + storage.bankAccount[x].type + "</div>");
+		t+= ("<input value=\"" + (storage.bankAccount[x].remark === null ? "" : storage.bankAccount[x].remark) + "\" disabled />");
+		t+= ("<div></div>");
+		t += "</div>";
+		html += t;
+	}
+	cnt.innerHTML = html;
+} // End of this.drawAccountList();
+
+drawAccountHistory(){
+	let cnt, html, x, list, start, end;
+
+	list = storage.bankHistory;
+	start = (storage.page.current - 1) * (storage.page.line * 5);
+	end = start + (storage.page.line * 5) - 1;
+	end = end >= storage.bankHistory.length ? storage.bankHistory.length - 1 : end;
+	cnt = document.getElementsByClassName("accountingContent")[0].children[1];
+	html = "<div><div>일자</div><div>기재내용</div><div>입금</div><div>출금</div><div>잔액</div><div>거래점</div><div>통장메모</div><div>메모</div><div>연결</div></div>";
+
+	for(x = start ; x <= end ; x++){
+		html += ("<div data-idx=\"" + x + "\">");
+		html += ("<div>" + dateFormat(list[x].dt) + "</div>");
+		html += ("<div>" + list[x].desc + "</div>");
+		html += ("<div>" + list[x].deposit.toLocaleString() + "</div>");
+		html += ("<div>" + list[x].withdraw.toLocaleString() + "</div>");
+		html += ("<div>" + list[x].balance.toLocaleString() + "</div>");
+		html += ("<div>" + (list[x].branch === null ? "" : list[x].branch) + "</div>");
+		html += ("<div>" + (list[x].memo1 === null ? "" : list[x].memo1) + "</div>");
+		html += ("<input value=\"" + (list[x].memo2 === null ? "" : list[x].memo2) + "\" onkeyup=\"writeMemo(this)\" />");
+		html += ("<div><img src=\"" + (list[x].link === "y" ? "/images/common/linkIcon.png" : "/images/common/linkIcon.png") + "\"></div>");
+		html +="</div>";
+	}
+	cnt.innerHTML = html;
+	drawPaging();
+} // End of drawAccountHostory()
+
+drawPaging(){
+	let cnt, html, current, start, end, limit, padding, x;
+	cnt = document.getElementsByClassName("pageContainer")[0];
+	limit = storage.page.max;
+	padding = 3;
+	current = storage.page.current;
+	start = current - padding;
+	start = start < 1 ? 1 : start;
+	end = current + padding;
+	end = end > limit ? limit : end;
+	console.log("limit : " + limit + " / padding : " + padding + " / current : " + current + " / start : " + start + " / end" + end);
+	if(start === 1)			html = "";
+	else if(start === 2)	html = "<div onclick=\"clickedPaging(1)\">1</div>";
+	else if(start > 2)	html = "<div onclick=\"clickedPaging(1)\">1</div><div>...</div>";
+	for(x = start ; x <= end ; x++){
+		html += ("<div " + (current !== x ? "onclick=\"clickedPaging(" + x + ")\"" : "class=\"paging_cell_current\"") + ">" + x + "</div>");
+	}
+	if(end === limit - 1)		html += ("<div onclick=\"clickedPaging(" + limit + ")\">" + limit + "</div>");
+	else if(end < limit - 1)	html += ("<div>...</div><div onclick=\"clickedPaging(" + limit + ")\">" + limit + "</div>");
+
+	cnt.innerHTML = html;
+} // End of drawPaging()
+
+clickedPaging(n){
+	storage.page.current = n*1;
+	drawAccountHistory();
+}
+
+// 날짜 포맷 함수
+dateFormat(l){
+	let str = "", dt;
+	if(l === undefined || l === null || isNaN(l))	return "";
+	dt = new Date(l);
+	str += (dt.getFullYear() + ".");
+	str += ((dt.getMonth()+1) + ".");
+	str += (dt.getDate());
+	return str;
+} // End of dateFormat()
+
+codeToBank(code){
+	let t, bnk = {"002": "KDB산업은행","003": "IBK기업은행","004": "KB국민은행","007": "수협은행","011": "NH농협은행","012": "농협중앙회(단위농축협)","020": "우리은행","023": "SC제일은행","027": "한국씨티은행","031": "대구은행","032": "부산은행","034": "광주은행","035": "제주은행","037": "전북은행","039": "경남은행","045": "새마을금고중앙회","048": "신협중앙회","050": "저축은행중앙회","064": "산림조합중앙회","071": "우체국","081": "하나은행","088": "신한은행","089": "케이뱅크","090": "카카오뱅크","092": "토스뱅크","218": "KB증권","238": "미래에셋대우","240": "삼성증권","243": "한국투자증권","247": "NH투자증권","261": "교보증권","262": "하이투자증권","263": "현대차증권","264": "키움증권","265": "이베스트투자증권","266": "SK증권","267": "대신증권","269": "한화투자증권","271": "토스증권","278": "신한금융투자","279": "DB금융투자","280": "유진투자증권","287": "메리츠증권"};
+	t = code === undefined ? "" : bnk[code];
+	return t === undefined ? "" : t;
+}
+
+clickedAccount(el){
+	let x, order, cntList, cntContent, parent, bank, account;
+
+	order = el.dataset.order * 1;
+	parent = el.parentElement;
+	cntList = document.getElementsByClassName("accountingContent")[0].children[0];
+	cntContent = document.getElementsByClassName("accountingContent")[0].children[1];
+	cntContent.innerHTML = "<div><div>일자</div><div>기재내용</div><div>입금</div><div>출금</div><div>잔액</div><div>거래점</div><div>통장메모</div><div>메모</div><div>연결</div></div>";
+	document.getElementsByClassName("pageContainer")[0].innerHTML = "";
+	cntList.className = "accountListCollect";
+	cntContent.style.display = "inline-block";
+	for(x = 1 ; x < parent.children.length ; x++)	parent.children[x].children[6].innerText = "";
+	document.getElementsByClassName("bodyFunc1")[0].style.display = "inline-block";
+	document.getElementsByClassName("bodyFunc2")[0].style.display = "inline-block";
+	el.children[6].innerText = "►";
+	bank = storage.bankAccount[order].bankCode;
+	account = storage.bankAccount[order].account;
+	storage.page.account = account;
+	storage.page.bank = bank;
+	getBankAccountHistory(bank, account);
+} // End of clickedAccount()
+
+clickedCloseHistory(){
+	let x, cntList, cntContent;
+	cntList = document.getElementsByClassName("accountingContent")[0].children[0];
+	cntContent = document.getElementsByClassName("accountingContent")[0].children[1];
+	cntList.className = "accountListExpand";
+	cntContent.style.display = "none";
+	for(x = 1 ; x < cntList.children.length ; x++)	cntList.children[x].children[6].innerText = "";
+	document.getElementsByClassName("bodyFunc1")[0].style.display = "none";
+	document.getElementsByClassName("bodyFunc2")[0].style.display = "none";
+	document.getElementsByClassName("pageContainer")[0].innerHTML = "";
+} // End of clickedCloseHostory()
+
+expandList(){
+	let cntList, cntContent;
+	order = el.dataset.order * 1;
+	cntList = document.getElementsByClassName("accountingContent")[0].children[0];
+	cntContent = document.getElementsByClassName("accountingContent")[0].children[1];
+	cntList.className = "accountListExpand";
+	cntContent.getElementsByClassName.display = "none";
+} // End of expandList()
+
+changeRange(el){
+	let v, current;
+	v = el.value * 1;
+	current = (storage.page.line * 5 * (storage.page.current - 1)) / (v * 5);console.log("current : " + current)
+	current = Math.floor(current) + 1;
+	storage.page.line = v;
+	storage.page.current = current;
+	storage.page.max = Math.ceil(storage.bankHistory.length / (v * 5));
+	document.getElementsByClassName("bodyFunc1")[0].children[1].innerText = v * 5;
+	if(storage.page.handler !== undefined)	window.clearTimeout(storage.page.handler);
+	storage.page.handler = window.setTimeout(function(){
+		storage.page.handler = undefined;
+		document.getElementsByClassName("bodyFunc1")[0].children[1].innerText = "";
+	},7000);
+	drawAccountHistory();
+} // End of changeRange()
+
+writeMemo(el){
+	const memo = el.value;
+	const idx = el.parentElement.dataset.idx * 1;
+	if(storage.writeMemo !== undefined)	window.clearTimeout(storage.writeMemo);
+	storage.writeMemo = window.setTimeout(function(){saveBankAccMemo(idx, memo);},3000)
+} // End of writeMemo()
+
+saveBankAccMemo(idx, memo){
+	let dt, deposit, withdraw, balance, desc, url, data, bank, account;
+	dt = storage.bankHistory[idx].dt;
+	deposit = storage.bankHistory[idx].deposit;
+	withdraw = storage.bankHistory[idx].withdraw;
+	balance = storage.bankHistory[idx].balance;
+	desc = storage.bankHistory[idx].desc === undefined || storage.bankHistory[idx].desc === null ? null : storage.bankHistory[idx].desc;
+	account = storage.page.account;
+	bank = storage.page.bank;
+	data = {
+		"dt":dt,
+		"deposit":deposit,
+		"withdraw":withdraw,
+		"balance":balance,
+		"desc":desc,
+		"memo":memo
+	}
+	data = JSON.stringify(data);
+	data = cipher.encAes(data);
+
+	url = apiServer + "/api/accounting/bankdetail/memo/" + bank + "/" + account;
+	$.ajax({
+		"url": url,
+		"data":data,
+		"method": "post",
+		"dataType": "json",
+		"contentType":"text/plain",
+		"cache": false,
+		success: (data) => {
+			if (data.result === "ok") {
+				msg.set("메모를 저장했습니다.");
+			} else {
+				msg.set("[getBankAccountList] Fail to get bank account information.");
+			}
+		}
+	});
+} // End of saveBankAccMemo()
+
+// 엑셀파일 입력 버튼 클릭시 실행되는 이벤트 리스너
+clickedDisk(){document.getElementById("xlsFile").click();}
+
+// 엑셀 파일 선택시 실행되는 함수
+readFile(el){
+	let file =  el.files[0];
+	console.log("STEP 1 : Read xls file");
+	storage.bankHistoryForParse = undefined;
+	if(file === null)	return null;
+	else bnkXls.readXlsFile(file);
+} // End of readFile();
+
+// 파싱된 엑셀 파일 데이터를 처리하는 메서드
+processAccData(data){
+	let from, to, html, x;
+	console.log("STEP 5 : prepare show data to user");
+	// 파싱된 데터ㄹ 저장함
+	storage.parseData = data;
+
+	// 파일 엘리먼트를 초기화 함
+	document.getElementById("xlsFile").value = "";
+
+	// 파싱된 데이터의 빠른 시간과 늦은 시간을 구하고 이를 서버에 전닳하여 기존 데이터를 요청함
+	from = data.detail[0][0];
+	to = data.detail[data.detail.length - 1][0];
+	from = (new Date(from)).getTime();
+	to = (new Date(to)).getTime();
+	getBankAccountHistoryWithDate(storage.page.bank, storage.page.account, from, to);
+
+	// 모달을 띄우고 파싱된 데이터를 화면에 보여줌
+	if(data.detail !== undefined && data.detail !== null && data.detail.length > 0){
+		html = "<div class=\"parsedTitle\" data-idx=\"-1\"><div>일자</div><div>기재내용</div><div>입금</div><div>출금</div><div>잔액</div><div>거래점</div><div><input type=\"checkbox\" onclick=\"clickedCheckAll(this)\" checked /></div></div>";
+		for(x = 0 ; x < data.detail.length ; x++){
+			html += ("<div class=\"parsedItem\" data-idx=\"" + x + "\"><div>" + data.detail[x][0] + "</div><div>" + data.detail[x][2] + "</div><div>" + data.detail[x][3].toLocaleString() + "</div><div>" + data.detail[x][4].toLocaleString() + "</div><div>" + data.detail[x][5].toLocaleString() + "</div><div>" + data.detail[x][6] + "</div><div><input type=\"checkbox\" checked /></div></div>");
+		}
+	}
+	console.log("STEP 6 : show modal");
+	modal.show();
+	modal.head.html("<div style=\"padding:1rem 0.2rem\">엑셀 파일에서 거래내역 추가</div>")
+	modal.body.html(html);
+	modal.confirm.html("등록");
+	modal.confirm.click(saveDetailDataToServer);
+} // End of processAccData();
+
+postProcessAccData(){
+	let t1, t2, dt, x, y, data = storage.parseData;
+
+	for(x = 0 ; x < storage.bankHistoryForParse.length ; x++){
+		t1 = storage.bankHistoryForParse[x];
+		for(y = 0 ; y < data.detail.length ; y++){
+			t2 = data.detail[y];
+			dt = (new Date(t2[0])).getTime();
+			console.log("x : " + x + " / y : " + y + " / dt : " + dt);
+			console.log("t1");
+			console.log(t1);
+			console.log("t2");
+			console.log(t2);
+
+			console.log("dt === t1.dt -- " + (t1.dt === dt) + " / dt : " + dt + " / t1.dt" + t1.dt);
+			console.log("t1.deposit === t2[3] --" + (t1.deposit === t2[3]));
+			console.log("t1.withdraw === t2[4] -- " + (t1.withdraw === t2[4]));
+			console.log("t1.balance === t2[5] -- " + (t1.balance === t2[5]));
+
+			if(dt === t1.dt && t1.deposit === t2[3] && t1.withdraw === t2[4] && t1.balance === t2[5]){
+				console.log(" !!!!!!!!!" + x + " / " + y);
+				document.getElementsByClassName("parsedItem")[y].className = "parsedItem savedItem";
+				document.getElementsByClassName("parsedItem")[y].children[6].children[0].checked = false;
+				document.getElementsByClassName("parsedItem")[y].children[6].children[0].disabled = true;
+			}
+		}
+	}
+}
+
+getBankAccountHistoryWithDate(bank, account, from, to){
+	let url;
+	url = apiServer + "/api/accounting/bankdetail/" + bank + "/" + account + "/" + from + "/" + to;
+	$.ajax({
+		"url": url,
+		"method": "get",
+		"dataType": "json",
+		"cache": false,
+		success: (data) => {
+			let x, list, row;
+			if (data.result === "ok") {
+				console.log("=================== 1")
+				list = cipher.decAes(data.data);
+				list = list.replaceAll("\r","").replaceAll("\n","").replaceAll("\t","");
+				list = JSON.parse(list);
+				storage.bankHistoryForParse = list;
+				postProcessAccData();
+			} else {
+				console.log("=================== 2")
+			}
+		}
+	});
+} // End of getBankAccountDetail()
+
+clickedCheckAll(el){
+	let els, x;
+	els = el.parentElement.parentElement.parentElement.getElementsByTagName("input");
+	for(x = 0 ; x < els.length ; x++){
+		if(els[x] === el || els[x].disabled === true) continue;
+		els[x].checked = el.checked;
+	}
+}
+
+// 은행 거래내역을 추가하는 함수
+saveDetailDataToServer(){
+	let url, data = [], x, els, arr = [], bank, account;
+	els = document.getElementsByClassName("modalBody")[0].getElementsByTagName("input");
+	for(x = 0 ; x < els.length ; x++)	if(els[x].checked)	arr.push(els[x].parentElement.parentElement.dataset.idx * 1);
+	for(x = 0 ; x < arr.length ; x++)	if(arr[x] >= 0)		data.push(storage.parseData.detail[arr[x]]);
+	for(x = 0 ; x < data.length ; x++)	data[x][0] = (new Date(data[x][0])).getTime();
+	console.log(data);
+
+	if(data.length === 0)	return;
+
+	data = JSON.stringify(data);
+	data = cipher.encAes(data);
+	account = storage.page.account;
+	bank = storage.page.bank;
+
+	url = apiServer + "/api/accounting/bankdetail/detail/" + bank + "/" + account;
+	$.ajax({
+		"url": url,
+		"data":data,
+		"method": "post",
+		"dataType": "json",
+		"contentType":"text/plain",
+		"cache": false,
+		success: (data) => {
+			if (data.result === "ok") {
+				console.log(data.data);
+			} else {
+				console.log(data.msg);
+			}
+		}
+	});
+	modal.hide();
+}
+
+}
+
+
+
+class AccountingCorporatecardSet{
+	constructor(){
+		CommonDatas.Temps.accountingCorporatecardSet = this;
+	}
+// 등록된 카드 내역 가져오는 함수 
+getCardListData() {
+	let data = null;
+	$.ajax({
+		url: "/api/card/list",
+		type: "get",
+		dataType: "json",
+		cache: false,
+		success: (result) => {
+			if (result.result == "ok") {
+				data = cipher.decAes(result.data);
+				console.log(result.data);
+				data = JSON.parse(data);
+				storage.cardList = data;
+				this.drawList();
+				storage.container = 0;
+				storage.cardStart = 0;
+				$('.theme-loader').fadeOut("slow");
+			} else {
+				console.log("실패");
+			}
+		}
+
+	});
+
+}
+
+
+// 등록된 카드 내역 리스트 그리는 함수 
+drawList() {
+	let container,
+		result,
+		jsonData,
+		job,
+		header = [],
+		data = [],
+		ids = [],
+		str,
+		fnc,
+		pageContainer
+
+	if (
+		storage.cardList === undefined ||
+		storage.cardList == 0
+	) {
+		container = $(".cardList");
+
+		header = [
+
+			{
+				title: "카드번호",
+				align: "center",
+			},
+			{
+				title: "구분",
+				align: "center",
+			},
+			{
+				title: "은행",
+				align: "center",
+			},
+			{
+				title: "상태",
+				align: "center",
+			},
+			{
+				title: "하이패스",
+				align: "center",
+			},
+			{
+				title: "발급일",
+				align: "center",
+			},
+			{
+				title: "비고",
+				align: "left",
+			}
+
+
+		];
+		createGrid(container, header, data, ids, job, fnc);
+
+		container.append(
+			"<div class='noListDefault'>등록된 내역이 없습니다.</div>"
+		);
+	} else {
+		// jsonData = storage.receiveList.receive;
+		let tt = [];
+		let hipass;
+		let bank;
+		for (let i = storage.cardList.length - 1; i >= 0; i--) { tt.push(storage.cardList[i]) };
+		jsonData = tt;
+		result = paging(jsonData.length, storage.currentPage, storage.articlePerPage);
+
+		pageContainer = document.getElementsByClassName("pageContainer");
+		container = $(".cardList");
+		header = [
+
+			{
+				title: "카드번호",
+				align: "center",
+			},
+			{
+				title: "구분",
+				align: "center",
+			},
+			{
+				title: "은행",
+				align: "center",
+			},
+			{
+				title: "상태",
+				align: "center",
+			},
+			{
+				title: "하이패스",
+				align: "center",
+			},
+			{
+				title: "발급일",
+				align: "center",
+			},
+			{
+				title: "비고",
+				align: "left",
+			}
+
+		];
+		for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
+			hipass = jsonData[i].hipass == "0" ? "N" : "Y";
+			bank = jsonData[i].bank + "";
+			if (bank.length == 2) {
+				bank = "0" + bank;
+			} else if (bank.length == 1) {
+				bank = "00" + bank;
+			}
+
+			str = [
+
+				{
+					"setData": jsonData[i].card,
+					"align": "center"
+				},
+				{
+					"setData": jsonData[i].div,
+					"align": "center"
+				},
+				{
+					"setData": bnkXls.code[bank],
+					"align": "center"
+				},
+				{
+					"setData": jsonData[i].status,
+					"align": "center",
+				},
+				{
+					"setData": hipass,
+					"align": "center"
+				},
+				{
+					"setData": jsonData[i].issued,
+					"align": "center"
+				},
+				{
+					"setData": jsonData[i].remark,
+					"align": "left"
+				},
+
+			];
+
+			fnc = "detailView(this)";
+			ids.push(jsonData[i].alias);
+			data.push(str);
+		}
+
+		let pageNation = createPaging(
+			pageContainer[0],
+			result[3],
+			"pageMove",
+			"drawList",
+			result[0]
+		);
+		pageContainer[0].innerHTML = pageNation;
+		createGrid(container, header, data, ids, job, fnc);
+	}
+} // End of drawNoticeApproval()
+
+
+
+detailView(obj) {
+	let alias = $(obj).attr("data-id"); // 카드 뒷번호 6자리 
+	let data;
+	$.ajax({
+		url: "/api/card/detail/" + alias,
+		type: "get",
+		dataType: "json",
+		success: (result) => {
+			if (result.result === "ok") {
+				data = result.data;
+				data = cipher.decAes(data);
+				if (data == null) {
+					storage.selectedCard = [];
+					storage.selectedCard = alias;
+				} else {
+					data = JSON.parse(data);
+					storage.cardDetail = data;
+					storage.selectedCard = alias;
+				}
+
+				this.drawCardDetail();
+
+			} else {
+				alert("카드 내역 상세 조회에 실패함");
+			}
+
+		}
+
+	})
+}
+
+
+
+drawCardDetail() {
+	$(".listRange").hide();
+
+
+	let target = $(".cardList");
+	target.html("<div class='detailDivContainer'><div class='crudBtns'><button onclick='showMain()'>목록보기</button></div><div class='cardDetailDiv'><div class='cardTable'></div><div class='detailTable'></div></div></div>");
+	let cardList = $(".cardTable");
+
+	// 카드 목록 테이블 간단하게 그림 
+	let cardHtml = "<div class='gridCardHeader'><span>카드번호<span></div><div class='contentContainer'>";
+
+	for (let i = 0; i < storage.cardList.length; i++) {
+
+		cardHtml += "<div class='gridCardContent' onclick='showCardDetail(this)' data-detail='" + storage.cardList[i].alias + "'><span class='textNumberFormat' >" + storage.cardList[i].card + "</span></div>";
+	}
+	cardHtml += "</div>";
+	$(cardList).html(cardHtml);
+
+	for (let i = 0; i < $(".gridCardContent").length; i++) {
+		if ($(".gridCardContent")[i].dataset.detail == storage.selectedCard) {
+			$($(".gridCardContent")[i]).css("background-color", "#EDEDF4");
+			showCardDetail($(".gridCardContent")[i]);
+			break;
+		}
+	}
+
+
+}
+
+showMain() {
+	location.href = "/accounting/corporatecard";
+}
+
+showCardDetail(obj) {
+	let alias = $(obj).attr("data-detail");
+	$(obj).css("background-color", "#EDEDF4");
+	for (let i = 0; i < $(".gridCardContent").length; i++) {
+		if ($(".gridCardContent")[i].dataset.detail != alias) {
+			$($(".gridCardContent")[i]).css("background-color", "white");
+		}
+	}
+	$.ajax({
+		url: "/api/card/detail/" + alias,
+		type: "get",
+		dataType: "json",
+		success: (result) => {
+			data = result.data;
+			if (data == "[]") {
+				storage.cardDetail = [];
+			} else {
+				data = cipher.decAes(data);
+				data = JSON.parse(data);
+				storage.cardDetail = data;
+			}
+
+			drawSelectedDetail();
+		}
+	});
+
+}
+
+drawSelectedDetail() {
+
+
+	$(".pageContainer").html("");
+	let container,
+		result,
+		jsonData,
+		job,
+		header = [],
+		data = [],
+		ids = [],
+		str,
+		fnc;
+
+	jsonData = storage.cardDetail;
+	if (jsonData.length == 0) {
+
+
+
+		container = $(".detailTable");
+
+		header = [
+
+			{
+				title: "카드번호",
+				align: "center",
+			},
+			{
+				title: "승인일자",
+				align: "center",
+			},
+
+			{
+				title: "승인번호",
+				align: "center",
+			},
+			{
+				title: "가맹점명",
+				align: "left",
+			},
+			{
+				title: "승인금액",
+				align: "center",
+			}
+
+
+
+		];
+		createGrid(container, header, data, ids, job, fnc);
+
+		container.append(
+			"<div class='gridContent'><div class='gridContentItem grid_default_text_align_center' style='grid-column: span 5; text-align: center;'>등록된 내역이 없습니다.</div></div>"
+		);
+		$(".gridHeader").css("grid-template-columns", "20% 20% 20% 20% 20%");
+		$(".gridContent").css("grid-template-columns", "20% 20% 20% 20% 20%");
+
+	} else {
+		result = paging(jsonData.length, storage.currentPage, storage.articlePerPage);
+
+		pageContainer = document.getElementsByClassName("pageContainer");
+		container = $(".detailTable");
+
+		header = [
+			{
+				title: "카드번호",
+				align: "center",
+			},
+			{
+				title: "승인일자",
+				align: "center",
+			},
+
+			{
+				title: "승인번호",
+				align: "center",
+			},
+			{
+				title: "가맹점명",
+				align: "left",
+			},
+			{
+				title: "승인금액",
+				align: "center",
+			}
+
+		];
+		for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
+
+			str = [
+				{
+					"setData": jsonData[i].cardNo,
+					"align": "center"
+				},
+				{
+					"setData": this.getYmdSlash(jsonData[i].transactionDate),
+					"align": "center"
+				},
+
+				{
+					"setData": jsonData[i].permitNo,
+					"align": "center"
+				},
+				{
+					"setData": jsonData[i].storeTitle,
+					"align": "left",
+				},
+				{
+					"setData": jsonData[i].permitAmount.toLocaleString() + "원",
+					"align": "center"
+				},
+
+			];
+
+			fnc = "";
+			ids.push(i);
+			data.push(str);
+		}
+
+		let pageNation = createPaging(
+			pageContainer[0],
+			result[3],
+			"pageMove",
+			"drawSelectedDetail",
+			result[0]
+		);
+		pageContainer[0].innerHTML = pageNation;
+		createGrid(container, header, data, ids, job, fnc);
+		$(".gridHeader").css("grid-template-columns", "20% 20% 20% 20% 20%");
+		$(".gridContent").css("grid-template-columns", "20% 20% 20% 20% 20%");
+	}
+
+
+
+}
+
+
+// 날짜 관련 함수 
+getYmdSlash(date) {
+	let d = new Date(date);
+	return (
+		(d.getFullYear() % 100) +
+		"/" +
+		(d.getMonth() + 1 > 9
+			? (d.getMonth() + 1).toString()
+			: "0" + (d.getMonth() + 1)) +
+		"/" +
+		(d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString())
+	);
+}
+
+
+}
+
+let idx = 0;
+
+class AccountingCarddatainsert {
+	constructor(){
+		CommonDatas.Temps.accountingCarddatainsert = this;
+	}
+
+drawDefaultList() {
+
+	$(".btnsLabel").css("font-size", $(".btnsBtn").css("font-size"));
+	let container, job, header = [], data = [], ids = [], fnc;
+
+	container = $(".parsedData");
+	header = [
+		{
+			title: "카드번호",
+			align: "center",
+		},
+		{
+			title: "승인일자",
+			align: "center",
+		},
+		{
+			title: "승인번호",
+			align: "center",
+		},
+		{
+			title: "가맹점명",
+			align: "left",
+		},
+		{
+			title: "승인금액",
+			align: "center",
+		},
+		{
+			title: "<input type='checkbox' name='batchBtns' class='allCb'>",
+			align: "center",
+		}
+
+	];
+
+	this.createCheckGrid(container, header, data, ids, job, fnc);
+
+	container.append(
+		"<div class='gridContent'><div class='gridContentItem grid_default_text_align_center' style='grid-column: span 6; text-align: center;'>선택된 파일이 없습니다.</div></div>"
+	);
+	storage.container = 0;
+	storage.cardStart = 0;
+	$('.theme-loader').fadeOut("slow");
+}
+
+
+
+drawCardList() {
+
+	let container,
+		result,
+		jsonData,
+		job,
+		header = [],
+		data = [],
+		ids = [],
+		str,
+		fnc,
+		pageContainer;
+
+	jsonData = storage.cardDetail;
+
+	result = paging(jsonData.length, storage.currentPage, storage.articlePerPage);
+
+	pageContainer = document.getElementsByClassName("pageContainer");
+	container = $(".parsedData");
+
+	header = [
+		{
+			title: "카드번호",
+			align: "center",
+		},
+		{
+			title: "승인일자",
+			align: "center",
+		},
+
+		{
+			title: "승인번호",
+			align: "center",
+		},
+		{
+			title: "가맹점명",
+			align: "left",
+		},
+		{
+			title: "승인금액",
+			align: "center",
+		},
+		{
+			title: "<input type='checkbox'  onclick='clickedCheckAll(this)'/>",
+			align: "center",
+		}
+
+	];
+	for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
+
+		let check = "<input type='checkbox' name='cardDataCb' class='cb" + i + "' />"
+		str = [
+			{
+				"setData": jsonData[i][1],
+				"align": "center"
+			},
+			{
+				"setData": jsonData[i][0],
+				"align": "center"
+			},
+
+			{
+				"setData": jsonData[i][2],
+				"align": "center"
+			},
+			{
+				"setData": jsonData[i][3],
+				"align": "left",
+			},
+			{
+				"setData": jsonData[i][4],
+				"align": "center"
+			},
+			{
+				"setData": check,
+				"align": "center",
+			}
+
+		];
+
+		fnc = "waitDetailView(this)";
+		ids.push(i);
+		data.push(str);
+	}
+
+	let pageNation = createPaging(
+		pageContainer[0],
+		result[3],
+		"pageMove",
+		"drawCardList",
+		result[0]
+	);
+	pageContainer[0].innerHTML = pageNation;
+	this.createCheckGrid(container, header, data, ids, job, fnc);
+}
+
+clickedCheckAll(el) {
+	let els, x;
+	els = el.parentElement.parentElement.parentElement.getElementsByTagName("input");
+	for (x = 0; x < els.length; x++) {
+		if (els[x] === el || els[x].disabled === true) continue;
+		els[x].checked = el.checked;
+	}
+}
+
+getCheckdData() {
+	let cbs = $("input[name='cardDataCb']:checked");
+	let checkedCN = [];
+	for (let i = 0; i < cbs.length; i++) {
+		checkedCN.push(cbs[i].className);
+	}
+	insertCardData(checkedCN);
+}
+
+insertCardData(checkedCN) {
+
+	let dataArr = $("." + checkedCN[idx]).parent().parent().parent().children();
+	let transactionDate, cardNo, permitNo, storeTitle, permitAmount;
+	let year, month, day;
+	transactionDate = $($("." + checkedCN[idx]).parent().parent().parent().children()[1]).children().html();
+	year = transactionDate.slice(0, 4);
+	month = transactionDate.slice(5, 7);
+	day = transactionDate.slice(8, 10);
+	cardNo = $($("." + checkedCN[idx]).parent().parent().parent().children()[0]).children().html();
+	permitNo = $($("." + checkedCN[idx]).parent().parent().parent().children()[2]).children().html();
+	storeTitle = $($("." + checkedCN[idx]).parent().parent().parent().children()[3]).children().html();
+	permitAmount = $($("." + checkedCN[idx]).parent().parent().parent().children()[4]).children().html();
+
+
+	let data = {
+		transactionDate: year + "-" + month + "-" + day + "",
+		cardNo: cardNo.slice(-6),
+		permitNo: permitNo,
+		storeTitle: storeTitle,
+		permitAmount: permitAmount.replace(",", "").replace(",", "")
+	}
+
+	data = JSON.stringify(data);
+	data = cipher.encAes(data);
+	console.log(data);
+	$.ajax({
+		url: "/api/card/insert",
+		type: "post",
+		data: data,
+		dataType: "json",
+		contentType: "text/plain",
+		success: (result) => {
+			if (result.result == "ok") {
+				console.log("성공");
+				idx++;
+				if (idx < checkedCN.length) {
+					insertCardData(checkedCN);
+				} else {
+					alert("등록되었습니다");
+					location.href = "/accounting/carddatainsert";
+				}
+			} else {
+				console.log("실패" + result.msg);
+				idx++;
+				if (idx < checkedCN.length) {
+					insertCardData(checkedCN);
+				} else {
+					alert("등록되었습니다");
+					location.href = "/accounting/carddatainsert";
+				}
+			}
+		}
+
+	})
+
+}
+createCheckGrid(gridContainer, headerDataArray, dataArray, ids, job, fnc, idName) {
+    let gridHtml = "", gridContents, idStr;
+    ids = (ids === undefined) ? 0 : ids;
+    fnc = (fnc === undefined) ? "" : fnc;
+    job = (job === undefined) ? "" : job;
+
+    if (idName === undefined) {
+        idStr = "gridContent";
+    } else {
+        idStr = idName;
+    }
+
+    gridHtml = "<div class='gridHeader grid_default_header_item'>";
+
+    for (let i = 0; i < headerDataArray.length; i++) {
+        if (headerDataArray[i].align === "center") {
+            gridHtml += "<div class='gridHeaderItem grid_default_text_align_center'>" + headerDataArray[i].title + "</div>";
+        } else if (headerDataArray[i].align === "left") {
+            gridHtml += "<div class='gridHeaderItem grid_default_text_align_left'>" + headerDataArray[i].title + "</div>";
+        } else {
+            gridHtml += "<div class='gridHeaderItem grid_default_text_align_right'>" + headerDataArray[i].title + "</div>";
+        }
+    }
+
+    gridHtml += "</div>";
+
+    for (let i = 0; i < dataArray.length; i++) {
+        gridHtml += "<div id='" + idStr + "_grid_" + i + "' class='gridContent grid_default_body_item' data-drag=\"true\" data-id='" + ids[i] + "' data-job='" + job[i] + "' >";
+        for (let t = 0; t <= dataArray[i].length; t++) {
+            if (dataArray[i][t] !== undefined) {
+                if (dataArray[i][t].setData === undefined) {
+                    gridHtml += "<div class='gridContentItem' onclick='" + fnc + "' style=\"grid-column: span " + dataArray[i][t].col + "; text-align: center;\">데이터가 없습니다.</div>";
+                } else if (dataArray[i][t].setData.includes("checkbox")) {
+                    gridHtml += "<div class='gridContentItem'><span class=\"textNumberFormat\">" + dataArray[i][t].setData + "</span></div>";
+                } else {
+                    gridHtml += "<div class='gridContentItem' onclick='" + fnc + "'><span class=\"textNumberFormat\">" + dataArray[i][t].setData + "</span></div>";
+                }
+            }
+        }
+        gridHtml += "</div>";
+    }
+
+    gridContainer.html(gridHtml);
+
+    if (idName === undefined) {
+        gridContents = $(".gridContent");
+    } else {
+        gridContents = $("#" + idName + " .gridContent");
+    }
+
+    let tempArray = [];
+
+    for (let i = 0; i < dataArray.length; i++) {
+        for (let key in dataArray[i]) {
+            tempArray.push(dataArray[i][key]);
+        }
+    }
+
+    for (let i = 0; i < tempArray.length; i++) {
+        for (let t = 0; t < gridContents.length; t++) {
+            if (tempArray[i].align === "center") {
+                $(gridContents[t]).find(".gridContentItem").eq(i).attr("class", "gridContentItem grid_default_text_align_center");
+            } else if (tempArray[i].align === "left") {
+                $(gridContents[t]).find(".gridContentItem").eq(i).attr("class", "gridContentItem grid_default_text_align_left");
+            } else {
+                $(gridContents[t]).find(".gridContentItem").eq(i).attr("class", "gridContentItem grid_default_text_align_right");
+            }
+        }
+    }
+
+}
+
+}
+
+class AccountingPurchasebillSet{
+	constructor(){
+		CommonDatas.Temps.accountingPurchasebill = this;
+	}
+
+	
+
+getPurchasebillList() {
+	let url, method, data, type;
+
+	url = "/api/accounting/taxbillYear/B";
+	method = "get";
+	data = "";
+	type = "list";
+
+	crud.defaultAjax(url, method, data, type, this.purchasebillSuccessList, this.purchasebillErrorList);
+	storage.container = 0;
+	storage.cardStart = 0;
+	$('.theme-loader').fadeOut("slow");
+}
+
+drawPurchasebillList() {
+	let container, result, job, jsonData, header = [], data = [], ids = [], str, fnc, pageContainer, containerTitle, detailBackBtn, listSearchInput;
+
+	if (storage.purchasebillList === undefined) {
+		msg.set("등록된 매입계산서가 없습니다");
+	}
+	else {
+		if(storage.searchDatas === undefined){
+			jsonData = storage.purchasebillList;
+		}else{
+			jsonData = storage.searchDatas;
+		}
+	}
+
+	result = paging(jsonData.length, storage.currentPage, storage.articlePerPage);
+
+	containerTitle = $("#containerTitle");
+	detailBackBtn = $(".detailBackBtn");
+	pageContainer = document.getElementsByClassName("pageContainer");
+	listSearchInput = $(".listSearchInput");
+	container = $(".gridList");
+
+	header = [
+		{
+			"title" : "발행일",
+			"align" : "center",
+		},
+		{
+			"title" : "고객사",
+			"align" : "center",
+		},
+		{
+			"title" : "발행번호",
+			"align" : "center",
+		},
+		{
+			"title" : "공급가",
+			"align" : "right",
+		},
+		{
+			"title" : "세액",
+			"align" : "right",
+		},
+		{
+			"title" : "합계금액",
+			"align" : "right",
+		},
+		{
+			"title" : "품목",
+			"align" : "left",
+		},
+		{
+			"title" : "규격",
+			"align" : "left",
+		},
+		{
+			"title" : "비고",
+			"align" : "left",
+		},
+		{
+			"title" : "상태",
+			"align" : "center",
+		},
+	];
+
+	if(jsonData === ""){
+		str = [
+			{
+				"setData": undefined,
+				"col": 10,
+			},
+		];
+		
+		data.push(str);
+	}else{
+		for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
+			let disDate, setDate, sellerCustomer, sn, status, amount, tax, product, standard, remark;
+			
+			disDate = dateDis(jsonData[i].issueDate);
+			setDate = dateFnc(disDate);
+			sellerCustomer = (jsonData[i].sellerCustomer === null || jsonData[i].sellerCustomer == 0 || jsonData[i].sellerCustomer === undefined) ? "" : storage.customer[jsonData[i].sellerCustomer].name;
+			sn = (jsonData[i].sn === null || jsonData[i].sn === "" || jsonData[i].sn === undefined) ? "" : jsonData[i].sn;
+			status = (jsonData[i].status === null || jsonData[i].status === "" || jsonData[i].status === undefined) ? "" : jsonData[i].status;
+
+			if(status === "B1"){
+				status = "매입발행";
+			}else if(status === "B3") {
+				status = "지급처리중";
+			}else{
+				status = "지급완료";
+			}
+
+			amount = (jsonData[i].amount === null || jsonData[i].amount == 0 || jsonData[i].amount === undefined) ? "" : jsonData[i].amount;
+			tax = (jsonData[i].tax === null || jsonData[i].tax == 0 || jsonData[i].tax === undefined) ? "" : jsonData[i].tax;
+			product = (jsonData[i].product === null || jsonData[i].product === "" || jsonData[i].product === undefined) ? "" : jsonData[i].product;
+			standard = (jsonData[i].standard === null || jsonData[i].standard === "" || jsonData[i].standard === undefined) ? "" : jsonData[i].standard;
+			remark = (jsonData[i].remark === null || jsonData[i].remark === "" || jsonData[i].remark === undefined) ? "" : jsonData[i].remark;
+
+			str = [
+				{
+					"setData": setDate,
+				},
+				{
+					"setData": sellerCustomer,
+				},
+				{
+					"setData": sn,
+				},
+				{
+					"setData": amount.toLocaleString("en-US"),
+				},
+				{
+					"setData": tax.toLocaleString("en-US"),
+				},
+				{
+					"setData": parseInt(amount + tax).toLocaleString("en-US"),
+				},
+				{
+					"setData": product,
+				},
+				{
+					"setData": standard,
+				},
+				{
+					"setData": remark,
+				},
+				{
+					"setData": status,
+				},
+			];
+	
+			ids.push(jsonData[i].no);
+			data.push(str);
+		}
+	
+		let pageNation = createPaging(pageContainer[0], result[3], "pageMove", "drawPurchasebillList", result[0]);
+		pageContainer[0].innerHTML = pageNation;
+	}
+
+	containerTitle.html("매입계산서조회");
+	$(pageContainer).children().show();
+	detailBackBtn.hide();
+	listSearchInput.show();
+	createGrid(container, header, data, ids, job, fnc);
+}
+
+purchasebillSuccessList(result){
+	// storage.purchasebillList = [];
+	// let nowDate = new Date();
+	// let nowYear = nowDate.getFullYear();
+
+	// for(let i = 0; i < result.length; i++){
+	// 	let getDate = new Date(result[i].issueDate);
+	// 	let getYear = getDate.getFullYear();
+
+	// 	if(nowYear == getYear){
+	// 		storage.purchasebillList.push(result[i]);
+	// 	}
+	// }
+
+	storage.purchasebillList = result;
+
+	if(storage.customer === undefined || storage.code === undefined || storage.dept === undefined){
+		window.setTimeout(this.drawPurchasebillList, 600);
+		window.setTimeout(addSearchList, 600);
+		window.setTimeout(searchContainerSet, 600);
+	}else{
+		window.setTimeout(this.drawPurchasebillList, 200);
+		window.setTimeout(addSearchList, 200);
+		window.setTimeout(searchContainerSet, 200);
+	}
+}
+
+purchasebillErrorList(){
+	msg.set("에러");
+}
+
+searchInputKeyup(){
+	let searchAllInput, tempArray;
+	searchAllInput = $("#searchAllInput").val();
+	tempArray = searchDataFilter(storage.purchasebillList, searchAllInput, "input");
+
+	if(tempArray.length > 0){
+		storage.searchDatas = tempArray;
+	}else{
+		storage.searchDatas = "";
+	}
+
+	this.drawPurchasebillList();
+}
+
+addSearchList(){
+	storage.searchList = [];
+
+	for(let i = 0; i < storage.purchasebillList.length; i++){
+		let disDate, setDate, sellerCustomer, sn, status, amount, tax, product, standard, remark;
+		disDate = dateDis(storage.purchasebillList[i].issueDate);
+		setDate = parseInt(dateFnc(disDate).replaceAll("-", ""));
+		sellerCustomer = (storage.purchasebillList[i].sellerCustomer === null || storage.purchasebillList[i].sellerCustomer == 0 || storage.purchasebillList[i].sellerCustomer === undefined) ? "" : storage.customer[storage.purchasebillList[i].sellerCustomer].name;
+		sn = (storage.purchasebillList[i].sn === null || storage.purchasebillList[i].sn === "" || storage.purchasebillList[i].sn === undefined) ? "" : storage.purchasebillList[i].sn;
+		status = (storage.purchasebillList[i].status === null || storage.purchasebillList[i].status === "" || storage.purchasebillList[i].status === undefined) ? "" : storage.purchasebillList[i].status;
+
+		if(status === "B1"){
+			status = "매입발행";
+		}else if(status === "B3") {
+			status = "지급처리중";
+		}else{
+			status = "지급완료";
+		}
+
+		amount = (storage.purchasebillList[i].amount === null || storage.purchasebillList[i].amount == 0 || storage.purchasebillList[i].amount === undefined) ? "" : storage.purchasebillList[i].amount;
+		tax = (storage.purchasebillList[i].tax === null || storage.purchasebillList[i].tax == 0 || storage.purchasebillList[i].tax === undefined) ? "" : storage.purchasebillList[i].tax;
+		product = (storage.purchasebillList[i].product === null || storage.purchasebillList[i].product === "" || storage.purchasebillList[i].product === undefined) ? "" : storage.purchasebillList[i].product;
+		standard = (storage.purchasebillList[i].standard === null || storage.purchasebillList[i].standard === "" || storage.purchasebillList[i].standard === undefined) ? "" : storage.purchasebillList[i].standard;
+		remark = (storage.purchasebillList[i].remark === null || storage.purchasebillList[i].remark === "" || storage.purchasebillList[i].remark === undefined) ? "" : storage.purchasebillList[i].remark;
+
+		storage.searchList.push("#issueDate" + setDate + "#" + sellerCustomer + "#" + sn + "#" + status + "#price" + (amount + tax) + "#" + product + "#" + standard + "#" + remark + "#");
+	}
+}
+
+searchSubmit(){
+	let dataArray = [], resultArray, eachIndex = 0, searchSellerCustomer, searchIssueFrom, searchPriceFrom;
+
+	searchSellerCustomer = $("#searchSellerCustomer").val();
+	searchIssueFrom = ($("#searchIssueFrom").val() === "") ? "" : $("#searchIssueFrom").val().replaceAll("-", "") + "#issueDate" + $("#searchIssueTo").val().replaceAll("-", "");
+	searchPriceFrom = ($("#searchPriceFrom").val() === "") ? "" : $("#searchPriceFrom").val().replaceAll(",", "") + "#price" + $("#searchPriceTo").val().replaceAll(",", "");
+
+	let searchValues = [searchSellerCustomer, searchIssueFrom, searchPriceFrom];
+
+	for(let i = 0; i < searchValues.length; i++){
+		if(searchValues[i] !== "" && searchValues[i] !== undefined && searchValues[i] !== null){
+			let tempArray = searchDataFilter(storage.purchasebillList, searchValues[i], "multi");
+			
+			for(let t = 0; t < tempArray.length; t++){
+				dataArray.push(tempArray[t]);
+			}
+
+			eachIndex++;
+		}
+	}
+
+	resultArray = searchMultiFilter(eachIndex, dataArray, storage.purchasebillList);
+	
+	storage.searchDatas = resultArray;
+
+	if(storage.searchDatas.length == 0){
+		msg.set("찾는 데이터가 없습니다.");
+		storage.searchDatas = storage.purchasebillList;
+	}
+	
+	this.drawPurchasebillList();
+}
+
+}
+
+class AccountingSalesbillSet{
+	constructor(){
+		CommonDatas.Temps.accountingSalesbill = this;
+	}
+
+getSalesbillList() {
+	let url, method, data, type;
+
+	url = "/api/accounting/taxbillYear/S";
+	method = "get";
+	data = "";
+	type = "list";
+
+	crud.defaultAjax(url, method, data, type, this.salesbillSuccessList, this.salesbillErrorList);
+	storage.container = 0;
+	storage.cardStart = 0;
+	$('.theme-loader').fadeOut("slow");
+}
+
+drawSalesbillList () {
+	let container, result, job, jsonData, header = [], data = [], ids = [], str, fnc, pageContainer, containerTitle, detailBackBtn, listSearchInput;
+	
+	if (storage.salesbillList === undefined) {
+		msg.set("등록된 매출계산서가 없습니다");
+	}
+	else {
+		if(storage.searchDatas === undefined){
+			jsonData = storage.salesbillList;
+		}else{
+			jsonData = storage.searchDatas;
+		}
+	}
+
+	result = paging(jsonData.length, storage.currentPage, storage.articlePerPage);
+
+	containerTitle = $("#containerTitle");
+	detailBackBtn = $(".detailBackBtn");
+	pageContainer = document.getElementsByClassName("pageContainer");
+	listSearchInput = $(".listSearchInput");
+	container = $(".gridList");
+
+	header = [
+		{
+			"title" : "발행일",
+			"align" : "center",
+		},
+		{
+			"title" : "고객사",
+			"align" : "center",
+		},
+		{
+			"title" : "발행번호",
+			"align" : "center",
+		},
+		{
+			"title" : "공급가",
+			"align" : "right",
+		},
+		{
+			"title" : "세액",
+			"align" : "right",
+		},
+		{
+			"title" : "합계금액",
+			"align" : "right",
+		},
+		{
+			"title" : "품목",
+			"align" : "left",
+		},
+		{
+			"title" : "규격",
+			"align" : "left",
+		},
+		{
+			"title" : "비고",
+			"align" : "left",
+		},
+		{
+			"title" : "상태",
+			"align" : "center",
+		},
+	];
+
+	if(jsonData === ""){
+		str = [
+			{
+				"setData": undefined,
+				"col": 10,
+			},
+		];
+		
+		data.push(str);
+	}else{
+		for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
+			let disDate, setDate, buyerCustomer, sn, status, amount, tax, product, standard, remark;
+			
+			disDate = dateDis(jsonData[i].issueDate);
+			setDate = dateFnc(disDate);
+			buyerCustomer = (jsonData[i].buyerCustomer === null || jsonData[i].buyerCustomer == 0 || jsonData[i].buyerCustomer === undefined) ? "" : storage.customer[jsonData[i].buyerCustomer].name;
+			sn = (jsonData[i].sn === null || jsonData[i].sn === "" || jsonData[i].sn === undefined) ? "" : jsonData[i].sn;
+			status = (jsonData[i].status === null || jsonData[i].status === "" || jsonData[i].status === undefined) ? "" : jsonData[i].status;
+
+			if(status === "S1"){
+				status = "매출발행";
+			}else if(status === "S3") {
+				status = "수금처리중";
+			}else{
+				status = "수금완료";
+			}
+
+			amount = (jsonData[i].amount === null || jsonData[i].amount == 0 || jsonData[i].amount === undefined) ? "" : jsonData[i].amount;
+			tax = (jsonData[i].tax === null || jsonData[i].tax == 0 || jsonData[i].tax === undefined) ? "" : jsonData[i].tax;
+			product = (jsonData[i].product === null || jsonData[i].product === "" || jsonData[i].product === undefined) ? "" : jsonData[i].product;
+			standard = (jsonData[i].standard === null || jsonData[i].standard === "" || jsonData[i].standard === undefined) ? "" : jsonData[i].standard;
+			remark = (jsonData[i].remark === null || jsonData[i].remark === "" || jsonData[i].remark === undefined) ? "" : jsonData[i].remark;
+
+			str = [
+				{
+					"setData": setDate,
+				},
+				{
+					"setData": buyerCustomer,
+				},
+				{
+					"setData": sn,
+				},
+				{
+					"setData": amount.toLocaleString("en-US"),
+				},
+				{
+					"setData": tax.toLocaleString("en-US"),
+				},
+				{
+					"setData": parseInt(amount + tax).toLocaleString("en-US"),
+				},
+				{
+					"setData": product,
+				},
+				{
+					"setData": standard,
+				},
+				{
+					"setData": remark,
+				},
+				{
+					"setData": status,
+				},
+			];
+	
+			ids.push(jsonData[i].no);
+			data.push(str);
+		}
+	
+		let pageNation = createPaging(pageContainer[0], result[3], "pageMove", "drawSalesbillList ", result[0]);
+		pageContainer[0].innerHTML = pageNation;
+	}
+
+	containerTitle.html("매출계산서조회");
+	$(pageContainer).children().show();
+	detailBackBtn.hide();
+	listSearchInput.show();
+	createGrid(container, header, data, ids, job, fnc);
+}
+
+salesbillSuccessList(result){
+	storage.salesbillList = result;
+
+	if(storage.customer === undefined || storage.code === undefined || storage.dept === undefined){
+		window.setTimeout(drawSalesbillList , 600);
+		window.setTimeout(addSearchList, 600);
+		window.setTimeout(searchContainerSet, 600);
+	}else{
+		window.setTimeout(drawSalesbillList , 200);
+		window.setTimeout(addSearchList, 200);
+		window.setTimeout(searchContainerSet, 200);
+	}
+}
+
+salesbillErrorList(){
+	msg.set("에러");
+}
+
+searchInputKeyup(){
+	let searchAllInput, tempArray;
+	searchAllInput = $("#searchAllInput").val();
+	tempArray = searchDataFilter(storage.salesbillList, searchAllInput, "input");
+
+	if(tempArray.length > 0){
+		storage.searchDatas = tempArray;
+	}else{
+		storage.searchDatas = "";
+	}
+
+	this.drawSalesbillList();
+}
+
+addSearchList(){
+	storage.searchList = [];
+
+	for(let i = 0; i < storage.salesbillList.length; i++){
+		let disDate, setDate, buyerCustomer, sn, status, amount, tax, product, standard, remark;
+		disDate = dateDis(storage.salesbillList[i].issueDate);
+		setDate = parseInt(dateFnc(disDate).replaceAll("-", ""));
+		buyerCustomer = (storage.salesbillList[i].buyerCustomer === null || storage.salesbillList[i].buyerCustomer == 0 || storage.salesbillList[i].buyerCustomer === undefined) ? "" : storage.customer[storage.salesbillList[i].buyerCustomer].name;
+		sn = (storage.salesbillList[i].sn === null || storage.salesbillList[i].sn === "" || storage.salesbillList[i].sn === undefined) ? "" : storage.salesbillList[i].sn;
+		status = (storage.salesbillList[i].status === null || storage.salesbillList[i].status === "" || storage.salesbillList[i].status === undefined) ? "" : storage.salesbillList[i].status;
+
+		if(status === "S1"){
+			status = "매출발행";
+		}else if(status === "S3") {
+			status = "수금처리중";
+		}else{
+			status = "수금완료";
+		}
+
+		amount = (storage.salesbillList[i].amount === null || storage.salesbillList[i].amount == 0 || storage.salesbillList[i].amount === undefined) ? "" : storage.salesbillList[i].amount;
+		tax = (storage.salesbillList[i].tax === null || storage.salesbillList[i].tax == 0 || storage.salesbillList[i].tax === undefined) ? "" : storage.salesbillList[i].tax;
+		product = (storage.salesbillList[i].product === null || storage.salesbillList[i].product === "" || storage.salesbillList[i].product === undefined) ? "" : storage.salesbillList[i].product;
+		standard = (storage.salesbillList[i].standard === null || storage.salesbillList[i].standard === "" || storage.salesbillList[i].standard === undefined) ? "" : storage.salesbillList[i].standard;
+		remark = (storage.salesbillList[i].remark === null || storage.salesbillList[i].remark === "" || storage.salesbillList[i].remark === undefined) ? "" : storage.salesbillList[i].remark;
+
+		storage.searchList.push("#issueDate" + setDate + "#" + buyerCustomer + "#" + sn + "#" + status + "#price" + (amount + tax) + "#" + product + "#" + standard + "#" + remark + "#");
+	}
+}
+
+searchSubmit(){
+	let dataArray = [], resultArray, eachIndex = 0, searchBuyerCustomer, searchIssueFrom, searchPriceFrom;
+
+	searchBuyerCustomer = $("#searchBuyerCustomer").val();
+	searchIssueFrom = ($("#searchIssueFrom").val() === "") ? "" : $("#searchIssueFrom").val().replaceAll("-", "") + "#issueDate" + $("#searchIssueTo").val().replaceAll("-", "");
+	searchPriceFrom = ($("#searchPriceFrom").val() === "") ? "" : $("#searchPriceFrom").val().replaceAll(",", "") + "#price" + $("#searchPriceTo").val().replaceAll(",", "");
+
+	let searchValues = [searchBuyerCustomer, searchIssueFrom, searchPriceFrom];
+
+	for(let i = 0; i < searchValues.length; i++){
+		if(searchValues[i] !== "" && searchValues[i] !== undefined && searchValues[i] !== null){
+			let tempArray = searchDataFilter(storage.salesbillList, searchValues[i], "multi");
+			
+			for(let t = 0; t < tempArray.length; t++){
+				dataArray.push(tempArray[t]);
+			}
+
+			eachIndex++;
+		}
+	}
+
+	resultArray = searchMultiFilter(eachIndex, dataArray, storage.salesbillList);
+	
+	storage.searchDatas = resultArray;
+
+	if(storage.searchDatas.length == 0){
+		msg.set("찾는 데이터가 없습니다.");
+		storage.searchDatas = storage.salesbillList;
+	}
+	
+	this.drawSalesbillList();
+}
+
+}
 
 // let v = null, hdr, act;
 // act = () => {

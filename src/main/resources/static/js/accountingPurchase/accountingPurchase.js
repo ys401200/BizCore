@@ -1,10 +1,11 @@
-$(document).ready(() => {
-    init();
-    
-	setTimeout(() => {
-		$("#loadingDiv").hide();
-		$("#loadingDiv").loading("toggle");
-	}, 300);
-
-	// For Initializing Code . . . . . . .  . . . . 
-});
+document.addEventListener("DOMContentLoaded", () => {
+	callerFun();
+  });
+  
+  async function callerFun(){
+  await promiseInit();
+	const setAccountingPurchase = new AccountingPurchaseSet();
+	locationBlock = false;
+	history.pushState(null, null, null);
+	setAccountingPurchase.drawList();
+  }
