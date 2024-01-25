@@ -16358,6 +16358,12 @@ class StoreSet{
 		});
 	}
 
+	storeDetailView(e) {
+		let thisEle = e;
+
+		axios.get
+	}
+
 	//재고현황 등록 폼
 	storeInsertForm(){
 		let html, dataArray;
@@ -21475,7 +21481,7 @@ class User{
 		} else {
 			let getUserKey = document.getElementsByClassName("userKey");
 			let userKey = "";
-			let tempUserKey = "GG0HH0II0JJ0KK0LL0MM0NN0";
+			let tempUserKey = "HH0II0JJ7KK0LL0MM0NN0";
 
 			for(let i = 0; i < getUserKey.length; i++){
 				let item = getUserKey[i];
