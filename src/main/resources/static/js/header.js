@@ -58,12 +58,12 @@ let promiseInit = function init() {
 			getCommonCode();
 			getUserMap();
 			getDeptMap();
-			// setDeptTree();
+			setDeptTree();
 			// getBasicInfo();
-			// getUserRank();
+			getUserRank();
 			getStorageList();
-			// getPersonalize();
-			// noteLiveUpdate();
+			getPersonalize();
+			noteLiveUpdate();
 			CommonDatas.setTopPathActive();
 			
 			setTimeout(() => {
@@ -824,7 +824,7 @@ function getUserMap(){
 			for(let i = 0; i < result.length; i++){
 				obj[result[i].userNo] = result[i];
 			}
-
+			
 			storage.user = obj;
 			storage.my = sessionStorage.getItem("getUserNo");
 		}
@@ -2857,6 +2857,7 @@ function searchDateDefaultSet(e) {
 
 // 부서트리를 만드는 함수
 function setDeptTree() {
+
 	let x, y, dept, arr = [], prv, count = 0;
 	if (storage.dept === undefined) return;
 
@@ -2888,13 +2889,44 @@ function setDeptTree() {
 		dept = new Department(storage.dept.dept[arr[x]]);
 		if (storage.dept.tree.addDept(dept)) arr.splice(x, 1);
 	}
-
 	// 부서원 추가
-	for (x in storage.user) {
-		if (x === undefined || storage.user[x] === undefined) continue;
-		dept = storage.user[x].deptId;
-		for (y in dept) if (storage.dept.tree.addEmployee(dept[y], x)) break;
-	}
+	axios.get("/api/user").then((res) => {
+		if(res.data.result === "ok"){
+			let obj = {};
+			let result = cipher.decAes(res.data.data);
+			result = JSON.parse(result);
+
+			for(let i = 0; i < result.length; i++){
+				obj[result[i].userNo] = result[i];
+			}
+			storage.user = obj;
+			for (x in obj) {
+				if (x === undefined || obj[x] === undefined) continue;
+				dept = obj[x].deptId;
+				console.log("user",obj[x].deptId);
+				for (y in dept) if (storage.dept.tree.addEmployee(dept[y], x)) break;
+			};
+			
+		}
+	})
+	// storage 내의 요소들에 접근 불가
+	// console.log("cardStart",storage.cardStart);
+	// console.log("categories",storage.categories);
+	// console.log("cip",storage.cip);
+	// console.log("code",storage.code);
+	// console.log("contract",storage.contract);
+	// console.log("customer",storage.customer);
+	// console.log("dept",storage.dept);
+	// console.log("formList",storage.formList);
+	// console.log("personalize",storage.personalize);
+	// console.log("product",storage.product);
+	// console.log("productCust",storage.productCust);
+	// console.log("sopp",storage.sopp);
+	// console.log("user",storage.user);
+	// console.log("userRank",storage.userRank);
+	// console.log("widget",storage.widget);
+	
+
 } // End of setDeptTree()
 
 class Department {
@@ -2993,22 +3025,19 @@ class Department {
 		html = "<input type=\"checkbox\" class=\"dept-tree-select\" name=\"deptTreeSelectEmp\" style=\"display:none\" id=\"dept-tree-" + this.id + "\" />";
 		html += ("<label for=\"dept-tree-" + this.id + "\" class=\"deptName\"><div><img src=\"/images/common/corporate.png\" style=\"width:20px;height:20px;vertical-align:middle;\">" + this.name + "</div></label>");
 		html += ("<div class=\"dept-tree-cnt\">");
-
 		for (x = 0; x < this.employee.length; x++) {
 			y = this.employee[x];
 			if (y === undefined) continue;
 			if (storage.user[y] === undefined || storage.user[y].resign) continue;
-			// html += ("<label for=\"emp:" + y + "\" ><input type=\"checkbox\" name=\"deptTreeSelectEmp\" class=\"dept-tree-select\" data-select=\"emp:" + y + "\" id=\"emp:" + y + "\" />");
+			html += ("<label for=\"emp:" + y + "\" ><input type=\"checkbox\" name=\"deptTreeSelectEmp\" class=\"dept-tree-select\" data-select=\"emp:" + y + "\" id=\"emp:" + y + "\" />");
 			html += ("<label for=\"cb" + y + "\" ><div style='margin-right:1rem'><img src=\"/api/user/image/" + y + "\" style=\"width:20px;height:20px;vertical-align:middle;margin-left:1.2rem;\" /> " + storage.user[y].userName + " " + storage.userRank[storage.user[y].rank][0]) + "</div>";
-			// html += ("<div><img src=\"/api/user/image/" + y + "\" style=\"width:20px;height:20px;vertical-align:middle;margin-left:1.2rem;\" /> " + storage.user[y].userName + " " + storage.userRank[storage.user[y].rank][0]) + "</div></label>";
+			html += ("<div><img src=\"/api/user/image/" + y + "\" style=\"width:20px;height:20px;vertical-align:middle;margin-left:1.2rem;\" /> " + storage.user[y].userName + " " + storage.userRank[storage.user[y].rank][0]) + "</div></label>";
 			html += ("<input type=\"checkbox\" name=\"userNames\" class=\"testClass\"  id=\"cb" + y + "\" value='" + y + "' /></label>");
 		}
-
 		for (x = 0; x < this.children.length; x++) {
 			y = this.children[x];
 			html += y.getGwHtml(empSelectable, deptSelectable);
 		}
-
 		html += ("</div>");
 		return html;
 	} // End of getTreeHtml()
@@ -3971,3 +4000,37 @@ function textReset(content){
 		item.value = "";
 	}
 }
+
+// 거래처 데이터리스트 set하는 함수 setCusDataList() Start =====================================================================================================================
+function setCusDataList() {
+  
+	let id;
+	if ($(".formNumHidden").val() == "") {
+	  id = storage.reportDetailData.formId;
+	} else {
+	  id = storage.formList[$(".formNumHidden").val()].id;
+	}
+  
+	let target = $("." + id + "_customer");
+	for (let i = 0; i < target.length; i++) {
+	  let html = $("." + id + "_customer")[i].innerHTML;
+	  let x;
+	  let dataListHtml = "";
+  
+	  // 거래처 데이터 리스트 만들기
+	  dataListHtml = "<datalist id='_customer'>";
+	  for (x in storage.customer) {
+		dataListHtml +=
+		  "<option data-value='" +
+		  x +
+		  "' value='" +
+		  storage.customer[x].name +
+		  "'></option> ";
+	  }
+	  dataListHtml += "</datalist>";
+	  html += dataListHtml;
+	  $("." + id + "_customer")[i].innerHTML = html;
+	  $("." + id + "_customer").attr("list", "_customer");
+  
+	}
+  }

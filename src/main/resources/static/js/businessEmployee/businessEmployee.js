@@ -43,8 +43,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
 async function callerFun(){
 	await promiseInit();
+	const setEmployee = new EmployeeSet();
+	setEmployee.getCorporateAssetInfo();
 
-	getCorporateAssetInfo();
+	
 	window.setTimeout(() => {
 		let cnt, els, x;
 		cnt = document.getElementsByClassName("deptTree")[0];
@@ -52,7 +54,7 @@ async function callerFun(){
 		els = cnt.getElementsByTagName("label");
 		for(x = 0 ; x < els.length ; x++){
 			if(els[x] === undefined) continue;
-			els[x].onclick = getDetailInfo;
+			els[x].onclick = setEmployee.getDetailInfo;
 		}
 		els = cnt.getElementsByClassName("dept-tree");
 		for(x = 0 ; x < els.length ; x++)	els[x].checked = true;
@@ -409,6 +411,7 @@ function clickedUserAdd(){
 // 부서 혹은 직원 클릭시 실행되는 함수
 function getDetailInfo(){
 	let empNo, dept;
+	console.log(this)
 	if(this.getAttribute("for").substring(0,3) === "emp"){
 		empNo = this.getAttribute("for").substring(4);
 		if(storage.basic !== undefined && storage.basic.no !== undefined && storage.basic.no == empNo)	return; // 현재 선택된 직원을 클릭하는 경우 종료함
@@ -497,6 +500,7 @@ function getCorporateAssetInfo(){
 				list = JSON.parse(list);
 				storage.card = list.card;
 				storage.vehicle = list.vehicle;
+				$('.theme-loader').fadeOut("slow");
 			} else {
 				msg.set("[getEmployeeDetailInfo] Fail to get bank account information.");
 			}
