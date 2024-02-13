@@ -35,7 +35,7 @@
 						</div>
 
 						<div class="list waitList" id="tabWaitList">
-							<div class="typeBtn"><button onclick="showCard(0)">카드</button><button onclick="showList(0)">리스트</button>
+							<div class="typeBtn"><button onclick="CommonDatas.Temps.gwHomeSet.showCard(0)">카드</button><button onclick="CommonDatas.Temps.gwHomeSet.showList(0)">리스트</button>
 							</div>
 							<div class="card"></div>
 							<div class="detailList"></div>
@@ -43,21 +43,21 @@
 
 						</div>
 						<div class="list dueList" id="tabDueList" style="display: none;">
-							<div class="typeBtn"><button onclick="showCard(1)">카드</button><button onclick="showList(1)">리스트</button>
+							<div class="typeBtn"><button onclick="CommonDatas.Temps.gwHomeSet.showCard(1)">카드</button><button onclick="CommonDatas.Temps.gwHomeSet.showList(1)">리스트</button>
 							</div>
 							<div class="card"></div>
 							<div class="detailList"></div>
 							<div class="pageContainer"></div>
 						</div>
 						<div class="list receiveList" id="tabReceiveList" style="display: none;">
-							<div class="typeBtn"><button onclick="showCard(2)">카드</button><button onclick="showList(2)">리스트</button>
+							<div class="typeBtn"><button onclick="CommonDatas.Temps.gwHomeSet.showCard(2)">카드</button><button onclick="CommonDatas.Temps.gwHomeSet.showList(2)">리스트</button>
 							</div>
 							<div class="card"></div>
 							<div class="detailList"></div>
 							<div class="pageContainer"></div>
 						</div>
 						<div class="list referList" id="tabReferList" style="display: none;">
-							<div class="typeBtn"><button onclick="showCard(3)">카드</button><button onclick="showList(3)">리스트</button>
+							<div class="typeBtn"><button onclick="CommonDatas.Temps.gwHomeSet.showCard(3)">카드</button><button onclick="CommonDatas.Temps.gwHomeSet.showList(3)">리스트</button>
 							</div>
 							<div class="card"></div>
 							<div class="detailList"></div>
