@@ -28,7 +28,7 @@
   text-align: right;
 }
 
-.purchaseContainer > button {
+.billsalesContainer > button {
   color: #ebefff;
   box-shadow: 0 1px 1px #bdbfc9;
   background-color: #182f81;
@@ -41,7 +41,7 @@
   margin-bottom: 10px;
 }
 
-.purchaseContainer > button:hover {
+.billsalesContainer > button:hover {
   color: #182f81;
   box-shadow: 0 1px 2px #bdbfc9;
   background-color: #ebefff;
@@ -55,21 +55,21 @@
   cursor: pointer;
 }
 
-.purchaseContainer {
+.billsalesContainer {
   margin-top: 3px;
   background: #ffffff;
   overflow: hidden;
   box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
 }
 
-.purchaseContainer > hr {
+.billsalesContainer > hr {
   float: left;
   border: 2px solid #182f81;
   height: 32px;
   margin: 0;
 }
 
-.purchaseContainer > #containerTitle {
+.billsalesContainer > #containerTitle {
   font-weight: 600;
   font-size: 0.9rem;
   margin-left: 15px;
@@ -78,27 +78,27 @@
   float: left;
 }
 
-.purchaseContainer .gridList {
+.billsalesContainer .gridList {
   display: grid;
   width: 99%;
   margin: 0 auto;
 }
 
-.purchaseContainer .gridList .gridHeader,
-.purchaseContainer .gridList .gridContent {
-  grid-template-columns: 8% 10% 16% 7% 7% 7% 12% 12% 14% 7%;
+.billsalesContainer .gridList .gridHeader,
+.billsalesContainer .gridList .gridContent {
+  grid-template-columns: 8% 10% 14% 6% 6% 6% 15% 13% 17% 5%;
 }
 
-.purchaseContainer .gridList .gridHeader {
+.billsalesContainer .gridList .gridHeader {
   border-bottom: 1px solid #abb6d5;
 }
 
-.purchaseContainer .pageContainer {
+.billsalesContainer .pageContainer {
   box-sizing: border-box;
   margin: 20px 0.5% 20px 0.5%;
 }
 
-.purchaseContainer .pageContainer .paging_cell_current {
+.billsalesbontainer .pageContainer .paging_cell_current {
   color: #182f81;
   border: 1px solid #182f81;
   background-color: #ebefff;

@@ -38,12 +38,12 @@ public class SystemService extends Svc {
         return result;
     } // End of test()
 
-    // 404 일 때 리턴하기 위한 내용을 세팅하는ㄴ 메서드
+    // 404 일 때 리턴하기 위한 내용을 세팅하는 메서드
     public void set404(String html) {
         html404 = html;
     }
 
-    // 500 일 때 리턴하기 위한 내용을 세팅하는ㄴ 메서드
+    // 500 일 때 리턴하기 위한 내용을 세팅하는 메서드
     public void set500(String html) {
         html500 = html;
     }
@@ -571,63 +571,63 @@ public class SystemService extends Svc {
     } // End of checkUsedSpace
 
     // public String getProductListXX(String compId) {
-    //     String result = null;
-    //     List<Product> list = null;
-    //     int x = 0;
+    // String result = null;
+    // List<Product> list = null;
+    // int x = 0;
 
-    //     list = productMapper.getProductList(compId);
-    //     result = "[";
-    //     if (list != null && list.size() > 0)
-    //         for (x = 0; x < list.size(); x++) {
-    //             if (x > 0)
-    //                 result += ",";
-    //             result += list.get(x).toJson();
-    //         }
-    //     result = "]";
+    // list = productMapper.getProductList(compId);
+    // result = "[";
+    // if (list != null && list.size() > 0)
+    // for (x = 0; x < list.size(); x++) {
+    // if (x > 0)
+    // result += ",";
+    // result += list.get(x).toJson();
+    // }
+    // result = "]";
 
-    //     return result;
+    // return result;
     // } // End of getProductList()
 
     // public String getProductList(String compId) {
-    //     String result = null;
-    //     List<Product> list = null;
-    //     int x = 0;
+    // String result = null;
+    // List<Product> list = null;
+    // int x = 0;
 
-    //     list = productMapper.getProductList(compId);
-    //     if (list != null && list.size() > 0) {
-    //         for (x = 0; x < list.size(); x++) {
-    //             if (result == null)
-    //                 result = "[";
-    //             else
-    //                 result += ",";
-    //             result += list.get(x).toJson();
-    //         }
-    //     }
-    //     result += "]";
+    // list = productMapper.getProductList(compId);
+    // if (list != null && list.size() > 0) {
+    // for (x = 0; x < list.size(); x++) {
+    // if (result == null)
+    // result = "[";
+    // else
+    // result += ",";
+    // result += list.get(x).toJson();
+    // }
+    // }
+    // result += "]";
 
-    //     return result;
+    // return result;
     // } // End of getProductList()
 
     // public String getProductList(String compId, int start, int end) {
-    //     String result = null;
-    //     List<Product> list = null;
-    //     int x = 0;
+    // String result = null;
+    // List<Product> list = null;
+    // int x = 0;
 
-    //     list = productMapper.getProductListWithStartAndEnd(compId, start, end);
-    //     result = "[";
-    //     if (list != null && list.size() > 0)
-    //         for (x = 0; x < list.size(); x++) {
-    //             if (x > 0)
-    //                 result += ",";
-    //             result += list.get(x).toJson();
-    //         }
-    //     result = "]";
+    // list = productMapper.getProductListWithStartAndEnd(compId, start, end);
+    // result = "[";
+    // if (list != null && list.size() > 0)
+    // for (x = 0; x < list.size(); x++) {
+    // if (x > 0)
+    // result += ",";
+    // result += list.get(x).toJson();
+    // }
+    // result = "]";
 
-    //     return result;
+    // return result;
     // } // End of getProductList()
 
     // public int getProductCount(String compId) {
-    //     return productMapper.getProductCount(compId);
+    // return productMapper.getProductCount(compId);
     // }
 
     public Product getProduct(String compId, int no) {
@@ -660,9 +660,9 @@ public class SystemService extends Svc {
     } // End of modifyProduct()
 
     // public int removeProduct(String compId, int no) {
-    //     int result = -1;
-    //     result = productMapper.removeProduct(compId, no);
-    //     return result;
+    // int result = -1;
+    // result = productMapper.removeProduct(compId, no);
+    // return result;
     // } // End of removeProduct()
 
     // 영업목표 가져오는 메서드
@@ -1153,7 +1153,7 @@ public class SystemService extends Svc {
             rs = pstmt.executeQuery();
             while (rs.next()) {
                 fileName = rs.getString("name");
-                logger.info("docFileDownloadAndSave :file name / " + fileName + " / count : " + (count+1));
+                logger.info("docFileDownloadAndSave :file name / " + fileName + " / count : " + (count + 1));
                 savedName = createRandomFileName();
                 blob = rs.getBlob("content");
                 isr = blob.getBinaryStream();
@@ -1162,19 +1162,20 @@ public class SystemService extends Svc {
                 file = new File(path + s + no);
                 if (!file.exists()) {
                     logger.info("docFileDownloadAndSave :directory not exist");
-                    if(file.mkdir()) {
+                    if (file.mkdir()) {
                         logger.info("docFileDownloadAndSave :success");
-                    }else{
+                    } else {
                         logger.info("docFileDownloadAndSave :fail");
                     }
-                    
+
                 }
                 file = new File(path + s + no + s + savedName);
                 fos = new FileOutputStream(file);
                 fos.write(data);
                 fos.close();
                 saveAttachedData("appDoc", no, fileName, savedName, file.length());
-                logger.info("docFileDownloadAndSave : no , fileName, savedName ,  : " + fileName + "//" + savedName + "//" + file.length());
+                logger.info("docFileDownloadAndSave : no , fileName, savedName ,  : " + fileName + "//" + savedName
+                        + "//" + file.length());
                 count++;
                 data = null;
             }

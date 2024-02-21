@@ -50,7 +50,7 @@ prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
         </div>
       </div>
     </div>
-    <div class="purchaseContainer">
+    <div class="billpurchaseContainer">
       <hr />
       <span id="containerTitle">매입계산서조회</span>
       <div class="listSearchInput">
@@ -69,7 +69,7 @@ prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
           max="100"
           step="10"
           value="0"
-          oninput="listRangeChange(this, drawPurchaseList);"
+          oninput="listRangeChange(this, drawBillpurchaseList);"
         />
         <span class="listRangeSpan">0</span>
       </div>
