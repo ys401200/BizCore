@@ -11,8 +11,8 @@
           <span class="titleSpan">새 결재 진행</span>
           <div class="ContentDiv">
             <div class="crudBtns paddingBottom">
-              <button type='button' onclick='reportInsert()' class='writeBtn'>기안 하기</button>
-              <button class='saveBtn' type='button' onclick='tempSave()' disabled>임시 저장</button>
+              <button type='button' onclick='CommonDatas.Temps.gwWriteSet.reportInsert()' class='writeBtn'>기안 하기</button>
+              <button class='saveBtn' type='button' onclick='CommonDatas.Temps.gwWriteSet.tempSave()' disabled>임시 저장</button>
               <!-- <button class="createEst" type="button" onclick="window.open('/gw/estimate','','width:1100px')">견적서 셋</button> -->
             </div>
 
@@ -27,7 +27,7 @@
                     <div> 결재양식</div>
                     <div class="crudBtns">
                       <div class='formListDiv'></div>
-                      <button type='button' class='formSelectbtn' onclick='selectForm()'>선택</button>
+                      <button type='button' class='formSelectbtn' onclick='CommonDatas.Temps.gwWriteSet.selectForm()'>선택</button>
                       <input type='hidden' class='formNumHidden' />
                     </div>
 
@@ -57,7 +57,7 @@
 
             <div class='selector'>
 
-              <div class="stepLabel crudBtns">● 결재선<button class='createLineBtn' onclick='showModal()'>결재선 생성</button>
+              <div class="stepLabel crudBtns">● 결재선<button class='createLineBtn' onclick='CommonDatas.Temps.gwWriteSet.showModal()'>결재선 생성</button>
               </div>
               <div class="lineBtnContainer">
 
@@ -86,7 +86,7 @@
                 <div class='fileDetail'>
                   <div>파일첨부</div>
                   <div class='filebtnContainer'><input type='file' multiple id='attached' name='attached[]'
-                      onchange='docFileChange()' />
+                      onchange='CommonDatas.Temps.gwWriteSet.docFileChange()' />
                     <div class='filePreview'></div>
                   </div>
                 </div>

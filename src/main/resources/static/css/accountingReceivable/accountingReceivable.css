@@ -1,4 +1,100 @@
-/* */
-.xxxxxxxx{
-	display:block;
+@charset "UTF-8";
+
+.searchContainer .searchMultiContent .searchIssue > .searchGridItem {
+  display: grid;
+  grid-template-columns: 45% 10% 45%;
+  text-align: center;
 }
+
+.searchContainer .searchMultiContent .searchIssue > .searchGridItem > span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.searchContainer .searchMultiContent .searchPrice > .searchGridItem {
+  display: grid;
+  grid-template-columns: 45% 10% 45%;
+  text-align: center;
+}
+
+.searchContainer .searchMultiContent .searchPrice > .searchGridItem > span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.searchContainer .searchMultiContent .searchPrice > .searchGridItem > input {
+  text-align: right;
+}
+
+.receivableContainer .totalReceivableList {
+  width: 99%;
+  margin: 8px;
+}
+
+.receivableContainer .totalReceivableList th {
+  border: 1px solid #abb6d5;
+  border-collapse: collapse;
+  width: 25%;
+}
+
+.receivableContainer .totalReceivableList td {
+  padding-right: 8px;
+  text-align: right;
+  background-color: #f7f7f9;
+  width: 25%;
+}
+
+.receivableContainer {
+  margin-top: 3px;
+  background: #ffffff;
+  overflow: auto;
+  box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
+}
+
+.receivableContainer > hr {
+  float: left;
+  border: 2px solid #182f81;
+  height: 32px;
+  margin: 0;
+}
+
+.receivableContainer > #containerTitle {
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-left: 15px;
+  line-height: 40px;
+  color: #332e85;
+  float: left;
+}
+
+.receivableContainer .gridList {
+  display: grid;
+  width: 99%;
+  margin: 0 auto;
+}
+
+.receivableContainer .gridList .gridHeader,
+.receivableContainer .gridList .gridContent {
+  grid-template-columns: 20% 20% 20% 20% 20%;
+}
+
+.receivableContainer .gridList .gridHeader {
+  border-bottom: 1px solid #abb6d5;
+}
+
+.receivableContainer > button {
+  margin: 0.4% 0.5% 0 0;
+  box-shadow: 0px 1px 2px #bdbfc9;
+  color: #ebefff;
+  background-color: #182f81;
+  padding: 0 0.7%;
+  height: 30px;
+  border-radius: 5px;
+  float: right;
+}
+
+/* .defaultFormContainer .defaultFormLine:first-child{
+	border-top: 0;
+} */

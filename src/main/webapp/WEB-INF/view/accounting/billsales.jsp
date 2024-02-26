@@ -15,7 +15,7 @@ prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
             type="text"
             data-complete="customer"
             autocomplete="off"
-            id="searchSellerCustomer"
+            id="searchBuyerCustomer"
             onclick="addAutoComplete(this);"
             onkeyup="addAutoComplete(this);"
           />
@@ -50,9 +50,9 @@ prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
         </div>
       </div>
     </div>
-    <div class="purchaseContainer">
+    <div class="salesbillContainer">
       <hr />
-      <span id="containerTitle">매입계산서조회</span>
+      <span id="containerTitle">매출계산서조회</span>
       <div class="listSearchInput">
         <input
           type="text"
@@ -69,7 +69,7 @@ prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
           max="100"
           step="10"
           value="0"
-          oninput="listRangeChange(this, drawPurchaseList);"
+          oninput="listRangeChange(this, drawSalesbillList);"
         />
         <span class="listRangeSpan">0</span>
       </div>
