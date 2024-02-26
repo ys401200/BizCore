@@ -27424,16 +27424,34 @@ class Common {
               '; text-align: center;">데이터가 없습니다.</div>';
           } else {
             if (dataArray[i][t].setData.toString().indexOf("<img") > -1) {
-              let splitStr = dataArray[i][t].setData.split("<img");
+              if (!!dataArray[i][t].onclick) {
+                let splitStr = dataArray[i][t].setData.split("<img");
+                gridHtml +=
+                  '<div class="gridContentItem"><a href="#" class="textNumberFormat" onclick="' +
+                  dataArray[i][t].onclick +
+                  '">' +
+                  splitStr[0].replaceAll("<br />", "") +
+                  "</a></div>";
+              } else {
+                let splitStr = dataArray[i][t].setData.split("<img");
+                gridHtml +=
+                  '<div class="gridContentItem"><span class="textNumberFormat">' +
+                  splitStr[0].replaceAll("<br />", "") +
+                  "</span></div>";
+              }
+            } else if (!!dataArray[i][t].onclick) {
               gridHtml +=
-                "<div class='gridContentItem'><span class=\"textNumberFormat\">" +
-                splitStr[0].replaceAll("<br />", "") +
-                "</span></div>";
-            } else
+                '<div class="gridContentItem"><a href="#" class="textNumberFormat" onclick="' +
+                dataArray[i][t].onclick +
+                '">' +
+                dataArray[i][t].setData +
+                "</a></div>";
+            } else {
               gridHtml +=
-                "<div class='gridContentItem'><span class=\"textNumberFormat\">" +
+                '<div class="gridContentItem"><span class="textNumberFormat">' +
                 dataArray[i][t].setData +
                 "</span></div>";
+            }
           }
         }
       }
@@ -35557,7 +35575,6 @@ class AccountingUnpaidSet {
               totalVatAmountBTd.innerHTML = totalVatAmountB.toLocaleString("ko-KR") + " 원";
               totalSerialTotalBTd.innerHTML = totalSerialTotalB.toLocaleString("ko-KR") + " 원";
               totalRemainAmountTd.innerHTML = totalRemainAmount.toLocaleString("ko-KR") + " 원";
-              console.log(data);
               return storage.unpaidList.push(data);
             }
             return;
@@ -35661,15 +35678,15 @@ class AccountingUnpaidSet {
           new Date(jsonData[i].modDatetime).getTime()
         );
         setDate = CommonDatas.dateFnc(disDate, "yy.mm.dd");
-        disDate = CommonDatas.dateDis(new Date(jsonData[i].schedFrom).getTime());
+        disDate = CommonDatas.dateDis(new Date(jsonData[i].vatIssueDateFrom).getTime());
         schedFrom = CommonDatas.dateFnc(disDate, "yy.mm.dd");
-        disDate = CommonDatas.dateDis(new Date(jsonData[i].schedTo).getTime());
+        disDate = CommonDatas.dateDis(new Date(jsonData[i].vatIssueDateTo).getTime());
         schedTo = CommonDatas.dateFnc(disDate, "yy.mm.dd");
         str = [
           {
             setData: storage.customer[jsonData[i].custNo].custName,
             align: "center",
-            onClick: "CommonDatas.Temps.accountingUnpaidSet.unpaidDetailView(this)",
+            onclick: "console.log('storage.customer[jsonData[i].custNo].custName')",
           },
           {
             setData: jsonData[i].custBalance.toLocaleString("ko-KR") + " 원",
@@ -35682,7 +35699,6 @@ class AccountingUnpaidSet {
           {
             setData: jsonData[i].serialTotalB.toLocaleString("ko-KR") + " 원",
             align: "right",
-            onClick: "CommonDatas.Temps.accountingUnpaidSet.unpaidDetailView(this)",
           },
           {
             setData:
@@ -35692,6 +35708,14 @@ class AccountingUnpaidSet {
                 jsonData[i].serialTotalB
               ).toLocaleString("ko-KR") + " 원",
             align: "right",
+            onclick:
+              'console.log("' +
+              (
+                jsonData[i].custBalance +
+                jsonData[i].vatAmountB -
+                jsonData[i].serialTotalB
+              ).toLocaleString("ko-KR") +
+              '")',
           },
         ];
 
@@ -35746,494 +35770,88 @@ class AccountingUnpaidSet {
         console.log(error);
       });
   }
-}
 
-//미지급 현황 crud
-class Unpaid {
-  constructor(getData) {
-    CommonDatas.Temps.unpaid = this;
+  //미지급 현황 검색 함수
+  searchSubmit() {
+    let dataArray = [],
+      resultArray,
+      eachIndex = 0,
+      cust,
+      searchCust,
+      searchDateFrom,
+      keyIndex = 0,
+      targetList;
+    searchCust = document.getElementById("searchBuyerCustomer");
+    searchDateFrom =
+      document.getElementById("searchDateFrom").value === ""
+        ? ""
+        : document.getElementById("searchDateFrom").value.replaceAll("-", "") +
+          "#regDatetime" +
+          document.getElementById("searchDateTo").value.replaceAll("-", "");
 
-    if (getData !== undefined) {
-      this.getData = getData;
-      this.unpaidNo = getData.unpaidNo;
-      this.compNo = getData.compNo;
-      this.custNo = getData.custNo;
-      this.soppNo = getData.soppNo;
-      this.contNo = getData.contNo;
-      this.cntrctMth = getData.cntrctMth;
-      this.endCustNo = getData.endCustNo;
-      this.custmemberNo = getData.custmemberNo;
-      this.title = getData.title;
-      this.desc = getData.desc;
-      this.unpaidCheck = getData.unpaidCheck;
-      this.unpaidItemmodel = getData.unpaidItemmodel;
-      this.unpaidItemversion = getData.unpaidItemversion;
-      this.unpaidPlace = getData.unpaidPlace;
-      this.schedFrom = getData.schedFrom;
-      this.schedTo = getData.schedTo;
-      this.type = getData.type;
-      this.unpaidSteps = getData.unpaidSteps;
-      this.userNo = getData.userNo;
-      this.schedType = getData.schedType;
-      this.regDatetime = getData.regDatetime;
-      this.modDatetime = getData.modDatetime;
+    if (searchCust.value === "" && searchDateFrom === "") {
+      CommonDatas.searchListSet("unpaidList");
+      targetList = storage.unpaidList;
     } else {
-      this.unpaidNo = 0;
-      this.compNo = 0;
-      this.custNo = 0;
-      this.soppNo = 0;
-      this.contNo = 0;
-      this.cntrctMth = "";
-      this.endCustNo = 0;
-      this.custmemberNo = 0;
-      this.title = "";
-      this.desc = "";
-      this.unpaidCheck = 0;
-      this.unpaidItemmodel = "";
-      this.unpaidItemversion = "";
-      this.unpaidPlace = "";
-      this.schedFrom = "";
-      this.schedTo = "";
-      this.type = "";
-      this.unpaidSteps = "";
-      this.userNo = 0;
-      this.schedType = 0;
-      this.regDatetime = "";
-      this.modDatetime = "";
-    }
-  }
-
-  //미지급 현황 상세
-  detail() {
-    let html = "";
-    let setDate, datas, dataArray, notIdArray, schedFrom, schedTo;
-    CommonDatas.detailSetFormList(this.getData);
-
-    let gridList = document.getElementsByClassName("gridList")[0];
-    let containerTitle = document.getElementById("containerTitle");
-    let detailBackBtn = document.getElementsByClassName("detailBackBtn")[0];
-    let crudUpdateBtn = document.getElementsByClassName("crudUpdateBtn")[0];
-    let crudDeleteBtn = document.getElementsByClassName("crudDeleteBtn")[0];
-    notIdArray = ["userNo"];
-
-    setDate = CommonDatas.dateDis(
-      new Date(this.regDatetime).getTime(),
-      new Date(this.modDatetime).getTime()
-    );
-    setDate = CommonDatas.dateFnc(setDate);
-
-    schedFrom = CommonDatas.dateDis(new Date(this.schedFrom).getTime());
-    schedFrom = CommonDatas.dateFnc(schedFrom);
-
-    schedTo = CommonDatas.dateDis(new Date(this.schedTo).getTime());
-    schedTo = CommonDatas.dateFnc(schedTo);
-
-    datas = ["soppNo", "userNo", "custNo", "endCustNo", "custmemberNo", "contNo"];
-    dataArray = [
-      {
-        title: "등록구분(*)",
-        radioValue: [
-          {
-            key: "10247",
-            value: "신규영업지원",
-          },
-          {
-            key: "10248",
-            value: "유지보수",
-          },
-        ],
-        type: "radio",
-        elementId: ["cntrctMthNew", "cntrctMthOld"],
-        onChange: "CommonDatas.Temps.accountingUnpaidSet.unpaidRadioChange();",
-        col: 4,
-        elementName: "cntrctMth",
-      },
-      {
-        title: "영업기회(*)",
-        elementId: "soppNo",
-        complete: "sopp",
-        keyup: "CommonDatas.addAutoComplete(this);",
-        onClick: "CommonDatas.addAutoComplete(this);",
-        value: CommonDatas.emptyValuesCheck(this.soppNo)
-          ? ""
-          : CommonDatas.getSoppFind(this.soppNo, "name"),
-      },
-      {
-        title: "계약(*)",
-        elementId: "contNo",
-        complete: "contract",
-        keyup: "CommonDatas.addAutoComplete(this);",
-        onClick: "CommonDatas.addAutoComplete(this);",
-        value: CommonDatas.emptyValuesCheck(this.contNo)
-          ? ""
-          : CommonDatas.getContFind(this.contNo, "name"),
-      },
-      {
-        title: "엔드유저(*)",
-        elementId: "endCustNo",
-        complete: "customer",
-        keyup: "CommonDatas.addAutoComplete(this);",
-        onClick: "CommonDatas.addAutoComplete(this);",
-        value: CommonDatas.emptyValuesCheck(this.endCustNo)
-          ? ""
-          : storage.customer[this.endCustNo].custName,
-      },
-      {
-        title: "엔드유저 담당자",
-        complete: "cip",
-        keyup: "CommonDatas.addAutoComplete(this);",
-        onClick: "CommonDatas.addAutoComplete(this);",
-        elementId: "custmemberNo",
-        value: CommonDatas.emptyValuesCheck(this.custmemberNo)
-          ? ""
-          : storage.cip[this.custmemberNo].name,
-      },
-      {
-        title: "담당자(*)",
-        complete: "user",
-        keyup: "CommonDatas.addAutoComplete(this);",
-        onClick: "CommonDatas.addAutoComplete(this);",
-        elementId: "userNo",
-        value: CommonDatas.emptyValuesCheck(this.userNo) ? "" : storage.user[this.userNo].userName,
-      },
-      {
-        title: "모델",
-        elementId: "unpaidItemmodel",
-        value: CommonDatas.emptyValuesCheck(this.unpaidItemmodel) ? "" : this.unpaidItemmodel,
-        col: 4,
-      },
-      {
-        title: "버전",
-        elementId: "unpaidItemversion",
-        value: CommonDatas.emptyValuesCheck(this.unpaidItemversion) ? "" : this.unpaidItemversion,
-        col: 4,
-      },
-      {
-        title: "단계",
-        selectValue: [
-          {
-            key: "10213",
-            value: "접수단계",
-          },
-          {
-            key: "10214",
-            value: "출동단계",
-          },
-          {
-            key: "10215",
-            value: "미계약에 따른 보류",
-          },
-          {
-            key: "10253",
-            value: "처리완료",
-          },
-        ],
-        type: "select",
-        elementId: "unpaidSteps",
-      },
-      {
-        title: "지원형태",
-        selectValue: [
-          {
-            key: "10187",
-            value: "전화상담",
-          },
-          {
-            key: "10208",
-            value: "현장방문",
-          },
-          {
-            key: "10209",
-            value: "원격지원",
-          },
-        ],
-        type: "select",
-        elementId: "type",
-      },
-      {
-        title: "지원일자 시작일(*)",
-        elementId: "schedFrom",
-        type: "datetime",
-        value: this.schedFrom,
-      },
-      {
-        title: "지원일자 종료일(*)",
-        elementId: "schedTo",
-        type: "datetime",
-        value: this.schedTo,
-      },
-      {
-        title: "장소",
-        elementId: "unpaidPlace",
-        value: CommonDatas.emptyValuesCheck(this.unpaidPlace) ? "" : this.unpaidPlace,
-        col: 1,
-      },
-      {
-        title: "미지급 현황명(*)",
-        elementId: "title",
-        value: CommonDatas.emptyValuesCheck(this.title) ? "" : this.title,
-        col: 3,
-      },
-      {
-        title: "내용",
-        type: "textarea",
-        elementId: "desc",
-        value: CommonDatas.emptyValuesCheck(this.desc)
-          ? ""
-          : this.desc.replaceAll('"', "'").replaceAll("\n", "<br />"),
-        col: 4,
-      },
-    ];
-
-    html = CommonDatas.detailViewForm(dataArray);
-    let createGrid = document.createElement("div");
-    createGrid.className = "defaultFormContainer";
-    createGrid.innerHTML = html;
-    gridList.after(createGrid);
-    containerTitle.innerText = this.title;
-    let hideArr = [
-      "gridList",
-      "listRange",
-      "crudAddBtn",
-      "listSearchInput",
-      "searchContainer",
-      "pageContainer",
-    ];
-    let showArr = ["defaultFormContainer"];
-    CommonDatas.setViewContents(hideArr, showArr);
-
-    if (storage.my == this.getData.userNo && storage.myUserKey.indexOf("EE7") > -1) {
-      crudUpdateBtn.setAttribute(
-        "onclick",
-        'CommonDatas.enableDisabled(this, "CommonDatas.Temps.unpaid.update();", "' +
-          notIdArray +
-          '");'
-      );
-      crudDeleteBtn.setAttribute("onclick", "CommonDatas.Temps.unpaid.delete();");
-      crudUpdateBtn.style.display = "flex";
-      crudDeleteBtn.style.display = "flex";
-    } else {
-      crudUpdateBtn.style.display = "none";
-      crudDeleteBtn.style.display = "none";
+      CommonDatas.searchListSet("unpaidAllList");
+      targetList = storage.unpaidAllList;
     }
 
-    detailBackBtn.style.display = "flex";
-    CommonDatas.detailTrueDatas(datas);
+    for (let key in targetList[0]) {
+      if (key === searchCust.dataset.key) cust = "#" + keyIndex + "/" + searchCust.value;
+      keyIndex++;
+    }
 
-    setTimeout(() => {
-      document
-        .querySelector('input[name="cntrctMth"][value="' + this.cntrctMth + '"]')
-        .setAttribute("checked", true);
-      CommonDatas.Temps.accountingUnpaidSet.unpaidRadioChange();
-      document.getElementById("unpaidSteps").value = this.unpaidSteps;
-      document.getElementById("type").value = this.type;
-      ckeditor.config.readOnly = true;
-      window.setTimeout(setEditor, 100);
-    }, 100);
-  }
+    let searchValues = [cust, searchDateFrom];
 
-  //미지급 현황 등록
-  insert() {
-    let cntrctMth = document.querySelector('input[name="cntrctMth"]:checked');
+    for (let i = 0; i < searchValues.length; i++) {
+      if (!!searchValues[i]) {
+        let tempArray = CommonDatas.searchDataFilter(targetList, searchValues[i], "multi", [
+          "#regDatetime",
+        ]);
 
-    if (cntrctMth.id === "cntrctMthNew" && document.getElementById("soppNo").value === "") {
-      msg.set("영업기회를 입력해주세요.");
-      document.getElementById("soppNo").focus();
-      return false;
-    } else if (
-      cntrctMth.id === "cntrctMthNew" &&
-      document.getElementById("soppNo").value !== "" &&
-      !CommonDatas.validateAutoComplete(document.getElementById("soppNo").value, "sopp")
-    ) {
-      msg.set("조회된 영업기회가 없습니다.\n다시 확인해주세요.");
-      document.getElementById("soppNo").focus();
-      return false;
-    } else if (cntrctMth.id === "cntrctMthOld" && document.getElementById("contNo").value === "") {
-      msg.set("계약을 입력해주세요.");
-      document.getElementById("contNo").focus();
-      return false;
-    } else if (
-      cntrctMth.id === "cntrctMthOld" &&
-      document.getElementById("contNo").value !== "" &&
-      !CommonDatas.validateAutoComplete(document.getElementById("contNo").value, "contract")
-    ) {
-      msg.set("조회된 계약이 없습니다.\n다시 확인해주세요.");
-      document.getElementById("contNo").focus();
-      return false;
-    } else if (document.getElementById("endCustNo").value === "") {
-      msg.set("엔드유저를 입력해주세요.");
-      document.getElementById("endCustNo").focus();
-      return false;
-    } else if (
-      document.getElementById("endCustNo").value !== "" &&
-      !CommonDatas.validateAutoComplete(document.getElementById("endCustNo").value, "customer")
-    ) {
-      msg.set("조회된 엔드유저가 없습니다.\n다시 확인해주세요.");
-      document.getElementById("endCustNo").focus();
-      return false;
-    } else if (document.getElementById("schedFrom").value === "") {
-      msg.set("지원시작일을 선택해주세요.");
-      document.getElementById("schedFrom").focus();
-      return false;
-    } else if (document.getElementById("schedFrom").value === "") {
-      msg.set("지원시작일을 선택해주세요.");
-      document.getElementById("schedFrom").focus();
-      return false;
-    } else if (document.getElementById("schedTo").value === "") {
-      msg.set("지원종료일을 선택해주세요.");
-      document.getElementById("schedTo").focus();
-      return false;
-    } else if (document.getElementById("title").value === "") {
-      msg.set("미지급 현황명을 입력해주세요.");
-      document.getElementById("title").focus();
-      return false;
-    } else {
-      CommonDatas.formDataSet();
+        for (let t = 0; t < tempArray.length; t++) {
+          dataArray.push(tempArray[t]);
+        }
 
-      if (cntrctMth.id === "cntrctMthNew") {
-        storage.formList.soppNo = document.getElementById("soppNo").dataset.value;
-      } else {
-        storage.formList.soppNo = document.getElementById("contNo").dataset.sopp;
+        eachIndex++;
       }
-
-      let data = storage.formList;
-      data = JSON.stringify(data);
-      data = cipher.encAes(data);
-
-      axios
-        .post("/api/unpaid", data, {
-          headers: { "Content-Type": "text/plain" },
-        })
-        .then((response) => {
-          if (response.data.result === "ok") {
-            location.reload();
-            msg.set("등록되었습니다.");
-          } else {
-            msg.set("등록 중 에러가 발생하였습니다.");
-            return false;
-          }
-        })
-        .catch((error) => {
-          msg.set("등록 도중 에러가 발생하였습니다.\n" + error);
-          console.log(error);
-          return false;
-        });
     }
+
+    resultArray = CommonDatas.searchMultiFilter(eachIndex, dataArray, targetList);
+
+    storage.searchDatas = resultArray;
+
+    if (storage.searchDatas.length == 0) {
+      msg.set("찾는 데이터가 없습니다.");
+      storage.searchDatas = storage.unpaidList;
+    }
+
+    this.drawUnpaidList();
   }
 
-  //미지급 현황 수정
-  update() {
-    let cntrctMth = document.querySelector('input[name="cntrctMth"]:checked');
+  //미지급 현황 단일 검색 함수
+  searchInputKeyup() {
+    let searchAllInput, tempArray, targetList;
+    searchAllInput = document.getElementById("searchAllInput").value;
 
-    if (cntrctMth.id === "cntrctMthNew" && document.getElementById("soppNo").value === "") {
-      msg.set("영업기회를 입력해주세요.");
-      document.getElementById("soppNo").focus();
-      return false;
-    } else if (
-      cntrctMth.id === "cntrctMthNew" &&
-      document.getElementById("soppNo").value !== "" &&
-      !CommonDatas.validateAutoComplete(document.getElementById("soppNo").value, "sopp")
-    ) {
-      msg.set("조회된 영업기회가 없습니다.\n다시 확인해주세요.");
-      document.getElementById("soppNo").focus();
-      return false;
-    } else if (cntrctMth.id === "cntrctMthOld" && document.getElementById("contNo").value === "") {
-      msg.set("계약을 입력해주세요.");
-      document.getElementById("contNo").focus();
-      return false;
-    } else if (
-      cntrctMth.id === "cntrctMthOld" &&
-      document.getElementById("contNo").value !== "" &&
-      !CommonDatas.validateAutoComplete(document.getElementById("contNo").value, "contract")
-    ) {
-      msg.set("조회된 계약이 없습니다.\n다시 확인해주세요.");
-      document.getElementById("contNo").focus();
-      return false;
-    } else if (document.getElementById("endCustNo").value === "") {
-      msg.set("엔드유저를 입력해주세요.");
-      document.getElementById("endCustNo").focus();
-      return false;
-    } else if (
-      document.getElementById("endCustNo").value !== "" &&
-      !CommonDatas.validateAutoComplete(document.getElementById("endCustNo").value, "customer")
-    ) {
-      msg.set("조회된 엔드유저가 없습니다.\n다시 확인해주세요.");
-      document.getElementById("endCustNo").focus();
-      return false;
-    } else if (document.getElementById("schedFrom").value === "") {
-      msg.set("지원시작일을 선택해주세요.");
-      document.getElementById("schedFrom").focus();
-      return false;
-    } else if (document.getElementById("schedFrom").value === "") {
-      msg.set("지원시작일을 선택해주세요.");
-      document.getElementById("schedFrom").focus();
-      return false;
-    } else if (document.getElementById("schedTo").value === "") {
-      msg.set("지원종료일을 선택해주세요.");
-      document.getElementById("schedTo").focus();
-      return false;
-    } else if (document.getElementById("title").value === "") {
-      msg.set("미지급 현황명을 입력해주세요.");
-      document.getElementById("title").focus();
-      return false;
+    if (searchAllInput === "") {
+      CommonDatas.searchListSet("unpaidList");
+      targetList = storage.unpaidList;
     } else {
-      CommonDatas.formDataSet();
-
-      if (cntrctMth.id === "cntrctMthNew") {
-        storage.formList.soppNo = document.getElementById("soppNo").dataset.value;
-      } else {
-        storage.formList.soppNo = document.getElementById("contNo").dataset.sopp;
-      }
-
-      let data = storage.formList;
-      data = JSON.stringify(data);
-      data = cipher.encAes(data);
-
-      axios
-        .put("/api/unpaid/" + this.unpaidNo, data, {
-          headers: { "Content-Type": "text/plain" },
-        })
-        .then((response) => {
-          if (response.data.result === "ok") {
-            location.reload();
-            msg.set("수정되었습니다.");
-          } else {
-            msg.set("수정 중 에러가 발생하였습니다.");
-            return false;
-          }
-        })
-        .catch((error) => {
-          msg.set("수정 도중 에러가 발생하였습니다.\n" + error);
-          console.log(error);
-          return false;
-        });
+      CommonDatas.searchListSet("unpaidAllList");
+      targetList = storage.unpaidAllList;
     }
-  }
 
-  //미지급 현황 삭제
-  delete() {
-    if (confirm("정말로 삭제하시겠습니까??")) {
-      axios
-        .delete("/api/unpaid/" + storage.formList.unpaidNo, {
-          headers: { "Content-Type": "text/plain" },
-        })
-        .then((response) => {
-          if (response.data.result === "ok") {
-            location.reload();
-            msg.set("삭제되었습니다.");
-          } else {
-            msg.set("삭제 중 에러가 발생하였습니다.");
-            return false;
-          }
-        })
-        .catch((error) => {
-          msg.set("삭제 도중 에러가 발생하였습니다.\n" + error);
-          console.log(error);
-          return false;
-        });
+    tempArray = CommonDatas.searchDataFilter(targetList, searchAllInput, "input");
+
+    if (tempArray.length > 0) {
+      storage.searchDatas = tempArray;
     } else {
-      return false;
+      storage.searchDatas = "";
     }
+
+    this.drawUnpaidList();
   }
 }
 
@@ -36241,8 +35859,311 @@ class AccountingReceivableSet {
   constructor() {
     CommonDatas.Temps.accountingReceivableSet = this;
   }
-  drawList() {
-    $(".theme-loader").fadeOut("slow");
+
+  //미수금 현황 리스트 저장 함수
+  list() {
+    axios
+      .get("/api/receivable/")
+      .then((response) => {
+        if (response.data.result === "ok") {
+          let result,
+            totalCustBalance = 0,
+            totalVatAmountS = 0,
+            totalSerialTotalS = 0,
+            totalRemainAmount = 0,
+            totalCustBalanceTd,
+            totalVatAmountSTd,
+            totalSerialTotalSTd,
+            totalRemainAmountTd;
+          result = cipher.decAes(response.data.data);
+          result = JSON.parse(result);
+          storage.receivableAllList = result;
+          storage.receivableList = [];
+          result.map((data) => {
+            if (!!data.custBalance || !!data.vatAmountS || !!data.serialTotalS) {
+              totalCustBalance += data.custBalance;
+              totalVatAmountS += data.vatAmountS;
+              totalSerialTotalS += data.serialTotalS;
+              totalRemainAmount += data.custBalance + data.vatAmountS - data.serialTotalS;
+              totalCustBalanceTd = document.getElementById("totalCustBalance");
+              totalVatAmountSTd = document.getElementById("totalVatAmountS");
+              totalSerialTotalSTd = document.getElementById("totalSerialTotalS");
+              totalRemainAmountTd = document.getElementById("totalRemainAmount");
+              totalCustBalanceTd.innerHTML = totalCustBalance.toLocaleString("ko-KR") + " 원";
+              totalVatAmountSTd.innerHTML = totalVatAmountS.toLocaleString("ko-KR") + " 원";
+              totalSerialTotalSTd.innerHTML = totalSerialTotalS.toLocaleString("ko-KR") + " 원";
+              totalRemainAmountTd.innerHTML = totalRemainAmount.toLocaleString("ko-KR") + " 원";
+              return storage.receivableList.push(data);
+            }
+            return;
+          });
+
+          CommonDatas.disListSet([], storage.receivableList, 3, "regDatetime");
+          this.drawReceivableList();
+
+          $(".theme-loader").fadeOut("slow");
+        }
+      })
+      .catch((error) => {
+        msg.set("미수금 현황 리스트 에러입니다.\n" + error);
+        console.log(error);
+        $(".theme-loader").fadeOut("slow");
+      });
+  }
+
+  //미수금 현황 리스트 출력 함수
+  drawReceivableList() {
+    let container,
+      result,
+      jsonData,
+      containerTitle,
+      job,
+      header = [],
+      data = [],
+      ids = [],
+      disDate,
+      setDate,
+      str,
+      fnc = [],
+      pageContainer,
+      hideArr,
+      showArr,
+      schedFrom,
+      schedTo;
+
+    if (storage.receivableList === undefined) {
+      msg.set("등록된 미수금 현황이 없습니다");
+    } else {
+      if (storage.searchDatas === undefined) {
+        jsonData = storage.receivableList;
+      } else {
+        jsonData = storage.searchDatas;
+      }
+    }
+
+    result = CommonDatas.paging(jsonData?.length, storage.currentPage, storage.articlePerPage);
+    containerTitle = document.getElementById("containerTitle");
+    pageContainer = document.getElementsByClassName("pageContainer")[0];
+    container = document.getElementsByClassName("gridList")[0];
+    hideArr = ["detailBackBtn", "crudUpdateBtn", "crudDeleteBtn", "contractReqBtn"];
+    showArr = [
+      { element: "gridList", display: "block" },
+      { element: "pageContainer", display: "flex" },
+      { element: "searchContainer", display: "block" },
+      { element: "listRange", display: "flex" },
+      { element: "listSearchInput", display: "flex" },
+      { element: "crudBtns", display: "flex" },
+      { element: "crudAddBtn", display: "flex" },
+    ];
+
+    header = [
+      {
+        title: "거래처",
+        align: "center",
+      },
+      {
+        title: "기초잔액",
+        align: "center",
+      },
+      {
+        title: "매출합계",
+        align: "center",
+      },
+      {
+        title: "수금완료합계",
+        align: "center",
+      },
+      {
+        title: "잔액",
+        align: "center",
+      },
+    ];
+
+    if (jsonData === "" || !jsonData?.length) {
+      str = [
+        {
+          setData: undefined,
+          align: "center",
+          col: 9,
+        },
+      ];
+
+      data.push(str);
+    } else {
+      for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
+        disDate = CommonDatas.dateDis(
+          new Date(jsonData[i].regDatetime).getTime(),
+          new Date(jsonData[i].modDatetime).getTime()
+        );
+        setDate = CommonDatas.dateFnc(disDate, "yy.mm.dd");
+        disDate = CommonDatas.dateDis(new Date(jsonData[i].vatIssueDateFrom).getTime());
+        schedFrom = CommonDatas.dateFnc(disDate, "yy.mm.dd");
+        disDate = CommonDatas.dateDis(new Date(jsonData[i].vatIssueDateTo).getTime());
+        schedTo = CommonDatas.dateFnc(disDate, "yy.mm.dd");
+        str = [
+          {
+            setData: storage.customer[jsonData[i].custNo].custName,
+            align: "center",
+          },
+          {
+            setData: jsonData[i].custBalance.toLocaleString("ko-KR") + " 원",
+            align: "right",
+          },
+          {
+            setData: jsonData[i].vatAmountS.toLocaleString("ko-KR") + " 원",
+            align: "right",
+          },
+          {
+            setData: jsonData[i].serialTotalS.toLocaleString("ko-KR") + " 원",
+            align: "right",
+          },
+          {
+            setData:
+              (
+                jsonData[i].custBalance +
+                jsonData[i].vatAmountS -
+                jsonData[i].serialTotalS
+              ).toLocaleString("ko-KR") + " 원",
+            align: "right",
+          },
+        ];
+
+        ids.push(jsonData[i].receivableNo);
+        data.push(str);
+      }
+
+      let pageNation = CommonDatas.createPaging(
+        pageContainer,
+        result[3],
+        "CommonDatas.pageMove",
+        "CommonDatas.Temps.accountingReceivableSet.drawReceivableList",
+        result[0]
+      );
+      pageContainer.innerHTML = pageNation;
+    }
+
+    CommonDatas.createGrid(container, header, data, ids, job, fnc);
+    CommonDatas.setViewContents(hideArr, showArr);
+    document
+      .getElementById("multiSearchBtn")
+      .setAttribute("onclick", "CommonDatas.Temps.accountingReceivableSet.searchSubmit();");
+    containerTitle.innerText = "미수금 현황조회";
+
+    let path = location.pathname.split("/");
+
+    if (path[3] !== undefined && jsonData !== null) {
+      let content = document.querySelector('.gridContent[data-id="' + path[3] + '"]');
+      CommonDatas.Temps.accountingReceivableSet.receivableDetailView(content);
+    }
+  }
+
+  //미수금 현황 가져오는 함수
+  receivableDetailView(e) {
+    let thisEle = e;
+
+    axios
+      .get("/api/receivable/" + thisEle.dataset.id)
+      .then((response) => {
+        if (response.data.result === "ok") {
+          let result;
+          result = cipher.decAes(response.data.data);
+          result = JSON.parse(result);
+          let receivable = new Receivable(result);
+          receivable.detail();
+
+          localStorage.setItem("loadSetPage", window.location.pathname);
+        }
+      })
+      .catch((error) => {
+        msg.set("상세보기 에러 입니다.\n" + error);
+        console.log(error);
+      });
+  }
+
+  //미수금 현황 검색 함수
+  searchSubmit() {
+    let dataArray = [],
+      resultArray,
+      eachIndex = 0,
+      user,
+      sopp,
+      cust,
+      type,
+      searchCust,
+      searchDateFrom,
+      keyIndex = 0,
+      targetList;
+    searchCust = document.getElementById("searchCust");
+    searchDateFrom =
+      document.getElementById("searchDateFrom").value === ""
+        ? ""
+        : document.getElementById("searchDateFrom").value.replaceAll("-", "") +
+          "#regDatetime" +
+          document.getElementById("searchDateTo").value.replaceAll("-", "");
+
+    if (searchCust.value === "" && searchDateFrom === "") {
+      CommonDatas.searchListSet("receivableList");
+      targetList = storage.receivableList;
+    } else {
+      CommonDatas.searchListSet("receivableAllList");
+      targetList = storage.receivableAllList;
+    }
+
+    for (let key in targetList[0]) {
+      if (key === searchCust.dataset.key) cust = "#" + keyIndex + "/" + searchCust.value;
+      keyIndex++;
+    }
+
+    let searchValues = [user, sopp, cust, type, searchDateFrom];
+
+    for (let i = 0; i < searchValues.length; i++) {
+      if (searchValues[i] !== "") {
+        let tempArray = CommonDatas.searchDataFilter(targetList, searchValues[i], "multi", [
+          "#regDatetime",
+        ]);
+
+        for (let t = 0; t < tempArray.length; t++) {
+          dataArray.push(tempArray[t]);
+        }
+
+        eachIndex++;
+      }
+    }
+
+    resultArray = CommonDatas.searchMultiFilter(eachIndex, dataArray, targetList);
+
+    storage.searchDatas = resultArray;
+
+    if (storage.searchDatas.length == 0) {
+      msg.set("찾는 데이터가 없습니다.");
+      storage.searchDatas = storage.receivableList;
+    }
+
+    this.drawReceivableList();
+  }
+
+  //미지급 현황 단일 검색 함수
+  searchInputKeyup() {
+    let searchAllInput, tempArray, targetList;
+    searchAllInput = document.getElementById("searchAllInput").value;
+
+    if (searchAllInput === "") {
+      CommonDatas.searchListSet("receivableList");
+      targetList = storage.receivableList;
+    } else {
+      CommonDatas.searchListSet("receivableAllList");
+      targetList = storage.receivableAllList;
+    }
+
+    tempArray = CommonDatas.searchDataFilter(targetList, searchAllInput, "input");
+
+    if (tempArray.length > 0) {
+      storage.searchDatas = tempArray;
+    } else {
+      storage.searchDatas = "";
+    }
+
+    this.drawReceivableList();
   }
 }
 

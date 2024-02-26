@@ -11,12 +11,13 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableScheduling
 @SpringBootApplication
 @MapperScan("kr.co.bizcore.v1.mapper")
-public class BizCoreApplication extends SpringBootServletInitializer{
+public class BizCoreApplication extends SpringBootServletInitializer {
 
 	@Override
-	protected SpringApplicationBuilder configure(SpringApplicationBuilder app){
+	protected SpringApplicationBuilder configure(SpringApplicationBuilder app) {
 		return app.sources(BizCoreApplication.class);
 	}
+
 	public static void main(String[] args) {
 		SpringApplication app = new SpringApplication(BizCoreApplication.class);
 		app.addListeners(new ApplicationPidFileWriter());

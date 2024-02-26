@@ -8,7 +8,7 @@ import org.slf4j.Logger;
 import org.springframework.stereotype.Service;
 
 import kr.co.bizcore.v1.domain.Unpaid;
-import kr.co.bizcore.v1.domain.UnpaidTarget;
+import kr.co.bizcore.v1.domain.UnpaidSub;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
@@ -19,64 +19,24 @@ public class UnpaidService extends Svc {
 
     public List<Unpaid> getUnpaidList(Unpaid unpaid, int compNo, String selectYear) {
         LocalDate now = LocalDate.now();
-        if (unpaid.getToDate() == null) {
-            unpaid.setFromDate(now.getYear() + "-01-01");
-            unpaid.setToDate(now.getYear() + "-12-31");
+        if (selectYear == null) {
+            selectYear = Integer.toString(now.getYear());
+        }
+        if (unpaid.getVatIssueDateTo() == null) {
+            unpaid.setVatIssueDateFrom(selectYear + "-01-01 00:00:00.000");
+            unpaid.setVatIssueDateTo(selectYear + "-12-31 23:59:59.999");
         }
 
-        return unpaidMapper.getUnpaidList(unpaid, unpaid.getCompNo(), Integer.toString(now.getYear()),
-                now.getYear() + "-01-01", now.getYear() + "-12-31");
+        return unpaidMapper.getUnpaidList(unpaid.getCompNo(), selectYear,
+                unpaid.getVatIssueDateFrom(), unpaid.getVatIssueDateTo());
     } // End of getUnpaidList()
 
-    public Unpaid getUnpaid(int compNo, String unpaidNo) {
-        Unpaid unpaid = null;
-        unpaid = unpaidMapper.getUnpaid(unpaidNo, compNo);
-        return unpaid;
-    } // End of getUnpaid();
-
-    // public int insertUnpaid(Unpaid unpaid) {
-    // return unpaidMapper.unpaidInsert(unpaid);
-    // }
-
-    // public int delete(int compNo, String unpaidNo) {
-    // return unpaidMapper.unpaidDelete(compNo, unpaidNo);
-    // }
-
-    // public int updateUnpaid(Unpaid unpaid) {
-    // return unpaidMapper.updateUnpaid(unpaid);
-    // }
-
-    // public List<UnpaidTarget> getGoalList(UnpaidTarget unpaidTarget) {
-    // LocalDate nowDate = LocalDate.now();
-    // int getYear = nowDate.getYear();
-    // return unpaidMapper.getGoalList(unpaidTarget, getYear);
-    // }
-
-    // public int goalInsert(UnpaidTarget unpaidTarget) {
-    // return unpaidMapper.goalInsert(unpaidTarget);
-    // }
-
-    // public int goalUpdate(UnpaidTarget unpaidTarget) {
-    // return unpaidMapper.goalUpdate(unpaidTarget);
-    // }
-
-    // public boolean modifyUnpaid(String unpaidNo, Unpaid unpaid, int compNo){
-    // int x = -1;
-    // Unpaid ogn = null;
-    // String sql = null;
-
-    // ogn = getUnpaid(compNo, unpaidNo);
-    // sql = ogn.createUpdateQuery(unpaid, null);
-    // sql = sql + " WHERE unpaidno = " + unpaidNo + " AND compno = (SELECT compno
-    // FROM swc_company WHERE compNo = '" + compNo + "')";
-    // x = executeSqlQuery(sql);
-    // return x > 0;
-    // }
-
-    // public boolean removeUnpaid(String no, String compId){
-    // int x = -1;
-    // x = unpaidMapper.removeUnpaid(no, compId);
-    // return x > 0;
-    // }
+    public List<UnpaidSub> getUnpaidSub(String selectYear) {
+        LocalDate now = LocalDate.now();
+        if (selectYear == null) {
+            selectYear = Integer.toString(now.getYear());
+        }
+        return unpaidMapper.getUnpaidSub(selectYear);
+    } // End of getUnpaidList()
 
 }

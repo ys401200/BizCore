@@ -22,7 +22,7 @@ prefix="c" uri="http://java.sun.com/jsp/jstl/core" %><jsp:include page="../heade
           <div class="searchGridItem">
             <input
               type="date"
-              id="searchIssueFrom"
+              id="searchDateFrom"
               max="9999-12-31"
               data-date-type="from"
               onchange="CommonDatas.searchDateDefaultSet(this);"
@@ -30,7 +30,7 @@ prefix="c" uri="http://java.sun.com/jsp/jstl/core" %><jsp:include page="../heade
             <span>~</span>
             <input
               type="date"
-              id="searchIssueTo"
+              id="searchDateTo"
               max="9999-12-31"
               data-date-type="to"
               onchange="CommonDatas.searchDateDefaultSet(this);"
@@ -49,10 +49,10 @@ prefix="c" uri="http://java.sun.com/jsp/jstl/core" %><jsp:include page="../heade
             class="listRangeInput"
             max="100"
             step="10"
-            value="10"
+            value="0"
             oninput="CommonDatas.listRangeChange(this, CommonDatas.Temps.accountingUnpaidSet.drawUnpaidList);"
           />
-          <span class="listRangeSpan">10</span>
+          <span class="listRangeSpan">0</span>
         </div>
         <div class="listSearchInput">
           <input

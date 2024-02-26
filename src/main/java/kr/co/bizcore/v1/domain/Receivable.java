@@ -9,7 +9,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class Unpaid extends Domain {
+public class Receivable extends Domain {
 
     @XmlElement(nillable = true)
     private String detail; // 내용
@@ -25,10 +25,10 @@ public class Unpaid extends Domain {
     private int custNo;
 
     private int custBalance;
-    private int vatAmountB;
-    private int serialTotalB;
+    private int vatAmountS;
+    private int serialTotalS;
 
-    private String vatSellerName;
+    private String vatBuyerName;
     private String vatIssueDateTo;
     private String vatIssueDateFrom;
     private String regDatetime;

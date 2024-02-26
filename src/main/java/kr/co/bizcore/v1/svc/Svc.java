@@ -37,6 +37,7 @@ import kr.co.bizcore.v1.mapper.TestMapper;
 import kr.co.bizcore.v1.mapper.TradeMapper;
 import kr.co.bizcore.v1.mapper.UserMapper;
 import kr.co.bizcore.v1.mapper.UnpaidMapper;
+import kr.co.bizcore.v1.mapper.ReceivableMapper;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
@@ -148,6 +149,9 @@ public abstract class Svc {
 
     @Autowired
     protected UnpaidMapper unpaidMapper;
+
+    @Autowired
+    protected ReceivableMapper receivableMapper;
 
     @Autowired
     ProjectMapper projectMapper;
