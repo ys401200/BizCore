@@ -239,64 +239,88 @@
       <input type="radio" id="come" name="sideMenu" onclick="CommonDatas.sideMenuItemClick();" />
       <label for="come">
         <img src="/images/main/icons/mainHomeIcon.png" id="accountingTradeIcon" />
-        <span>매입매출</span>
+        <span>매입/매출 관리</span>
         <span>+</span>
       </label>
     </div>
     <div class="panel">
-      <div>
+      <!-- <div>
         <a href="/accounting/trade">매입매출</a>
-      </div>
+      </div> -->
       <div>
         <a href="/accounting/unpaid">미지급현황</a>
       </div>
       <div>
         <a href="/accounting/receivable">미수금현황</a>
       </div>
-      <div>
+      <!-- <div>
         <a href="/accounting/purchase">매입원장</a>
       </div>
       <div>
         <a href="/accounting/sales">매출원장</a>
-      </div>
+      </div> -->
     </div>
     <div class="menuItem">
-      <a href="/accounting/bankaccount">
-        <img src="/images/main/icons/mainHomeIcon.png" id="accountingBackIcon" />
-        <span>은행예금</span>
-      </a>
-    </div>
-    <div class="menuItem">
-      <input type="radio" id="card" name="sideMenu" onclick="CommonDatas.sideMenuItemClick();" />
-      <label for="card">
+      <input type="radio" id="deposit" name="sideMenu" onclick="CommonDatas.sideMenuItemClick();" />
+      <label for="deposit">
         <img src="/images/main/icons/mainHomeIcon.png" id="accountingTradeIcon" />
-        <span>법인카드</span>
+        <span>자금 관리</span>
         <span>+</span>
       </label>
     </div>
     <div class="panel">
       <div>
-        <a href="/accounting/corporatecard">법인카드 조회</a>
+        <a href="/accounting/bankaccount">자금현황조회</a>
+      </div>
+      <div>
+        <a href="#">계좌내역등록</a>
+      </div>
+      <div>
+        <a href="#">계좌내역조회</a>
       </div>
       <div>
         <a href="/accounting/carddatainsert">카드내역 등록</a>
+      </div>
+      <div>
+        <a href="/accounting/corporatecard">카드내역조회</a>
       </div>
     </div>
     <div class="menuItem">
       <input type="radio" id="bill" name="sideMenu" onclick="CommonDatas.sideMenuItemClick();" />
       <label for="bill">
         <img src="/images/main/icons/mainHomeIcon.png" id="accountingTradeIcon" />
-        <span>세금계산서</span>
+        <span>세금계산서 관리</span>
         <span>+</span>
       </label>
     </div>
     <div class="panel">
       <div>
-        <a href="/accounting/billpurchase">매입</a>
+        <a href="/accounting/billpurchase">매입 계산서 조회</a>
       </div>
       <div>
-        <a href="/accounting/billsales">매출</a>
+        <a href="/accounting/billsales">매출 계산서 조회</a>
       </div>
+      <div>
+        <a href="#">계산서 등록</a>
+      </div>
+      <div>
+        <a href="#">계산서 발행</a>
+      </div>
+      <div>
+        <a href="#">계산서 연결 현황</a>
+      </div>
+      <div>
+        <a href="#">거래처별 매출 원장</a>
+      </div>
+      <div>
+        <a href="#">거래처별 매입 원장</a>
+      </div>
+    </div>
+    <div class="menuItem">
+      <a href="/accounting/vat">
+        <img src="/images/main/icons/mainHomeIcon.png" id="accountingVatIcon" />
+        <span>부가가치세</span>
+      </a>
     </div>
   </div>
   <!-- 
