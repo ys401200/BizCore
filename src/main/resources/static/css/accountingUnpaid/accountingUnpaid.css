@@ -78,6 +78,7 @@
 .unpaidContainer .gridList .gridHeader,
 .unpaidContainer .gridList .gridContent {
   grid-template-columns: 20% 20% 20% 20% 20%;
+  cursor: default;
 }
 
 .unpaidContainer .gridList .gridHeader {

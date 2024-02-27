@@ -168,7 +168,7 @@ input[type="datetime-local"] {
 }
 
 .contentHeaders > .listRange {
-  display: none;
+  display: flex;
   align-items: center;
   padding-right: 10px;
 }
@@ -365,19 +365,19 @@ input[type="datetime-local"] {
 /* 메시징 컨테이너 끝 */
 
 /* 리스트 input range 시작 */
-/* .listRange {
-	display: flex;
-	align-items: center;
-	line-height: 40px;
-	padding-left: 1%;
-	float: left;
+.listRange {
+  display: flex;
+  align-items: center;
+  line-height: 40px;
+  padding-left: 1%;
+  float: left;
 }
 
-.listRange>span {
-	color: #332E85;
-	font-weight: 600;
-	font-size: 0.9rem;
-} */
+.listRange > span {
+  color: #332e85;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
 
 /* 리스트 input range 끝 */
 

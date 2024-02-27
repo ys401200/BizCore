@@ -88,6 +88,12 @@ public class AccountingController extends Ctrl {
         return "/accounting/detailtable";
     }
 
+    @GetMapping("/vat") // 세금계산서 - 매입/매출 상세
+    public String vat(HttpServletRequest request) {
+        doIt(request);
+        return "/accounting/vat";
+    }
+
     @RequestMapping(value = { "/contract2", "/contract2/{no:\\d+}" })
     public String cont2(HttpServletRequest request) {
         doIt(request);
