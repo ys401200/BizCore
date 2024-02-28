@@ -160,7 +160,8 @@ newSoppShowEmployee = (el) => {
 	cnt.style.padding = "";
 	cnt.innerHTML = storage.dept.tree.getTreeHtml();
 	els = cnt.getElementsByTagName("label");
-	for (x = 0; x < els.length; x++)	if (els[x].className !== "deptName") els[x].setAttribute("onclick", "newSoppSelectEmployee(this,'" + el.dataset.name + "')");
+	for (x = 0; x < els.length; x++)	
+	if (els[x].className !== "deptName") els[x].setAttribute("onclick", "newSoppSelectEmployee(this,'" + el.dataset.name + "')");
 } // End of newSoppSelectEmployee()
 
 newSoppSelectEmployee = (el, name) => {
