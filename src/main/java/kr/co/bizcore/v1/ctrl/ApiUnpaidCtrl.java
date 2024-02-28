@@ -79,4 +79,54 @@ public class ApiUnpaidCtrl extends Ctrl {
         return result;
     }
 
+    @GetMapping("/modal")
+    public String upaidModalList(HttpServletRequest request) {
+        String result = null, data = null, aesKey = null, aesIv = null, userNo = null, compId = null;
+        int compNo = 0;
+        HttpSession session = null;
+        Msg msg = null;
+        List<Unpaid> list = null;
+        List<UnpaidSub> sub = null;
+        String selectYear = null;
+
+        session = request.getSession();
+        aesKey = (String) session.getAttribute("aesKey");
+        aesIv = (String) session.getAttribute("aesIv");
+        compNo = (int) session.getAttribute("compNo");
+        userNo = (String) session.getAttribute("userNo");
+        msg = getMsg((String) session.getAttribute("lang"));
+        selectYear = (String) session.getAttribute("selectYear");
+        if (compNo == 0)
+            compNo = (int) request.getAttribute("compNo");
+
+        if (compNo == 0) {
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.compNoNotVerified + "\"}";
+        } else if (aesKey == null || aesIv == null) {
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
+        } else {
+            Unpaid unpaid = new Unpaid();
+            unpaid.setCompNo(compNo);
+            list = unpaidService.getUnpaidList(unpaid, compNo, selectYear);
+            sub = unpaidService.getUnpaidSub(selectYear);
+
+            for (int i = 0; i < sub.size(); i++) {
+                for (int s = 0; s < list.size(); s++) {
+                    if (sub.get(i).getCustNo() == list.get(s).getCustNo()) {
+                        list.get(s).setSerialTotalB(sub.get(i).getModal_receive_data());
+                    }
+                }
+            }
+            if (list != null) {
+                data = new Gson().toJson(list).toString();
+            } else {
+                data = "[]";
+            }
+
+            data = unpaidService.encAes(data, aesKey, aesIv);
+            result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}";
+        }
+
+        return result;
+    }
+
 }

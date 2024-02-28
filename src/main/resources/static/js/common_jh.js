@@ -25400,9 +25400,8 @@ class Common {
     for (let i = 0; i < menuItem.length; i++) {
       let item = menuItem[i];
       let itemNextDiv = item.nextElementSibling;
-
-      if (itemNextDiv.className === "panel" && itemNextDiv.dataset.key !== undefined) {
-        if (itemNextDiv.dataset.key === "categories") {
+      if (itemNextDiv?.className === "panel" && itemNextDiv?.dataset.key !== undefined) {
+        if (itemNextDiv?.dataset.key === "categories") {
           for (let t = 0; t < storage.categories.length; t++) {
             let secondItem = storage.categories[t];
             let createDiv = document.createElement("div");
@@ -25413,7 +25412,7 @@ class Common {
               secondItem.custCategoryName +
               "</a>";
             createDiv.innerHTML = html;
-            itemNextDiv.append(createDiv);
+            itemNextDiv?.append(createDiv);
           }
         }
       }
@@ -34003,7 +34002,7 @@ class AccountingUnpaidSet {
           {
             setData: storage.customer[jsonData[i].custNo].custName,
             align: "center",
-            onclick: "console.log('storage.customer[jsonData[i].custNo].custName')",
+            onclick: "CommonDatas.Temps.accountingUnpaidSet.openDetailModal('당해연도 지급 목록')",
           },
           {
             setData: jsonData[i].custBalance.toLocaleString("ko-KR") + " 원",
@@ -34025,14 +34024,7 @@ class AccountingUnpaidSet {
                 jsonData[i].serialTotalB
               ).toLocaleString("ko-KR") + " 원",
             align: "right",
-            onclick:
-              'console.log("' +
-              (
-                jsonData[i].custBalance +
-                jsonData[i].vatAmountB -
-                jsonData[i].serialTotalB
-              ).toLocaleString("ko-KR") +
-              '")',
+            onclick: "CommonDatas.Temps.accountingUnpaidSet.openDetailModal('전체연도 지급 목록')",
           },
         ];
 
@@ -34065,27 +34057,161 @@ class AccountingUnpaidSet {
     }
   }
 
-  //미지급 현황 가져오는 함수
-  unpaidDetailView(e) {
-    let thisEle = e;
-
+  modalGrid(header, dataArray) {
     axios
-      .get("/api/unpaid/" + thisEle.dataset.id)
+      .get("/api/unpaid/modal-list/")
       .then((response) => {
         if (response.data.result === "ok") {
           let result;
           result = cipher.decAes(response.data.data);
           result = JSON.parse(result);
-          let unpaid = new Unpaid(result);
-          unpaid.detail();
+          storage.paidAllList = result;
+          storage.paidList = [];
+          result.map((data) => {
+            if (!!data.custBalance || !!data.vatAmountB || !!data.serialTotalB) {
+              return storage.paidList.push(data);
+            }
+            return;
+          });
 
-          localStorage.setItem("loadSetPage", window.location.pathname);
+          CommonDatas.disListSet([], storage.paidList, 3, "regDatetime");
+          this.drawUnpaidList();
+
+          $(".theme-loader").fadeOut("slow");
         }
       })
       .catch((error) => {
-        msg.set("상세보기 에러 입니다.\n" + error);
+        msg.set("미지급 현황 리스트 에러입니다.\n" + error);
         console.log(error);
+        $(".theme-loader").fadeOut("slow");
       });
+
+    let html = "";
+    html += "<table class='unpaidModalGridPerYear'style='width: 100%; border: solid 1px #e0e4e9'>";
+    html += "<tr>";
+    if (!!header?.length) {
+      for (let i = 0; i < header.length ?? 0; i++) {
+        html +=
+          "<th colspan='" +
+          header[i].col +
+          "' style='border-bottom: solid 1px #e0e4e9; height : 38px;' >" +
+          header[i].title +
+          "</th>";
+      }
+      html += "</tr>";
+      if (!!dataArray?.length) {
+        html += "<tr>";
+        for (let i = 0; i < dataArray.length ?? 0; i++) {
+          html +=
+            "<td colspan='" +
+            dataArray[i].col +
+            "'style='text-align : " +
+            dataArray[i].align +
+            "; border: solid 1px #e0e4e9; border-collapse : collapse; height : 38px;'>" +
+            dataArray[i].value +
+            "</td>";
+        }
+      } else {
+        html +=
+          "<td colspan='39'style='text-align : center; border: solid 1px #e0e4e9 border-collapse : collapse; height : 38px;'>데이터가 없습니다.</td>";
+      }
+    }
+    html += "</tr>";
+    html += "</table>";
+    return html;
+  }
+
+  openDetailModal(title) {
+    let html = "",
+      dataArray = [],
+      datas,
+      header = [];
+
+    header = [
+      {
+        title: "등록일",
+        align: "right",
+        col: 4,
+      },
+      {
+        title: "거래처",
+        align: "right",
+        col: 6,
+      },
+      {
+        title: "수금확인",
+        elementId: "paidCheck",
+        align: "right",
+        col: 2,
+      },
+      {
+        title: "품명",
+        elementId: "productName",
+        align: "right",
+        col: 8,
+      },
+      {
+        title: "상태",
+        elementId: "status",
+        align: "right",
+        col: 2,
+      },
+      {
+        title: "공급가",
+        elementId: "supplyPrice",
+        align: "right",
+        col: 3,
+      },
+      {
+        title: "세액",
+        elementId: "vat",
+        align: "right",
+        col: 3,
+      },
+      {
+        title: "합계금액",
+        elementId: "totalPrice",
+        align: "right",
+        col: 3,
+      },
+      {
+        title: "입/출금 일시",
+        elementId: "inOutDate",
+        align: "right",
+        col: 4,
+      },
+      {
+        title: "남은 금액(계산서)",
+        elementId: "remainPrice",
+        align: "right",
+        col: 4,
+      },
+    ];
+    dataArray = [];
+
+    datas = ["userNo"];
+    html = this.modalGrid(header, dataArray);
+    modal.show();
+    modal.content.style.minWidth = "70%";
+    modal.content.style.maxWidth = "70%";
+    modal.headTitle.innerText = title;
+    modal.body.innerHTML = html;
+    modal.confirm.style.display = "none";
+    modal.close.innerText = "닫기";
+    modal.close.setAttribute("onclick", "modal.hide();");
+
+    storage.formList = {
+      userNo: storage.my,
+      noticeTitle: "",
+      noticeContents: "",
+    };
+
+    setTimeout(() => {
+      CommonDatas.detailTrueDatas(datas);
+      document.getElementById("userNo").value = storage.user[storage.my].userName;
+      ckeditor.config.readOnly = false;
+      window.setTimeout(setEditor, 100);
+    }, 100);
   }
 
   //미지급 현황 검색 함수

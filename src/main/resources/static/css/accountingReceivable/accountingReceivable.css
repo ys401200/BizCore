@@ -78,6 +78,7 @@
 .receivableContainer .gridList .gridHeader,
 .receivableContainer .gridList .gridContent {
   grid-template-columns: 20% 20% 20% 20% 20%;
+  cursor: default;
 }
 
 .receivableContainer .gridList .gridHeader {
