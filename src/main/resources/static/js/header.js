@@ -3767,7 +3767,7 @@ class Department {
     padding = "1rem";
 
     html =
-      '<input type="radio" class="dept-tree-select" name="deptTreeSelectEmp" style="display:none" id="dept-tree-' +
+      '<input type="radio" class="" name="deptTreeSelectEmp" style="display:none" id="dept-tree-' +
       this.id +
       '" />';
     html +=
@@ -3915,27 +3915,30 @@ class Department {
   } // End of getHtml()
 } // End of class === Department
 
-// function addNoteContainer() {
-// 	let noteHtml = "";
-// 	setDeptTree();
+//주석
+function addNoteContainer() {
+  let noteHtml = "";
+  setDeptTree();
 
-// 	noteHtml += "<div class=\"noteUserContainer\">";
-// 	noteHtml += "<div class=\"noteUserAccoordion\">";
-// 	noteHtml += "<div class=\"noteUserLi\" data-no=\"0\" onclick=\"noteUserItemClick(this);\"><h4 class=\"noteUserLiTitle\">시스템알림</h4></div>";
-// 	noteHtml += storage.dept.tree.getHtml();
-// 	noteHtml += "</div>";
-// 	noteHtml += "</div>";
-// 	noteHtml += "<div class=\"noteMainContainer\"></div>";
+  noteHtml += '<div class="noteUserContainer">';
+  noteHtml += '<div class="noteUserAccoordion">';
+  noteHtml +=
+    '<div class="noteUserLi" data-no="0" onclick="noteUserItemClick(this);"><h4 class="noteUserLiTitle">시스템알림</h4></div>';
+  noteHtml += storage.dept.tree.getHtml();
+  noteHtml += "</div>";
+  noteHtml += "</div>";
+  noteHtml += '<div class="noteMainContainer"></div>';
 
-// 	modal.noteBody.innerHTML = noteHtml;
-// 	modal.noteHeadTitle.innerText = "쪽지";
-// }
+  modal.noteBody.innerHTML = noteHtml;
+  modal.noteHeadTitle.innerText = "쪽지";
+}
 
-// function noteContentShow() {
-// 	modal.noteShow();
-// 	addNoteContainer();
-// 	noteListBadge();
-// }
+function noteContentShow() {
+  modal.noteShow();
+  addNoteContainer();
+  noteListBadge();
+}
+//주석
 
 function noteSubmit() {
   let noteSubmitText, data, noteMainContent, html;
